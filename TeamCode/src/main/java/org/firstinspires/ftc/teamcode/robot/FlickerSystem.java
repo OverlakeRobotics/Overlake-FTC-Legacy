@@ -32,7 +32,7 @@ public class FlickerSystem {
     private final int ticksPerRotation = 1120 * 3 / 2;
     private final double FLICKER_POWER = 0.8;
     private final double SHOOT_POSITION = 0.5;
-    private final double LOAD_POSITION = 0.46;
+    private final double LOAD_POSITION = 0.44;
 
     private final int BASE_RED = 1;
     private final int BASE_GREEN = 1;
