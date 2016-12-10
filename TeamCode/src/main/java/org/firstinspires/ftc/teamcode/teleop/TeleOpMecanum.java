@@ -57,6 +57,8 @@ public class TeleOpMecanum extends OpMode {
 
     private Button ballLiftFowardButton;
     private Button ballLiftReverseButton;
+    private Button ballFlailFowardButton;
+    private Button ballFlailReverseButton;
     private FlickerSystem flicker;
     private BallLiftSystem ballLift;
 
@@ -140,6 +142,70 @@ public class TeleOpMecanum extends OpMode {
                     {
                         ballLift.stopBelt();
                         ballLift.stopLift();
+                    }
+                };
+
+
+        this.ballFlailFowardButton = new Button();
+
+        this.ballFlailFowardButton.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.a;
+                    }
+                };
+        this.ballFlailFowardButton.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        if (/*!flicker.isBallLoaded()*/true) {
+                            ballLift.runFlail(true);
+                        }
+                    }
+                };
+        this.ballFlailFowardButton.releasedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        ballLift.stopFlail();
+                    }
+                };
+
+        this.ballFlailReverseButton = new Button();
+
+
+        this.ballFlailReverseButton.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.b;
+                    }
+                };
+        this.ballFlailReverseButton.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        ballLift.runFlail(false);
+                    }
+                };
+        this.ballFlailReverseButton.releasedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        ballLift.stopFlail();
                     }
                 };
 
@@ -248,6 +314,8 @@ public class TeleOpMecanum extends OpMode {
         flickerLoadPositionButton.testAndHandle();
         ballLiftFowardButton.testAndHandle();
         ballLiftReverseButton.testAndHandle();
+        ballFlailFowardButton.testAndHandle();
+        ballFlailReverseButton.testAndHandle();
 
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
 	}

@@ -23,7 +23,7 @@ public class BallLiftSystem {
     private HardwareMap map;
     private DcMotor lifter;
     private DcMotor belt;
-    private DcMotor intake;
+    private DcMotor flail;
     public boolean autonomous;
 
     private boolean debug;
@@ -32,25 +32,31 @@ public class BallLiftSystem {
         this.map = map;
         this.lifter = map.dcMotor.get("ballLiftMotor");
         this.belt = map.dcMotor.get("ballBeltMotor");
-        this.intake = map.dcMotor.get("ballIntakeMotor");
+        this.flail = map.dcMotor.get("ballIntakeMotor");
 
     }
-    public void runIntake(boolean isFoward){
+    public void runFlail(boolean isFoward){
         if(isFoward){
-            intake.setDirection(DcMotorSimple.Direction.FORWARD);
+            flail.setDirection(DcMotorSimple.Direction.REVERSE);
         }
         else{
-            intake.setDirection(DcMotorSimple.Direction.REVERSE);
+            flail.setDirection(DcMotorSimple.Direction.FORWARD);
         }
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setPower(INTAKE_POWER);
+        flail.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flail.setPower(INTAKE_POWER);
     }
-    public void runIntake(double revolutions){
-        intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setTargetPosition(intake.getCurrentPosition()+revolutionsToTics(revolutions));
-        intake.setPower(INTAKE_POWER);
+    public void runFlail(double revolutions){
+        flail.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        flail.setTargetPosition(flail.getCurrentPosition()+revolutionsToTics(revolutions));
+        flail.setPower(INTAKE_POWER);
         
     }
+
+    public void stopFlail()
+    {
+        flail.setPower(0);
+    }
+
     public void runLift(boolean isFoward) {
         if (isFoward)
             lifter.setDirection(DcMotorSimple.Direction.FORWARD);
