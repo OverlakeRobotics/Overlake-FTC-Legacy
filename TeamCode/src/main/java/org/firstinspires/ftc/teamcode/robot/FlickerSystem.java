@@ -29,10 +29,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class FlickerSystem {
     //ticks per rotation for a 60 to 1 motor
-    private final int ticksPerRotation = 1120 * 3 / 2;
+    private final int ticksPerRotation = 1120 * 3;
     private final double FLICKER_POWER = 0.8;
-    private final double SHOOT_POSITION = 0.5;
-    private final double LOAD_POSITION = 0.44;
+    private double LOAD_POSITION = 0.51;
+    private double SHOOT_POSITION = 0.46;
 
     private final int BASE_RED = 1;
     private final int BASE_GREEN = 1;
@@ -42,6 +42,7 @@ public class FlickerSystem {
     private Servo loadWing;
     private ColorSensor colorSensor;
     private ServoPositions position;
+    private double servoAngle;
 
     public FlickerSystem(HardwareMap map) {
         this.flicker = map.dcMotor.get("flicker");
@@ -49,6 +50,7 @@ public class FlickerSystem {
         //this.colorSensor = map.colorSensor.get("flickerColorDetector");
         this.position = ServoPositions.FLICKERLOAD;
         flicker.setDirection(DcMotor.Direction.REVERSE);
+        servoAngle = LOAD_POSITION;
     }
 
     public void shoot() {
@@ -66,13 +68,15 @@ public class FlickerSystem {
     }
 
     public void setLoadPosition() {
-        loadWing.setPosition(SHOOT_POSITION);
+        servoAngle = LOAD_POSITION;
+        loadWing.setPosition(servoAngle);
         //.5 or .6
         this.position = ServoPositions.FLICKERLOAD;
     }
 
     public void setShootPosition() {
-        loadWing.setPosition(LOAD_POSITION);
+        servoAngle = SHOOT_POSITION;
+        loadWing.setPosition(servoAngle);
         this.position = ServoPositions.FLICKERSHOOT;
     }
 
@@ -89,6 +93,28 @@ public class FlickerSystem {
         return colorSensor.red() == BASE_RED && colorSensor.green() == BASE_GREEN && colorSensor.blue() == BASE_BLUE || position == ServoPositions.FLICKERSHOOT;
          */
         return true;
+    }
+
+    public void incrementLoad() {
+        servoAngle += 0.01;
+        loadWing.setPosition(servoAngle);
+    }
+
+    public void decrementLoad() {
+        servoAngle -= 0.01;
+        loadWing.setPosition(servoAngle);
+    }
+
+    public void saveLoadPosition() {
+        LOAD_POSITION = servoAngle;
+    }
+
+    public void saveShootPosition() {
+        SHOOT_POSITION = servoAngle;
+    }
+
+    public double getServoAngle() {
+        return servoAngle;
     }
 
     private int revolutionsToTics(double revolutions) {

@@ -54,6 +54,10 @@ public class TeleOpMecanum extends OpMode {
     private Button flickerButton;
     private Button flickerShootPositionButton;
     private Button flickerLoadPositionButton;
+    private Button flickerIncrementAngle;
+    private Button flickerDecrementAngle;
+    private Button flickerSaveShootPos;
+    private Button flickerSaveLoadPos;
 
     private Button ballLiftFowardButton;
     private Button ballLiftReverseButton;
@@ -216,7 +220,7 @@ public class TeleOpMecanum extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.right_trigger > 0;
+                        return gamepad2.right_trigger > 0.75;
                     }
                 };
         this.flickerButton.pressedHandler =
@@ -295,6 +299,108 @@ public class TeleOpMecanum extends OpMode {
                         //
                     }
                 };
+
+        this.flickerIncrementAngle = new Button();
+        this.flickerIncrementAngle.isPressed = new Func<Boolean>()
+        {
+            @Override
+            public Boolean value()
+            {
+                return gamepad2.dpad_right;
+            }
+        };
+        this.flickerIncrementAngle.pressedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                flicker.incrementLoad();
+            }
+        };
+        this.flickerIncrementAngle.releasedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                //
+            }
+        };
+
+        this.flickerDecrementAngle = new Button();
+        this.flickerDecrementAngle.isPressed = new Func<Boolean>()
+        {
+            @Override
+            public Boolean value()
+            {
+                return gamepad2.dpad_left;
+            }
+        };
+        this.flickerDecrementAngle.pressedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                flicker.decrementLoad();
+            }
+        };
+        this.flickerDecrementAngle.releasedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                //
+            }
+        };
+
+        this.flickerSaveLoadPos = new Button();
+        this.flickerSaveLoadPos.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value()
+            {
+                return gamepad2.x;
+            }
+        };
+        this.flickerSaveLoadPos.pressedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                flicker.saveLoadPosition();
+            }
+        };
+        this.flickerSaveLoadPos.releasedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                //
+            }
+        };
+
+        this.flickerSaveShootPos = new Button();
+        this.flickerSaveShootPos.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value()
+            {
+                return gamepad2.y;
+            }
+        };
+        this.flickerSaveShootPos.pressedHandler = new Handler() {
+            @Override
+            public void invoke() {
+                flicker.saveShootPosition();
+            }
+        };
+        this.flickerSaveShootPos.releasedHandler = new Handler()
+        {
+            @Override
+            public void invoke()
+            {
+                //
+            }
+        };
+
+
 	}
 
 	/*
@@ -316,8 +422,13 @@ public class TeleOpMecanum extends OpMode {
         ballLiftReverseButton.testAndHandle();
         ballFlailFowardButton.testAndHandle();
         ballFlailReverseButton.testAndHandle();
+        flickerDecrementAngle.testAndHandle();
+        flickerIncrementAngle.testAndHandle();
+        flickerSaveShootPos.testAndHandle();
+        flickerSaveLoadPos.testAndHandle();
 
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
+        telemetry.addData("Angle", flicker.getServoAngle());
 	}
 
 	/*

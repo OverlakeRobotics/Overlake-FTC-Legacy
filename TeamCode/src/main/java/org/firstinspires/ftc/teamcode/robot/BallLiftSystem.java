@@ -99,9 +99,7 @@ public class BallLiftSystem {
         return (int) Math.round(revolutions * this.ticksPerRotation);
     }
 
-    public void waitBeltandLiftBusy () {
-        while (lifter.isBusy() || belt.isBusy()) {
-
-        }
+    public boolean isBusy() {
+        return belt.isBusy() && lifter.isBusy();
     }
 }

@@ -168,17 +168,22 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
     public void shoot() {
         flickerSystem.setShootPosition();
+        sleep(1000);
         flickerSystem.shoot();
         while (flickerSystem.isBusy()) {
             this.idle();
         }
+        sleep(1000);
         flickerSystem.setLoadPosition();
     }
 
     public void load() {
         ballSystem.runLift(2);
         ballSystem.runBelt(2);
-        ballSystem.waitBeltandLiftBusy();
+        while (ballSystem.isBusy()) {
+            this.idle();
+        }
+        sleep(1000);
     }
 
     public void park() {

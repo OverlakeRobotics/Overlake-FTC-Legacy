@@ -16,16 +16,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name="AutonomousMode", group="Bot")
 public class BlueCenterPark extends AutonomousOpMode {
 
-    private final double DRIVE_POWER = 0.8;
+    private final double DRIVE_POWER = 0.7;
 
     @Override
     public void runOpMode() {
         initializeAllDevices();
+        waitForStart();
         driveToPositionRevs(-1.75, DRIVE_POWER);
         shoot();
         load();
         shoot();
         driveToPositionRevs(-1.5, DRIVE_POWER);
-        //park();
     }
 }
