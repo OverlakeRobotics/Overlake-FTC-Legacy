@@ -18,8 +18,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     {
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
-        this.imuSystem = new IMUSystem();
-        this.imuSystem.init(this.hardwareMap);
+        //this.imuSystem = new IMUSystem();
+        //this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
 //        this.lineFollowingSystem.init(this.hardwareMap);
         this.flickerSystem = new FlickerSystem(this.hardwareMap);
@@ -83,7 +83,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
         // we want to slow down from maxPower to 0.1
         ExponentialRamp ramp = new ExponentialRamp(2.0, 0.1, 130.0, maxPower);
 
-        while (Math.abs(computeDegrees(targetHeading, heading)) > 1)
+        while (!isStopRequested() && Math.abs(computeDegrees(targetHeading, heading)) > 1)
         {
             telemetry.update();
             double power = getTurnPower(ramp, targetHeading, heading);
@@ -95,7 +95,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
             try
             {
-                wait(50);
+                sleep(50);
             }
             catch (Exception e)
             {
@@ -178,8 +178,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     }
 
     public void load() {
-        ballSystem.runLift(2);
-        ballSystem.runBelt(2);
+        ballSystem.runLift(1.5);
+        ballSystem.runBelt(1.5);
         while (ballSystem.isBusy()) {
             this.idle();
         }
