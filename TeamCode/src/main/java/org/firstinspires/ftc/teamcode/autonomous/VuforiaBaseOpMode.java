@@ -8,7 +8,6 @@ import com.vuforia.Vuforia;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
@@ -18,10 +17,10 @@ import org.firstinspires.ftc.teamcode.R;
  */
 
 
-@Autonomous(name="VuforiaOP", group="Bot")
-public class VuforiaOpMode extends AutonomousOpMode {
 
-    public void runOpMode() {
+public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
+
+    public void run(int num) {
         initializeAllDevices();
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
@@ -37,7 +36,7 @@ public class VuforiaOpMode extends AutonomousOpMode {
         beacons.get(2).setName("Lego");
         beacons.get(3).setName("Gears");
 
-        VuforiaTrackableDefaultListener wheels = (VuforiaTrackableDefaultListener) beacons.get(0).getListener();
+        VuforiaTrackableDefaultListener wheels = (VuforiaTrackableDefaultListener) beacons.get(num).getListener();
 
         beacons.activate();
         waitForStart();
@@ -50,9 +49,26 @@ public class VuforiaOpMode extends AutonomousOpMode {
         driveSystem.setPower(0);
 
         //analyze beacon here
+        VectorF translationWheels = wheels.getPose().getTranslation();
+        double angleWheels = Math.atan2(translationWheels.get(2), translationWheels.get(0)); // in radians
+        double degreesToTurnWheels = Math.toDegrees(angleWheels) + 90;                 // adjust for vertical orientation of phone
+        double distanceWheels = Math.sqrt(translationWheels.get(2) * translationWheels.get(2) + translationWheels.get(0) * translationWheels.get(0));  // Pythagoras calc of hypotenuse
+        //TODO: move robot toward the position provided by previous variables without turning
+
+
+
+
+
+//////OLD CODE/////////////OLD CODE//////////////OLD CODE//////////////////////////OLD CODE/////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 
         VectorF angles = anglesFromTarget(wheels);
-
         VectorF translation = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
         telemetry.addData("Translation 1 ", translation.get(0));
         if (translation.get(0) > 0) {
