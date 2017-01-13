@@ -18,8 +18,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     {
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
-        //this.imuSystem = new IMUSystem();
-        //this.imuSystem.init(this.hardwareMap);
+        this.imuSystem = new IMUSystem();
+        this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
 //        this.lineFollowingSystem.init(this.hardwareMap);
         this.flickerSystem = new FlickerSystem(this.hardwareMap);
@@ -178,8 +178,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     }
 
     public void load() {
-        ballSystem.runLift(1.5);
-        ballSystem.runBelt(1.5);
+        ballSystem.runLift(1.0);
+        ballSystem.runBelt(1.0);
         while (ballSystem.isBusy()) {
             this.idle();
         }

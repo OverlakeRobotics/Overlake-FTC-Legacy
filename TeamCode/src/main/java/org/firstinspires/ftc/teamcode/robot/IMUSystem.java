@@ -32,7 +32,7 @@ public class IMUSystem
         this.parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         this.parameters.loggingEnabled = true;
         this.parameters.loggingTag = "BNO055";
-        //TODO: parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         this.imu = this.hwMap.get(BNO055IMU.class, "imu");
         this.imu.initialize(parameters);
 
