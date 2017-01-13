@@ -20,8 +20,18 @@ import org.firstinspires.ftc.teamcode.R;
 
 public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
 
-    public void run(int num) {
+    protected static class Target {
+        public static int Wheels = 0;
+        public static int Tools = 1;
+        public static int Lego = 2;
+        public static int Gears = 3;
+    };
+
+    VuforiaTrackables beacons;
+
+    public void initialize() {
         initializeAllDevices();
+
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         params.vuforiaLicenseKey = "AfIW5rj/////AAAAGaDrYjvjtkibrSYzQTjEFjJb+NGdODG1LJE2IVqxl0wdLW+9JZ3nIyQF2Hef7GlSLQxR/6SQ3pkFudWmzU48zdcBEYJ+HCwOH3vKFK8gJjuzrcc7nis7JrU+IMTONPctq+JTavtRk+LBhM5bxiFJhEO7CFnDqDDEFc5f720179XJOvZZA0nuCvIqwSslb+ybEVo/G8BDwH1FjGOaH/CxWaXGxVmGd4zISFBsMyrwopDI2T0pHdqvRBQ795QCuJFQjGQUtk9UU3hw/E8Z+oSC36CSWZPdpH3XkKtvSb9teM5xgomeEJ17MdV+XwTYL0iB/aRXZiXRczAtjrcederMUrNqqS0o7XvYS3eW1ViHfynl";
@@ -30,26 +40,27 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
         VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(params);
         Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
-        VuforiaTrackables beacons = vuforia.loadTrackablesFromAsset("FTC_2016-17");
-        beacons.get(0).setName("Wheels");
-        beacons.get(1).setName("Tools");
-        beacons.get(2).setName("Lego");
-        beacons.get(3).setName("Gears");
-
-        VuforiaTrackableDefaultListener wheels = (VuforiaTrackableDefaultListener) beacons.get(num).getListener();
+        beacons = vuforia.loadTrackablesFromAsset("FTC_2016-17");
+        beacons.get(Target.Wheels).setName("Wheels");
+        beacons.get(Target.Tools).setName("Tools");
+        beacons.get(Target.Lego).setName("Lego");
+        beacons.get(Target.Gears).setName("Gears");
 
         beacons.activate();
-        waitForStart();
+    }
+
+    public void driveToTarget(int targetNum) {
+        VuforiaTrackableDefaultListener target = (VuforiaTrackableDefaultListener) beacons.get(targetNum).getListener();
         driveSystem.setPower(0.2);
 
-        while (opModeIsActive() && wheels.getRawPose() == null) {
+        while (opModeIsActive() && target.getRawPose() == null) {
             idle();
         }
 
         driveSystem.setPower(0);
 
         //analyze beacon here
-        VectorF translationWheels = wheels.getPose().getTranslation();
+        VectorF translationWheels = target.getPose().getTranslation();
         double angleWheels = Math.atan2(translationWheels.get(2), translationWheels.get(0)); // in radians
         double degreesToTurnWheels = Math.toDegrees(angleWheels) + 90;                 // adjust for vertical orientation of phone
         double distanceWheels = Math.sqrt(translationWheels.get(2) * translationWheels.get(2) + translationWheels.get(0) * translationWheels.get(0));  // Pythagoras calc of hypotenuse
@@ -68,8 +79,8 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
 
 
 
-        VectorF angles = anglesFromTarget(wheels);
-        VectorF translation = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
+        VectorF angles = anglesFromTarget(target);
+        VectorF translation = navOffWall(target.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
         telemetry.addData("Translation 1 ", translation.get(0));
         if (translation.get(0) > 0) {
             driveSystem.motorBackLeft.setPower(0.2);
@@ -84,8 +95,8 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
         }
 
         do {
-            if (wheels.getPose() != null) {
-                translation = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0)) - 90, new VectorF(500, 0 , 0));
+            if (target.getPose() != null) {
+                translation = navOffWall(target.getPose().getTranslation(), Math.toDegrees(angles.get(0)) - 90, new VectorF(500, 0 , 0));
                 telemetry.addData("Translation 2 ", translation.get(0));
             }
             idle();
@@ -111,10 +122,10 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
 
         driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (opModeIsActive() && (wheels.getPose() == null) || Math.abs(wheels.getPose().getTranslation().get(0)) > 10) {
-            if (wheels.getPose() != null) {
-                telemetry.addData("Translation 3 ", wheels.getPose().getTranslation().get(0));
-                if (wheels.getPose().getTranslation().get(0) > 0) {
+        while (opModeIsActive() && (target.getPose() == null) || Math.abs(target.getPose().getTranslation().get(0)) > 10) {
+            if (target.getPose() != null) {
+                telemetry.addData("Translation 3 ", target.getPose().getTranslation().get(0));
+                if (target.getPose().getTranslation().get(0) > 0) {
                     driveSystem.motorBackLeft.setPower(-0.2);
                     driveSystem.motorFrontLeft.setPower(-0.2);
                     driveSystem.motorBackRight.setPower(0.2);

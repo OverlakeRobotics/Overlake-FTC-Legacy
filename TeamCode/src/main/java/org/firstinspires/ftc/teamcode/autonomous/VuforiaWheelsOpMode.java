@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.R;
 @Autonomous(name="VuforiaWheelsOpMode", group="Bot")
 public class VuforiaWheelsOpMode extends VuforiaBaseOpMode{
     public void runOpMode() {
-        run(0);
+        initialize();
+        waitForStart();
+        driveToTarget(Target.Wheels);
     }
 }
