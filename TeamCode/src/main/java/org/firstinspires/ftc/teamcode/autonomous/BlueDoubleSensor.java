@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="BlueAutonomous", group="Bot")
-public class BlueDoubleSensor extends AutonomousOpMode {
+public class BlueDoubleSensor extends VuforiaBaseOpMode {
 
     private final double DRIVE_POWER = 0.2;
 
@@ -10,6 +10,7 @@ public class BlueDoubleSensor extends AutonomousOpMode {
     public void runOpMode() {
         initializeAllDevices();
         waitForStart();
+        runFlail();
         driveToPositionRevs(-1.5, DRIVE_POWER);
         shoot();
         sleep(500);
@@ -22,5 +23,6 @@ public class BlueDoubleSensor extends AutonomousOpMode {
         driveToPositionRevs(-2.0, DRIVE_POWER);
         sleep(500);
         turn(35, 0.3);
+
     }
 }

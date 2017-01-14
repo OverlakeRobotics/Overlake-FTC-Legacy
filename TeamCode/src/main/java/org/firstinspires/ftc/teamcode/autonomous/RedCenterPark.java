@@ -13,10 +13,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
      \_______\/ \_____\/ \_____\/ \_____\/     \_____\/ \_____\/ \__\/ \__\/   \__\/    \_____\/ \_\/ \_\/     \_\/     \__\/\__\/ \_\/ \_\/ \__\/\__\/
 
  */
-@Autonomous(name="BlueCenter1", group="Bot")
-public class BlueCenterPark extends AutonomousOpMode {
+@Autonomous(name="RedCenter1", group="Bot")
+public class RedCenterPark extends AutonomousOpMode {
 
-    private final double DRIVE_POWER = 0.3;
+    private final double DRIVE_POWER = 0.2;
 
     @Override
     public void runOpMode() {
@@ -25,16 +25,16 @@ public class BlueCenterPark extends AutonomousOpMode {
         runFlail();
         driveToPositionRevs(-1.5, DRIVE_POWER);
         shoot();
-        sleep(250);
+        sleep(500);
         load();
-        sleep(4000);
+        sleep(3000);
         shoot();
-        sleep(250);
-        turn(35, 0.3);
-        sleep(250);
+        sleep(500);
+        turn(-35, 0.3);
+        sleep(500);
         driveToPositionRevs(-1.0, DRIVE_POWER);
-        sleep(250);
-        turn(90, 0.3);
+        sleep(500);
+        turn(-90, 0.3);
         driveToPositionRevs(1.5, DRIVE_POWER);
     }
 }

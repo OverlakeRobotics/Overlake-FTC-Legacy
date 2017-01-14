@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.google.gson.annotations.Expose;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
+import java.io.*;
+import com.google.gson.*;
+import com.google.gson.annotations.*;
 
 public abstract class AutonomousOpMode extends LinearOpMode
 {
@@ -13,6 +19,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     IMUSystem imuSystem;
     FlickerSystem flickerSystem;
     BallLiftSystem ballSystem;
+    ColorSensorData colorSensorData;
+
 
     void initializeAllDevices()
     {
@@ -168,12 +176,12 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
     public void shoot() {
         flickerSystem.setShootPosition();
-        sleep(1000);
+        sleep(500);
         flickerSystem.shoot();
         while (flickerSystem.isBusy()) {
             this.idle();
         }
-        sleep(1000);
+        sleep(500);
         flickerSystem.setLoadPosition();
     }
 
@@ -183,7 +191,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
         while (ballSystem.isBusy()) {
             this.idle();
         }
-        sleep(1000);
+        sleep(500);
     }
 
     public void park() {
@@ -192,5 +200,14 @@ public abstract class AutonomousOpMode extends LinearOpMode
         } catch (Exception e) {
 
         }
+    }
+    //public void colorCheck(){
+      //  if(ColorSensorData.fromJson()){
+
+        //}
+    //}
+    public void runFlail(){
+        ballSystem.runFlail(-1);
+
     }
 }

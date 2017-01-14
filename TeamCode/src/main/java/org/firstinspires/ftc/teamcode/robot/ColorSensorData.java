@@ -9,29 +9,29 @@ import com.google.gson.annotations.*;
  */
 public class ColorSensorData
 {
-    @Expose public HueData grayTile;
-    @Expose public HueData redTape;
-    @Expose public HueData blueTape;
-    @Expose public HueData whiteTape;
+    //@Expose public HueData grayTile;
+    //@Expose public HueData redTape;
+    //@Expose public HueData blueTape;
+    //@Expose public HueData whiteTape;
     @Expose public HueData redBeacon;
     @Expose public HueData blueBeacon;
 
     public ColorSensorData()
     {
-        grayTile = new HueData();
-        redTape = new HueData();
-        blueTape = new HueData();
-        whiteTape = new HueData();
+       // grayTile = new HueData();
+        //redTape = new HueData();
+       // blueTape = new HueData();
+        //whiteTape = new HueData();
         redBeacon = new HueData();
         blueBeacon = new HueData();
     }
 
     public String toString()
     {
-        return "gt: " + grayTile.hasData +
-               ", rt: " + redTape.hasData +
-               ", bt: " + blueTape.hasData +
-               ", wt: " + whiteTape.hasData +
+        return //"gt: " + grayTile.hasData +
+               //", rt: " + redTape.hasData +
+               //", bt: " + blueTape.hasData +
+               //", wt: " + whiteTape.hasData +
                ", rb: " + redBeacon.hasData +
                ", bb: " + blueBeacon.hasData;
     }

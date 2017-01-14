@@ -20,16 +20,16 @@ public class ColorCalibration extends LinearOpMode
 
     // TODO: Implement this program for multiple sensors with an array of sensors
     ColorSensorData[] data;
-    String message = "Program starting (next: grayTile)";
+    String message = "Program starting (next: RedBeacon)";
 
     @Override
     public void runOpMode() throws InterruptedException
     {
         hardwareMap.logDevices();
-        cdim = hardwareMap.deviceInterfaceModule.get("dim");
+        //cdim = hardwareMap.deviceInterfaceModule.get("dim");
         sensorRGB = hardwareMap.colorSensor.get("color");
-        cdim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
-        cdim.setDigitalChannelState(LED_CHANNEL, true);
+        //cdim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+        //cdim.setDigitalChannelState(LED_CHANNEL, true);
 
         composeDashboard();
         telemetry.update();
@@ -38,10 +38,10 @@ public class ColorCalibration extends LinearOpMode
         for (int i = 0; i < data.length; i++)
         {
             data[i] = new ColorSensorData();
-            getData(data[i].grayTile, "Gray tile calibrated (next: redTape)");
-            getData(data[i].redTape, "Red tape calibrated (next: blueTape)");
-            getData(data[i].blueTape, "Blue tape calibrated (next: whiteTape)");
-            getData(data[i].whiteTape, "White tape calibrated (next: redBeacon)");
+            //getData(data[i].grayTile, "Gray tile calibrated (next: redTape)");
+            //getData(data[i].redTape, "Red tape calibrated (next: blueTape)");
+            //getData(data[i].blueTape, "Blue tape calibrated (next: whiteTape)");
+            //getData(data[i].whiteTape, "White tape calibrated (next: redBeacon)");
             getData(data[i].redBeacon, "Red beacon calibrated (next: blueBeacon)");
             getData(data[i].blueBeacon, "Blue beacon calibrated (sending to file)");
         }
