@@ -1,6 +1,6 @@
 package org.overlake.ftc.team_7330.Testing;
 
-import com.qualcomm.hardware.adafruit.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
