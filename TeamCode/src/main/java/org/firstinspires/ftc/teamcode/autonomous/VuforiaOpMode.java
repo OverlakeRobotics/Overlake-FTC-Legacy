@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.R;
 
 
 @Autonomous(name="VuforiaOP", group="Bot")
+@Disabled
 public class VuforiaOpMode extends AutonomousOpMode {
 
     public void runOpMode() {

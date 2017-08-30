@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.util.ramp.*;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 /**
  * Created by evancoulson on 12/3/16.
@@ -49,120 +51,59 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
         beacons.activate();
     }
 
-    public void driveToTarget(int targetNum) {
+    public void driveToTarget(int targetNum, double minPower, double maxPower)
+    {
+        double minDistance = 10.0; //TODO: Find good value.
+        double maxDistance = 100.0; //TODO: Find good value.
+
         VuforiaTrackableDefaultListener target = (VuforiaTrackableDefaultListener) beacons.get(targetNum).getListener();
-        driveSystem.setPower(0.2);
 
-        while (opModeIsActive() && target.getRawPose() == null) {
-            idle();
-        }
+        /*
+            We want to ramp the speed (power) down as we get closer to the target. Between maxDistance and minDistance
+            power drops exponentially from maxPower to minPower.
+        */
+        Ramp ramp = new ExponentialRamp(minDistance, minPower, maxDistance, maxPower);
 
-        driveSystem.setPower(0);
+        double distanceToTarget = Double.MAX_VALUE;
+        double angleToTarget;
+        double degreesToTurnToTarget;
 
-        //analyze beacon here
-        VectorF translationWheels = target.getPose().getTranslation();
-        double angleWheels = Math.atan2(translationWheels.get(2), translationWheels.get(0)); // in radians
-        double degreesToTurnWheels = Math.toDegrees(angleWheels) + 90;                 // adjust for vertical orientation of phone
-        double distanceWheels = Math.sqrt(translationWheels.get(2) * translationWheels.get(2) + translationWheels.get(0) * translationWheels.get(0));  // Pythagoras calc of hypotenuse
-        //TODO: move robot toward the position provided by previous variables without turning
+        while (distanceToTarget > minDistance)
+        {
+            OpenGLMatrix  pose = target.getPose();
 
+            if (pose != null)
+            {
+                VectorF translationToTarget = pose.getTranslation();
+                double x = translationToTarget.get(0);
+                double y = translationToTarget.get(1);
+                double z = translationToTarget.get(2);
 
+                angleToTarget = Math.atan2(z, x); // in radians
+                degreesToTurnToTarget = Math.toDegrees(angleToTarget);
+                distanceToTarget = Math.sqrt(z * z + x * x);  // Pythagoras calc of hypotenuse
 
+                double power = ramp.value(distanceToTarget);
 
+                telemetry.addData("Tracking", "Target found.");
+                telemetry.addData("Translation", String.format("(%.1f, %.1f, %.1f)", x, y, z));
+                telemetry.addData("Angle", "%1f degrees", degreesToTurnToTarget);
+                telemetry.addData("Power", "%1f", power);
 
-//////OLD CODE/////////////OLD CODE//////////////OLD CODE//////////////////////////OLD CODE/////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-        VectorF angles = anglesFromTarget(target);
-        VectorF translation = navOffWall(target.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
-        telemetry.addData("Translation 1 ", translation.get(0));
-        if (translation.get(0) > 0) {
-            driveSystem.motorBackLeft.setPower(0.2);
-            driveSystem.motorFrontLeft.setPower(0.2);
-            driveSystem.motorBackRight.setPower(-0.2);
-            driveSystem.motorFrontRight.setPower(-0.2);
-        } else {
-            driveSystem.motorBackLeft.setPower(-0.2);
-            driveSystem.motorFrontLeft.setPower(-0.2);
-            driveSystem.motorBackRight.setPower(0.2);
-            driveSystem.motorFrontRight.setPower(0.2);
-        }
-
-        do {
-            if (target.getPose() != null) {
-                translation = navOffWall(target.getPose().getTranslation(), Math.toDegrees(angles.get(0)) - 90, new VectorF(500, 0 , 0));
-                telemetry.addData("Translation 2 ", translation.get(0));
+                driveSystem.mecanumDrivePolar(angleToTarget, power);
             }
-            idle();
-            telemetry.update();
-        } while(opModeIsActive() && Math.abs(translation.get(0)) > 30);
+            else
+            {
+                // Can't see the target... just drive forward
 
-        driveSystem.setPower(0);
+                telemetry.addData("Tracking", "Can't see target.");
 
-        driveSystem.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        driveSystem.motorBackLeft.setTargetPosition((int)(driveSystem.motorBackLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorBackRight.setTargetPosition((int)(driveSystem.motorBackRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorFrontLeft.setTargetPosition((int)(driveSystem.motorFrontLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorFrontRight.setTargetPosition((int)(driveSystem.motorFrontRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-
-        driveSystem.setPower(0.3);
-
-        while(opModeIsActive() && driveSystem.anyMotorsBusy()) {
-            idle();
-        }
-
-        driveSystem.setPower(0);
-
-        driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        while (opModeIsActive() && (target.getPose() == null) || Math.abs(target.getPose().getTranslation().get(0)) > 10) {
-            if (target.getPose() != null) {
-                telemetry.addData("Translation 3 ", target.getPose().getTranslation().get(0));
-                if (target.getPose().getTranslation().get(0) > 0) {
-                    driveSystem.motorBackLeft.setPower(-0.2);
-                    driveSystem.motorFrontLeft.setPower(-0.2);
-                    driveSystem.motorBackRight.setPower(0.2);
-                    driveSystem.motorFrontRight.setPower(0.2);
-                } else {
-                    driveSystem.motorBackLeft.setPower(0.2);
-                    driveSystem.motorFrontLeft.setPower(0.2);
-                    driveSystem.motorBackRight.setPower(-0.2);
-                    driveSystem.motorFrontRight.setPower(-0.2);
-                }
-            } else {
-                driveSystem.motorBackLeft.setPower(-0.2);
-                driveSystem.motorFrontLeft.setPower(-0.2);
-                driveSystem.motorBackRight.setPower(0.2);
-                driveSystem.motorFrontRight.setPower(0.2);
+                driveSystem.setPower(minPower);
             }
-            idle();
             telemetry.update();
+            idle();
         }
 
         driveSystem.setPower(0);
-    }
-
-    public VectorF navOffWall(VectorF trans, double robotAngle, VectorF offWall) {
-        return new VectorF((float) (trans.get(0) - offWall.get(0) * Math.sin(Math.toRadians(robotAngle)) - offWall.get(2) * Math.cos(Math.toRadians(robotAngle))), trans.get(1), (float) (trans.get(2) + offWall.get(0) * Math.cos(Math.toRadians(robotAngle)) - offWall.get(2) * Math.sin(Math.toRadians(robotAngle))));
-    }
-
-    public VectorF anglesFromTarget(VuforiaTrackableDefaultListener image) {
-        float[] data = image.getRawPose().getData();
-        float[][] rotation = {
-                { data[0], data[1]},
-                { data[4], data[5], data[6] },
-                { data[8], data[9], data[10] }
-        };
-        double thetaX = Math.atan2(rotation[2][1], rotation[2][2]);
-        double thetaY = Math.atan2(-rotation[2][0], Math.sqrt(rotation[2][1] * rotation[2][1] + rotation[2][2] * rotation[2][2]));
-        double thetaZ = Math.atan2(rotation[1][0], rotation[0][0]);
-        return new VectorF((float)thetaX, (float)thetaY, (float)thetaZ);
     }
 }

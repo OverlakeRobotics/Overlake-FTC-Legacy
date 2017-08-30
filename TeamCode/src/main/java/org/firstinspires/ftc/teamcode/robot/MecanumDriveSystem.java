@@ -9,19 +9,19 @@ import org.firstinspires.ftc.teamcode.util.ramp.*;
 
 public class MecanumDriveSystem
 {
-    public DcMotor  motorFrontLeft   = null;
-    public DcMotor  motorFrontRight  = null;
-    public DcMotor  motorBackLeft   = null;
-    public DcMotor  motorBackRight  = null;
+    public DcMotor motorFrontLeft = null;
+    public DcMotor motorFrontRight = null;
+    public DcMotor motorBackLeft = null;
+    public DcMotor motorBackRight = null;
 
     private static final double ticksPerRotation = 1120; // This is for the Andymark Neverest motor
     private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual value for this
     private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelDiameterInches   = 4.0 ; //TODO: This is a placeholder, use actual value for this
+    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual value for this
     private static final double gearRatio = wheelGearSize / motorGearSize;
-    private static final double ticksPerInch = (ticksPerRotation * gearRatio)  / (wheelDiameterInches * Math.PI );
+    private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
-    HardwareMap hwMap           =  null;
+    HardwareMap hwMap = null;
 
     public final double minimumPower = 0.1; //TODO: Figure out the best value for this.
 
@@ -35,10 +35,10 @@ public class MecanumDriveSystem
     {
         this.hwMap = hwMap;
 
-        this.motorFrontLeft   = this.hwMap.dcMotor.get("motor_front_left");
-        this.motorFrontRight  = this.hwMap.dcMotor.get("motor_front_right");
-        this.motorBackLeft   = this.hwMap.dcMotor.get("motor_back_left");
-        this.motorBackRight  = this.hwMap.dcMotor.get("motor_back_right");
+        this.motorFrontLeft = this.hwMap.dcMotor.get("motor_front_left");
+        this.motorFrontRight = this.hwMap.dcMotor.get("motor_front_right");
+        this.motorBackLeft = this.hwMap.dcMotor.get("motor_back_left");
+        this.motorBackRight = this.hwMap.dcMotor.get("motor_back_right");
         this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -57,7 +57,7 @@ public class MecanumDriveSystem
         motorBackLeft.setMode(runMode);
         motorBackRight.setMode(runMode);
     }
-    
+
     public void setTargetPositionInches(double inches)
     {
         int ticks = this.inchesToTicks(inches);
@@ -72,6 +72,7 @@ public class MecanumDriveSystem
         setTargetPosition(ticks);
 
     }
+
     public void setTargetPosition(int position)
     {
         int frontLeftTarget = this.motorFrontLeft.getCurrentPosition() + position;
@@ -98,18 +99,15 @@ public class MecanumDriveSystem
         return (int) Math.round(revolutions * this.ticksPerRotation);
     }
 
-    public double ticksToRevolutions(int ticks)
-    {
+    public double ticksToRevolutions(int ticks) {
         return ((double) ticks / this.ticksPerRotation);
     }
-    
-    public int inchesToTicks(double inches)
-    {
+
+    public int inchesToTicks(double inches) {
         return (int) Math.round(inches * this.ticksPerInch);
     }
 
-    public double ticksToInches(int ticks)
-    {
+    public double ticksToInches(int ticks) {
         return ((double) ticks / this.ticksPerInch);
     }
 
@@ -133,7 +131,7 @@ public class MecanumDriveSystem
 
     // Tweeks the left and right motors by increment.
     // increment is added to the current power of the left wheels
-   /// and subtracted from the current power of the right wheels.
+    /// and subtracted from the current power of the right wheels.
     public void tweakTankDrive(double increment)
     {
         double leftMotorPower = this.motorBackLeft.getPower();
@@ -167,15 +165,14 @@ public class MecanumDriveSystem
         // so we make it positive here and account for the direction when
         // the motor power is set.
         double direction = 1.0;
-        if (minDistance < 0)
-            {
-                minDistance = -minDistance;
-                direction = -1.0;
-            }
+        if (minDistance < 0) {
+            minDistance = -minDistance;
+            direction = -1.0;
+        }
 
         double scaledPower = ramp.value(minDistance);
 
-        setPower(direction*scaledPower);
+        setPower(direction * scaledPower);
     }
 
     public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
@@ -188,7 +185,7 @@ public class MecanumDriveSystem
         rightX = scaleJoystickValue(rightX);
         rightY = scaleJoystickValue(rightY);
         leftX = scaleJoystickValue(leftX);
-        leftY =  scaleJoystickValue(leftY);
+        leftY = scaleJoystickValue(leftY);
 
         // write the values to the motors
         double frontRightPower = leftY + rightX + leftX;
@@ -200,6 +197,23 @@ public class MecanumDriveSystem
         motorFrontLeft.setPower(Range.clip(leftY - rightX - leftX, -1, 1));
         motorBackLeft.setPower(Range.clip(leftY - rightX + leftX, -1, 1));
     }
+
+    public void mecanumDriveXY(double x, double y)
+    {
+        motorFrontRight.setPower(Range.clip(y + x, -1, 1));
+        motorBackRight.setPower(Range.clip(y - x, -1, 1));
+        motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
+        motorBackLeft.setPower(Range.clip(y + x, -1, 1));
+    }
+
+    public void mecanumDrivePolar(double radians, double power)
+    {
+        double x = Math.cos(radians)*power;
+        double y = Math.sin(radians)*power;
+
+        mecanumDriveXY(x, y);
+    }
+
 
     float scaleJoystickValue(float joystickValue)
     {
