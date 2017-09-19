@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
+import com.qualcomm.robotcore.util.TypeConversion;
 
 @I2cSensor(name = "PixyCam", description = "PixyCam", xmlTag = "PixyCam")
 public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
@@ -36,13 +37,13 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
          */
         public final int width, height;
 
-        public Block(int signature, int x, int y, int width, int height)
+        public Block(int signature, byte x, byte y, byte width, byte height)
         {
             this.signature = signature;
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            this.x = TypeConversion.unsignedByteToInt(x);
+            this.y = TypeConversion.unsignedByteToInt(y);
+            this.width = TypeConversion.unsignedByteToInt(width);
+            this.height = TypeConversion.unsignedByteToInt(height);
         }
 
         @Override public String toString()
@@ -82,7 +83,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     private byte [] ReadEntireWindow(I2cDeviceSynch.ReadWindow readWindow)
     {
         this.deviceClient.setReadWindow(readWindow);
-        return this.deviceClient.read(0, readWindow.getRegisterCount());
+        return this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
     }
 
     /***
