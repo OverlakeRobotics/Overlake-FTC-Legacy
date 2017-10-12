@@ -17,21 +17,15 @@ public abstract class AutonomousOpMode extends LinearOpMode
     MecanumDriveSystem driveSystem;
     LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
-    FlickerSystem flickerSystem;
-    BallLiftSystem ballSystem;
     ColorSensorData colorSensorData;
 
 
     void initializeAllDevices()
     {
-        this.driveSystem = new MecanumDriveSystem();
-        this.driveSystem.init(this.hardwareMap);
+        this.driveSystem = new MecanumDriveSystem(hardwareMap, telemetry);
         this.imuSystem = new IMUSystem();
         this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
-//        this.lineFollowingSystem.init(this.hardwareMap);
-        this.flickerSystem = new FlickerSystem(this.hardwareMap);
-        this.ballSystem = new BallLiftSystem(this.hardwareMap);
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor
@@ -66,7 +60,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
         // positive increment forces it to drive a little to the right,
         // negative increment drives it a little to the left.
-        driveSystem.tweakTankDrive(increment);
+//        driveSystem.tweakTankDrive(increment);
     }
 
     void turn(double degrees, double maxPower)
@@ -85,7 +79,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
             targetHeading += 360;
         }
 
-        this.driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Between 130 and 2 degrees away from the target
         // we want to slow down from maxPower to 0.1
@@ -99,7 +93,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
             telemetry.addLine("target heading: " + targetHeading);
             telemetry.addLine("power: " + power);
 
-            this.driveSystem.tankDrive(power, -power);
+//            this.driveSystem.tankDrive(power, -power);
 
             try
             {
@@ -153,8 +147,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
             will be set to maxPower, but when it gets within 1.0 revolutions, the power
             will be ramped down to minPower
         */
-        Ramp ramp = new ExponentialRamp(driveSystem.revolutionsToTicks(0.01), minPower,
-                                        driveSystem.revolutionsToTicks(1.0), maxPower);
+//        Ramp ramp = new ExponentialRamp(driveSystem.revolutionsToTicks(0.01), minPower,
+//                                        driveSystem.revolutionsToTicks(1.0), maxPower);
 
         // Wait until they are done
         driveSystem.setPower(maxPower);
@@ -164,7 +158,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
             this.idle();
 
-            this.driveSystem.adjustPower(ramp);
+//            this.driveSystem.adjustPower(ramp);
         }
 
         // Now that we've arrived, kill the motors so they don't just sit there buzzing
@@ -172,42 +166,5 @@ public abstract class AutonomousOpMode extends LinearOpMode
 
         // Always leave the screen looking pretty
         telemetry.update();
-    }
-
-    public void shoot() {
-        flickerSystem.setShootPosition();
-        sleep(500);
-        flickerSystem.shoot();
-        while (flickerSystem.isBusy()) {
-            this.idle();
-        }
-        sleep(500);
-        flickerSystem.setLoadPosition();
-    }
-
-    public void load() {
-        ballSystem.runLift(1.0);
-        ballSystem.runBelt(1.0);
-        while (ballSystem.isBusy()) {
-            this.idle();
-        }
-        sleep(500);
-    }
-
-    public void park() {
-        try {
-            driveToPositionRevs(0,0);
-        } catch (Exception e) {
-
-        }
-    }
-    //public void colorCheck(){
-      //  if(ColorSensorData.fromJson()){
-
-        //}
-    //}
-    public void runFlail(){
-        ballSystem.runFlail(-1);
-
     }
 }

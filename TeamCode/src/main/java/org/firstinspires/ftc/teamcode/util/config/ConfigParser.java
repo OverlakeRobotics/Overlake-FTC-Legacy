@@ -5,8 +5,10 @@ import android.os.Environment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Created by evancoulson on 9/23/17.
@@ -37,7 +39,7 @@ public class ConfigParser {
                 configData.put(args[1], args);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("CONFIG FILE" + filename);
         }
     }
 
@@ -101,4 +103,20 @@ public class ConfigParser {
             throw new IllegalArgumentException();
         }
     }
+
+    public Set<String> getKeys() {
+        return configData.keySet();
+    }
+
+    public Set<String> getKeysContaining(String segment) {
+        Set<String> results = new HashSet<String>();
+        for (String key : getKeys()) {
+            if (key.contains(segment)) {
+                results.add(key);
+            }
+        }
+        return results;
+    }
+
+
 }

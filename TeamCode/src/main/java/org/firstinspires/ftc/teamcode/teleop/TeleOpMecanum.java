@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.Handler;
 
@@ -46,48 +47,25 @@ import org.firstinspires.ftc.teamcode.util.Handler;
  */
 
 @TeleOp(name="TeleOpMecanum", group="TeleOp")
-public class TeleOpMecanum extends OpMode {
+public class TeleOpMecanum extends BaseOpMode {
 
-	//region Motors
 	MecanumDriveSystem driveSystem;
 
-	public TeleOpMecanum() {
-
-	}
-
-	/*
-	 * Code to run when the op mode is initialized goes here
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
-	 */
 	@Override
-	public void init()
-	{
-        driveSystem = new MecanumDriveSystem();
-        this.driveSystem.init(this.hardwareMap);
-
+	public void init() {
+        initializeComponents();
+        this.driveSystem = (MecanumDriveSystem)getComponent("MecanumDriveSystem");
 	}
 
-	/*
-	 * This method will be called repeatedly in a loop
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#run()
-	 */
 	@Override
 	public void loop()
 	{
-		// scale the joystick value to make it easier to control
-		// the robot more precisely at slower speeds.
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
+
 
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
 	}
 
-	/*
-	 * Code to run when the op mode is first disabled goes here
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-	 */
 	@Override
 	public void stop()
 	{

@@ -80,12 +80,12 @@ public class VuforiaOpMode extends AutonomousOpMode {
 
         driveSystem.setPower(0);
 
-        driveSystem.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        driveSystem.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        driveSystem.motorBackLeft.setTargetPosition((int)(driveSystem.motorBackLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorBackRight.setTargetPosition((int)(driveSystem.motorBackRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorFrontLeft.setTargetPosition((int)(driveSystem.motorFrontLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-        driveSystem.motorFrontRight.setTargetPosition((int)(driveSystem.motorFrontRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
+//        driveSystem.motorBackLeft.setTargetPosition((int)(driveSystem.motorBackLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
+//        driveSystem.motorBackRight.setTargetPosition((int)(driveSystem.motorBackRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
+//        driveSystem.motorFrontLeft.setTargetPosition((int)(driveSystem.motorFrontLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
+//        driveSystem.motorFrontRight.setTargetPosition((int)(driveSystem.motorFrontRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
 
         driveSystem.setPower(0.3);
 
@@ -95,7 +95,7 @@ public class VuforiaOpMode extends AutonomousOpMode {
 
         driveSystem.setPower(0);
 
-        driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive() && (wheels.getPose() == null) || Math.abs(wheels.getPose().getTranslation().get(0)) > 10) {
             if (wheels.getPose() != null) {

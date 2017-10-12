@@ -5,155 +5,104 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
-public class MecanumDriveSystem
+import java.util.Map;
+import java.util.Set;
+
+public class MecanumDriveSystem extends Component
 {
-    public DcMotor motorFrontLeft = null;
-    public DcMotor motorFrontRight = null;
-    public DcMotor motorBackLeft = null;
-    public DcMotor motorBackRight = null;
 
-    private static final double ticksPerRotation = 1120; // This is for the Andymark Neverest motor
-    private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual value for this
-    private static final double gearRatio = wheelGearSize / motorGearSize;
-    private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
+    public Map<String, GearedMotor> motors;
 
-    HardwareMap hwMap = null;
-
-    public final double minimumPower = 0.1; //TODO: Figure out the best value for this.
+    public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
 
     /* Constructor */
-    public MecanumDriveSystem()
-    {
-    }
+    public MecanumDriveSystem(HardwareMap hwMap, Telemetry telemetry) {
+        super(hwMap, telemetry, "MecanumDrive");
 
-    /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hwMap)
-    {
-        this.hwMap = hwMap;
+        Set<String> motorConfigKeys = config.getKeysContaining("motor");
 
-        this.motorFrontLeft = this.hwMap.dcMotor.get("motor_front_left");
-        this.motorFrontRight = this.hwMap.dcMotor.get("motor_front_right");
-        this.motorBackLeft = this.hwMap.dcMotor.get("motor_back_left");
-        this.motorBackRight = this.hwMap.dcMotor.get("motor_back_right");
-        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
+        for (String motorKey : motorConfigKeys) {
+            String motorName = config.getString(motorKey);
+            DcMotor motor = map.dcMotor.get(motorName);
+            GearedMotor gearedMotor = new GearedMotor(MOTOR_PULSES, motor, 32, 16);
+            motors.put(motorName, gearedMotor);
+        }
+
+
+        this.motors.get(config.getString("motorFL")).setDirection(DcMotor.Direction.REVERSE);
+        this.motors.get(config.getString("motorBL")).setDirection(DcMotor.Direction.REVERSE);
+        this.motors.get(config.getString("motorFR")).setDirection(DcMotor.Direction.FORWARD);
+        this.motors.get(config.getString("motorBR")).setDirection(DcMotor.Direction.FORWARD);
 
         // Set all drive motors to zero power
         setPower(0);
-
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void setMode(DcMotor.RunMode runMode)
-    {
-        motorFrontLeft.setMode(runMode);
-        motorFrontRight.setMode(runMode);
-        motorBackLeft.setMode(runMode);
-        motorBackRight.setMode(runMode);
-    }
 
     public void setTargetPositionInches(double inches)
     {
-        int ticks = this.inchesToTicks(inches);
-
-        setTargetPosition(ticks);
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.runOutputInches(inches, 0.8);
+        }
     }
 
     public void setTargetPositionRevs(double revolutions)
     {
-        int ticks = this.revolutionsToTicks(revolutions);
-
-        setTargetPosition(ticks);
-
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.runOutputGear(revolutions, 0.8);
+        }
     }
 
-    public void setTargetPosition(int position)
-    {
-        int frontLeftTarget = this.motorFrontLeft.getCurrentPosition() + position;
-        int frontRightTarget = this.motorFrontRight.getCurrentPosition() + position;
-        int backLeftTarget = this.motorBackLeft.getCurrentPosition() + position;
-        int backRightTarget = this.motorBackRight.getCurrentPosition() + position;
-
-        // Tell the motors where we are going
-        this.motorFrontLeft.setTargetPosition(frontLeftTarget);
-        this.motorFrontRight.setTargetPosition(frontRightTarget);
-        this.motorBackLeft.setTargetPosition(backLeftTarget);
-        this.motorBackRight.setTargetPosition(backRightTarget);
-
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void setDirection(DcMotorSimple.Direction direction) {
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.setDirection(direction);
+        }
     }
+
 
     public boolean anyMotorsBusy()
     {
-        return (this.motorFrontLeft.isBusy() && this.motorFrontRight.isBusy() && this.motorBackRight.isBusy() && this.motorBackLeft.isBusy());
-    }
-
-    public int revolutionsToTicks(double revolutions)
-    {
-        return (int) Math.round(revolutions * this.ticksPerRotation);
-    }
-
-    public double ticksToRevolutions(int ticks) {
-        return ((double) ticks / this.ticksPerRotation);
-    }
-
-    public int inchesToTicks(double inches) {
-        return (int) Math.round(inches * this.ticksPerInch);
-    }
-
-    public double ticksToInches(int ticks) {
-        return ((double) ticks / this.ticksPerInch);
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            if (!motor.isBusy()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int getMinimumDistanceFromTarget()
     {
-        int d = this.motorFrontLeft.getTargetPosition() - this.motorFrontLeft.getCurrentPosition();
-        d = closestToZero(d, this.motorFrontRight.getTargetPosition() - this.motorFrontRight.getCurrentPosition());
-        d = closestToZero(d, this.motorBackLeft.getTargetPosition() - this.motorBackLeft.getCurrentPosition());
-        d = closestToZero(d, this.motorBackRight.getTargetPosition() - this.motorBackRight.getCurrentPosition());
+        int minDistance = Integer.MAX_VALUE;
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            int difference = motor.getTargetPosition() - motor.getCurrentPosition();
+            minDistance = closestToZero(minDistance, difference);
+        }
 
-        return d;
+        return minDistance;
     }
 
-    private int closestToZero(int v1, int v2)
+    private int closestToZero(int i, int j)
     {
-        if (Math.abs(v1) < Math.abs(v2))
-            return v1;
+        if (Math.abs(i) < Math.abs(j))
+            return i;
 
-        return v2;
-    }
-
-    // Tweeks the left and right motors by increment.
-    // increment is added to the current power of the left wheels
-    /// and subtracted from the current power of the right wheels.
-    public void tweakTankDrive(double increment)
-    {
-        double leftMotorPower = this.motorBackLeft.getPower();
-        double rightMotorPower = this.motorBackRight.getPower();
-
-        tankDrive(leftMotorPower + increment, rightMotorPower - increment);
-    }
-
-    public void tankDrive(double leftPower, double rightPower)
-    {
-        this.motorFrontLeft.setPower(leftPower);
-        this.motorBackLeft.setPower(leftPower);
-        this.motorFrontRight.setPower(rightPower);
-        this.motorBackRight.setPower(rightPower);
+        return j;
     }
 
     public void setPower(double power)
     {
-        this.motorFrontLeft.setPower(power);
-        this.motorFrontRight.setPower(power);
-        this.motorBackLeft.setPower(power);
-        this.motorBackRight.setPower(power);
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.setPower(power);
+        }
     }
 
     public void adjustPower(Ramp ramp)
@@ -178,12 +127,10 @@ public class MecanumDriveSystem
     public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
     {
         rightX = Range.clip(rightX, -1, 1);
-        rightY = Range.clip(rightY, -1, 1);
         leftX = Range.clip(leftX, -1, 1);
         leftY = Range.clip(leftY, -1, 1);
 
         rightX = scaleJoystickValue(rightX);
-        rightY = scaleJoystickValue(rightY);
         leftX = scaleJoystickValue(leftX);
         leftY = scaleJoystickValue(leftY);
 
@@ -192,18 +139,18 @@ public class MecanumDriveSystem
         double backRightPower = leftY + rightX - leftX;
         double frontLeftPower = leftY - rightX - leftX;
         double backLeftPower = leftY - rightX + leftX;
-        motorFrontRight.setPower(Range.clip(leftY + rightX + leftX, -1, 1));
-        motorBackRight.setPower(Range.clip(leftY + rightX - leftX, -1, 1));
-        motorFrontLeft.setPower(Range.clip(leftY - rightX - leftX, -1, 1));
-        motorBackLeft.setPower(Range.clip(leftY - rightX + leftX, -1, 1));
+        motors.get(config.getString("motorFR")).setPower(Range.clip(frontRightPower, -1, 1));
+        motors.get(config.getString("motorBR")).setPower(Range.clip(backRightPower, -1, 1));
+        motors.get(config.getString("motorFL")).setPower(Range.clip(frontLeftPower - leftX, -1, 1));
+        motors.get(config.getString("motorBL")).setPower(Range.clip(backLeftPower + leftX, -1, 1));
     }
 
     public void mecanumDriveXY(double x, double y)
     {
-        motorFrontRight.setPower(Range.clip(y + x, -1, 1));
-        motorBackRight.setPower(Range.clip(y - x, -1, 1));
-        motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
-        motorBackLeft.setPower(Range.clip(y + x, -1, 1));
+        motors.get(config.getString("motorFR")).setPower(Range.clip(y + x, -1, 1));
+        motors.get(config.getString("motorBR")).setPower(Range.clip(y - x, -1, 1));
+        motors.get(config.getString("motorFL")).setPower(Range.clip(y - x, -1, 1));
+        motors.get(config.getString("motorBL")).setPower(Range.clip(y + x, -1, 1));
     }
 
     public void mecanumDrivePolar(double radians, double power)
@@ -217,14 +164,9 @@ public class MecanumDriveSystem
 
     float scaleJoystickValue(float joystickValue)
     {
-        if(joystickValue > 0)
-        {
-            return (float)((joystickValue*joystickValue)*.62);
-        }
-        else
-        {
-            return (float)(-(joystickValue*joystickValue)*.62);
-        }
+        return joystickValue > 0
+                ? (float)((joystickValue*joystickValue)*.62)
+                : (float)(-(joystickValue*joystickValue)*.62);
     }
 }
 
