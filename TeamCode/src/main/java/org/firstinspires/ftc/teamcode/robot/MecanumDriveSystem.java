@@ -14,6 +14,8 @@ import java.util.Set;
 public class MecanumDriveSystem extends Component
 {
 
+    public Button test;
+
     public Map<String, GearedMotor> motors;
 
     public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
@@ -31,6 +33,7 @@ public class MecanumDriveSystem extends Component
             motors.put(motorName, gearedMotor);
         }
 
+        addButtonToOpMode(test);
 
         this.motors.get(config.getString("motorFL")).setDirection(DcMotor.Direction.REVERSE);
         this.motors.get(config.getString("motorBL")).setDirection(DcMotor.Direction.REVERSE);

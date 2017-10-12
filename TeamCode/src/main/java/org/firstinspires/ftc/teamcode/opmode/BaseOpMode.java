@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.robot.Button;
 import org.firstinspires.ftc.teamcode.robot.Component;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,11 +17,13 @@ import java.util.Set;
  */
 
 public abstract class BaseOpMode extends OpMode {
-    Map<String, Component> components;
-    ConfigParser config;
+    private Map<String, Component> components;
+    private Set<Button> buttonSet;
+    private ConfigParser config;
 
     public void initializeComponents(String opModeName) {
         components = new HashMap<String, Component>();
+        buttonSet = new HashSet<Button>();
         try {
             config = new ConfigParser(opModeName + ".omc");
         } catch(Exception e) {
@@ -29,11 +33,19 @@ public abstract class BaseOpMode extends OpMode {
         for (String key : keys) {
             String componentName = config.getString(key);
             telemetry.addData("[Component] Intializing ", componentName.toUpperCase() + "...");
-            components.put(componentName, new Component(hardwareMap, telemetry, componentName));
+            Component component = new Component(hardwareMap, telemetry, componentName);
+            component.setOpModeButtonSet(buttonSet);
+            components.put(componentName, component);
         }
     }
 
     public Component getComponent(String componentName) {
         return components.get(componentName);
+    }
+
+    public void handleButtons() {
+        for (Button button : buttonSet) {
+            button.testAndHandle();
+        }
     }
 }
