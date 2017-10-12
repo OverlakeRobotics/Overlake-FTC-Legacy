@@ -53,7 +53,7 @@ public class TeleOpMecanum extends BaseOpMode {
 
 	@Override
 	public void init() {
-        initializeComponents();
+        initializeComponents("TeleOpMecanum");
         this.driveSystem = (MecanumDriveSystem)getComponent("MecanumDriveSystem");
 	}
 
@@ -61,7 +61,6 @@ public class TeleOpMecanum extends BaseOpMode {
 	public void loop()
 	{
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
-
 
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
 	}
