@@ -40,17 +40,26 @@ public class GearedMotor {
         motor.setDirection(direction);
     }
 
-    public void runOutputGear(double revolutions, double power) {
+    public void runOutputGearTics(int tics, double power) {
+        int outputTics = chain.calculateOuputTics(tics);
+        runMotor(outputTics, power);
+    }
+
+    public void runOutputGearRevolutions(double revolutions, double power) {
         int tics = chain.calculateOutputRevolutions(pulses, revolutions);
         runMotor(tics, power);
     }
 
-    public void runInputGear(double revolutions, double power) {
+    public void runInputGearTics(int tics, double power) {
+        runMotor(tics, power);
+    }
+
+    public void runInputGearRevolutions(double revolutions, double power) {
         int tics = chain.calculateInputRevolutions(pulses, revolutions);
         runMotor(tics, power);
     }
 
-    public void runOutputInches(double inches, double power) {
+    public void runOutputWheelInches(double inches, double power) {
         int tics = (int) Math.round(inches * ticsPerInch);
         runMotor(tics, power);
     }

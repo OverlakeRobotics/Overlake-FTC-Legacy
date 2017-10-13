@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.google.gson.annotations.Expose;
+
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
-import java.io.*;
-import com.google.gson.*;
-import com.google.gson.annotations.*;
 
 public abstract class AutonomousOpMode extends LinearOpMode
 {

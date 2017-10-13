@@ -52,5 +52,4 @@ public class Component {
     public String getSystemName() {
         return system;
     }
-
 }

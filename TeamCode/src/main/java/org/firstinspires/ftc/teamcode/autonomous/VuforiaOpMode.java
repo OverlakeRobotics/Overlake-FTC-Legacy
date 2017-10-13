@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
@@ -58,15 +56,11 @@ public class VuforiaOpMode extends AutonomousOpMode {
         VectorF translation = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
         telemetry.addData("Translation 1 ", translation.get(0));
         if (translation.get(0) > 0) {
-            driveSystem.motorBackLeft.setPower(0.2);
-            driveSystem.motorFrontLeft.setPower(0.2);
-            driveSystem.motorBackRight.setPower(-0.2);
-            driveSystem.motorFrontRight.setPower(-0.2);
+            driveSystem.setLeftPower(0.2);
+            driveSystem.setRightPower(-0.2);
         } else {
-            driveSystem.motorBackLeft.setPower(-0.2);
-            driveSystem.motorFrontLeft.setPower(-0.2);
-            driveSystem.motorBackRight.setPower(0.2);
-            driveSystem.motorFrontRight.setPower(0.2);
+            driveSystem.setLeftPower(-0.2);
+            driveSystem.setRightPower(0.2);
         }
 
         do {
@@ -80,12 +74,7 @@ public class VuforiaOpMode extends AutonomousOpMode {
 
         driveSystem.setPower(0);
 
-//        driveSystem.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-//        driveSystem.motorBackLeft.setTargetPosition((int)(driveSystem.motorBackLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-//        driveSystem.motorBackRight.setTargetPosition((int)(driveSystem.motorBackRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-//        driveSystem.motorFrontLeft.setTargetPosition((int)(driveSystem.motorFrontLeft.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
-//        driveSystem.motorFrontRight.setTargetPosition((int)(driveSystem.motorFrontRight.getCurrentPosition() + ((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560)));
+        driveSystem.setTargetPosition((int)((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560));
 
         driveSystem.setPower(0.3);
 
@@ -95,27 +84,20 @@ public class VuforiaOpMode extends AutonomousOpMode {
 
         driveSystem.setPower(0);
 
-//        driveSystem.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         while (opModeIsActive() && (wheels.getPose() == null) || Math.abs(wheels.getPose().getTranslation().get(0)) > 10) {
             if (wheels.getPose() != null) {
                 telemetry.addData("Translation 3 ", wheels.getPose().getTranslation().get(0));
                 if (wheels.getPose().getTranslation().get(0) > 0) {
-                    driveSystem.motorBackLeft.setPower(-0.2);
-                    driveSystem.motorFrontLeft.setPower(-0.2);
-                    driveSystem.motorBackRight.setPower(0.2);
-                    driveSystem.motorFrontRight.setPower(0.2);
+                    driveSystem.setPower(-0.2);
                 } else {
-                    driveSystem.motorBackLeft.setPower(0.2);
-                    driveSystem.motorFrontLeft.setPower(0.2);
-                    driveSystem.motorBackRight.setPower(-0.2);
-                    driveSystem.motorFrontRight.setPower(-0.2);
+                    driveSystem.motors.get("BackLeft").setPower(0.2);
+                    driveSystem.motors.get("FrontLeft").setPower(0.2);
+                    driveSystem.motors.get("BackRight").setPower(-0.2);
+                    driveSystem.motors.get("FrontRight").setPower(-0.2);
                 }
             } else {
-                driveSystem.motorBackLeft.setPower(-0.2);
-                driveSystem.motorFrontLeft.setPower(-0.2);
-                driveSystem.motorBackRight.setPower(0.2);
-                driveSystem.motorFrontRight.setPower(0.2);
+                driveSystem.setLeftPower(-0.2);
+                driveSystem.setRightPower(0.2);
             }
             idle();
             telemetry.update();

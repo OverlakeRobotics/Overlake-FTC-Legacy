@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
@@ -44,12 +45,18 @@ public class MecanumDriveSystem extends Component
         setPower(0);
     }
 
+    public void setTargetPosition(int tics) {
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.runInputGearTics(tics, 0.8);
+        }
+    }
 
     public void setTargetPositionInches(double inches)
     {
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
-            motor.runOutputInches(inches, 0.8);
+            motor.runOutputWheelInches(inches, 0.8);
         }
     }
 
@@ -57,7 +64,7 @@ public class MecanumDriveSystem extends Component
     {
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
-            motor.runOutputGear(revolutions, 0.8);
+            motor.runOutputGearRevolutions(revolutions, 0.8);
         }
     }
 
@@ -106,6 +113,31 @@ public class MecanumDriveSystem extends Component
             GearedMotor motor = motors.get(key);
             motor.setPower(power);
         }
+    }
+
+    private void setSectionPower(String section, double power) {
+        for (String key : motors.keySet()) {
+            if (key.toLowerCase().contains(section)) {
+                GearedMotor motor = motors.get(key);
+                motor.setPower(power);
+            }
+        }
+    }
+
+    public void setRightPower(double power) {
+        setSectionPower("right", power);
+    }
+
+    public void setLeftPower(double power) {
+        setSectionPower("left", power);
+    }
+
+    public void setForwardPower(double power) {
+        setSectionPower("forward", power);
+    }
+
+    public void setBackPower(double power) {
+        setSectionPower("back", power);
     }
 
     public void adjustPower(Ramp ramp)

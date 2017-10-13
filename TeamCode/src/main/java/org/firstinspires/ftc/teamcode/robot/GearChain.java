@@ -34,6 +34,10 @@ public class GearChain {
         return (int) Math.round(pulses * revolutions * chainRatio);
     }
 
+    public int calculateOuputTics(int tics) {
+        return (int) Math.round(tics * chainRatio);
+    }
+
     private double calculateChainRatio() {
         double ratio = 1d;
         Gear current = input;
