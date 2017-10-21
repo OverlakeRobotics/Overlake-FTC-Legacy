@@ -5,26 +5,39 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MecanumDriveSystem extends Component
+public class MecanumDriveSystem extends System
 {
+    //TODO:
+    // 1) make all drive funcitons rampable
+    // 2) remove motor map, too 
+    private final float SCALE_FACTOR = 0.62f;
 
-    public Button test;
-
+    public IMUSystem imuSystem;
     public Map<String, GearedMotor> motors;
-
     public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
+
+    public GearedMotor motorFrontLeft;
+    public GearedMotor motorFrontRight;
+    public GearedMotor motorBackLeft;
+    public GearedMotor motorBackRight;
+
+    private double startingIMUHeading;
 
     /* Constructor */
     public MecanumDriveSystem(HardwareMap hwMap, Telemetry telemetry) {
         super(hwMap, telemetry, "MecanumDrive");
 
+        imuSystem = new IMUSystem(hwMap, telemetry);
+        motors = new HashMap<String, GearedMotor>();
+
+        startingIMUHeading = imuSystem.getHeading();
         Set<String> motorConfigKeys = config.getKeysContaining("motor");
 
         for (String motorKey : motorConfigKeys) {
@@ -34,37 +47,37 @@ public class MecanumDriveSystem extends Component
             motors.put(motorName, gearedMotor);
         }
 
-        addButtonToOpMode(test);
-
         this.motors.get(config.getString("motorFL")).setDirection(DcMotor.Direction.REVERSE);
         this.motors.get(config.getString("motorBL")).setDirection(DcMotor.Direction.REVERSE);
         this.motors.get(config.getString("motorFR")).setDirection(DcMotor.Direction.FORWARD);
         this.motors.get(config.getString("motorBR")).setDirection(DcMotor.Direction.FORWARD);
 
+        // Set PID coeffiecents
+        setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
         // Set all drive motors to zero power
         setPower(0);
     }
 
-    public void setTargetPosition(int tics) {
+    public void driveTicks(int ticks, double power) {
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
-            motor.runInputGearTics(tics, 0.8);
+            motor.runInputGearTicks(ticks, power);
         }
     }
 
-    public void setTargetPositionInches(double inches)
+    public void driveInches(double inches, double power)
     {
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
-            motor.runOutputWheelInches(inches, 0.8);
+            motor.runOutputWheelInches(inches, power);
         }
     }
 
-    public void setTargetPositionRevs(double revolutions)
+    public void driveRevs(double revolutions, double power)
     {
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
-            motor.runOutputGearRevolutions(revolutions, 0.8);
+            motor.runOutputGearRevolutions(revolutions, power);
         }
     }
 
@@ -75,6 +88,11 @@ public class MecanumDriveSystem extends Component
         }
     }
 
+    public void setAllMotorsPID(double P, double I, double D) {
+        for (String key : motors.keySet()) {
+            setPIDCoefficients(key, P, I, D);
+        }
+    }
 
     public boolean anyMotorsBusy()
     {
@@ -85,26 +103,6 @@ public class MecanumDriveSystem extends Component
             }
         }
         return true;
-    }
-
-    public int getMinimumDistanceFromTarget()
-    {
-        int minDistance = Integer.MAX_VALUE;
-        for (String key : motors.keySet()) {
-            GearedMotor motor = motors.get(key);
-            int difference = motor.getTargetPosition() - motor.getCurrentPosition();
-            minDistance = closestToZero(minDistance, difference);
-        }
-
-        return minDistance;
-    }
-
-    private int closestToZero(int i, int j)
-    {
-        if (Math.abs(i) < Math.abs(j))
-            return i;
-
-        return j;
     }
 
     public void setPower(double power)
@@ -140,25 +138,6 @@ public class MecanumDriveSystem extends Component
         setSectionPower("back", power);
     }
 
-    public void adjustPower(Ramp ramp)
-    {
-        // Adjust the motor power as we get closer to the target
-        int minDistance = this.getMinimumDistanceFromTarget();
-
-        // ramp assumes the distance away from the target is positive,
-        // so we make it positive here and account for the direction when
-        // the motor power is set.
-        double direction = 1.0;
-        if (minDistance < 0) {
-            minDistance = -minDistance;
-            direction = -1.0;
-        }
-
-        double scaledPower = ramp.value(minDistance);
-
-        setPower(direction * scaledPower);
-    }
-
     public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
     {
         rightX = Range.clip(rightX, -1, 1);
@@ -190,18 +169,26 @@ public class MecanumDriveSystem extends Component
 
     public void mecanumDrivePolar(double radians, double power)
     {
-        double x = Math.cos(radians)*power;
-        double y = Math.sin(radians)*power;
-
+        double x = Math.cos(radians) * power;
+        double y = Math.sin(radians) * power;
         mecanumDriveXY(x, y);
     }
 
+    public void driveInchesPolar(double angle, double inches, double power, boolean shouldRamp) {
+        double radians = (angle * Math.PI) / 180.0;
+//        turn(radians);
+        if (shouldRamp) {
+            GearedMotor.runMotorsRampedInches(inches, power, motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft);
+        } else {
+            driveInches(inches, power);
+        }
+    }
 
     float scaleJoystickValue(float joystickValue)
     {
         return joystickValue > 0
-                ? (float)((joystickValue*joystickValue)*.62)
-                : (float)(-(joystickValue*joystickValue)*.62);
+                ? ((joystickValue * joystickValue) * SCALE_FACTOR)
+                : (-(joystickValue * joystickValue) * SCALE_FACTOR);
     }
 }
 

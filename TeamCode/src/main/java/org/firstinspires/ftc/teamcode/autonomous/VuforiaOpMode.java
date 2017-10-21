@@ -74,7 +74,7 @@ public class VuforiaOpMode extends AutonomousOpMode {
 
         driveSystem.setPower(0);
 
-        driveSystem.setTargetPosition((int)((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560));
+        driveSystem.driveTics((int)((Math.hypot(translation.get(0), translation.get(2)) + 150) / 409.575 * 560));
 
         driveSystem.setPower(0.3);
 

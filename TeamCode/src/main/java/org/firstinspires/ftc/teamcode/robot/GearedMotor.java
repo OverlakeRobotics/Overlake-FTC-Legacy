@@ -3,16 +3,25 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
+import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
+
 /**
  * Created by EvanCoulson on 10/9/17.
  */
 
 public class GearedMotor {
+    private final static double MIN_POWER = 0.1d;
+    private final static double MIN_REVS = 0.01d;
+    private final static double MAX_REVS = 1.0d;
+    private final static double FOWARD_DIRECTION = 1d;
+    private final static double BACKWARD_DIRECTION = -1d;
+
     private GearChain chain;
     private DcMotor motor;
     private int pulses;
     private double wheelDiameter;
-    private double ticsPerInch;
+    private double ticksPerInch;
 
     public GearedMotor(int pulses, DcMotor motor) {
         this(pulses, 0, motor, 1, 1);
@@ -26,7 +35,7 @@ public class GearedMotor {
         this.chain = new GearChain(teeth);
         this.pulses = pulses;
         this.wheelDiameter = wheelDiameter;
-        this.ticsPerInch = (pulses * chain.calculateOutputRevolutions(pulses, 1)) / (wheelDiameter * Math.PI);
+        this.ticksPerInch = (pulses * chain.calculateOutputRevolutions(pulses, 1)) / (wheelDiameter * Math.PI);
         this.motor = motor;
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motor.setPower(0);
@@ -40,39 +49,44 @@ public class GearedMotor {
         motor.setDirection(direction);
     }
 
-    public void runOutputGearTics(int tics, double power) {
-        int outputTics = chain.calculateOuputTics(tics);
-        runMotor(outputTics, power);
+    public void runOutputGearTicks(int ticks, double power) {
+        int outputTicks = chain.calculateOuputTicks(ticks);
+        runMotor(outputTicks, power);
     }
 
     public void runOutputGearRevolutions(double revolutions, double power) {
-        int tics = chain.calculateOutputRevolutions(pulses, revolutions);
-        runMotor(tics, power);
+        int ticks = chain.calculateOutputRevolutions(pulses, revolutions);
+        runMotor(ticks, power);
     }
 
-    public void runInputGearTics(int tics, double power) {
-        runMotor(tics, power);
+    public void runInputGearTicks(int ticks, double power) {
+        runMotor(ticks, power);
     }
 
     public void runInputGearRevolutions(double revolutions, double power) {
-        int tics = chain.calculateInputRevolutions(pulses, revolutions);
-        runMotor(tics, power);
+        int ticks = chain.calculateInputRevolutions(pulses, revolutions);
+        runMotor(ticks, power);
     }
 
     public void runOutputWheelInches(double inches, double power) {
-        int tics = (int) Math.round(inches * ticsPerInch);
-        runMotor(tics, power);
+        int ticks = (int) Math.round(inches * ticksPerInch);
+        runMotor(ticks, power);
     }
 
-    private void runMotor(int tics, double power) {
-        int current = motor.getCurrentPosition();
-        motor.setTargetPosition(current + tics);
+    private void runMotor(int ticks, double power) {
+        setTargetPosition(ticks);
         motor.setPower(power);
     }
 
     public void setPower(double power) {
         motor.setPower(power);
     }
+
+    private void setTargetPosition(int ticks) {
+        int current = motor.getCurrentPosition();
+        motor.setTargetPosition(current + ticks);
+    }
+
 
     public double getPower() {
         return motor.getPower();
@@ -84,5 +98,123 @@ public class GearedMotor {
 
     public int getCurrentPosition() {
         return motor.getCurrentPosition();
+    }
+
+    public int getDistance() {
+        return getTargetPosition() - getCurrentPosition();
+    }
+
+    public static void runMotorsRampedInches(double inches, double maxPower, GearedMotor... motors) {
+        checkLength(motors);
+        checkPulses(motors);
+        checkWheels(motors);
+        int pulses = motors[0].pulses;
+        int ticks = (int) Math.round(inches * motors[0].ticksPerInch);
+        runMotorsRampedTicks(ticks, maxPower, motors);
+    }
+
+    public static void runMotosRampedInputRevolutions(double revolutions, double maxPower, GearedMotor... motors) {
+        checkLength(motors);
+        checkPulses(motors);
+        int pulses = motors[0].pulses;
+        int ticks = motors[0].chain.calculateInputRevolutions(pulses, revolutions);
+        runMotorsRampedTicks(ticks, maxPower, motors);
+    }
+
+    public static void runMotorsRampedOuputRevolutions(double revolutions, double maxPower, GearedMotor... motors) {
+        checkLength(motors);
+        checkPulses(motors);
+        int pulses = motors[0].pulses;
+        int ticks = motors[0].chain.calculateOutputRevolutions(pulses, revolutions);
+        runMotorsRampedTicks(ticks, maxPower, motors);
+    }
+
+    public static void runMotorsRampedOutputTicks(int ticks, double maxPower, GearedMotor... motors) {
+        checkLength(motors);
+        checkPulses(motors);
+        int newTicks = motors[0].chain.calculateOuputTicks(ticks);
+        runMotorsRampedTicks(newTicks, maxPower, motors);
+    }
+
+    public static void runMotorsRampedInputTicks(int ticks, double maxPower, GearedMotor... motors) {
+        checkLength(motors);
+        checkPulses(motors);
+        runMotorsRampedTicks(ticks, maxPower, motors);
+    }
+
+
+    private static void checkLength(GearedMotor... motors) {
+        if (motors.length == 0) {
+            throw new IllegalArgumentException("Can not ramp on 0 motors");
+        }
+    }
+
+    private static void checkPulses(GearedMotor... motors) {
+        int testPulse = motors[0].pulses;
+        for (GearedMotor motor : motors) {
+            if (motor == null) {
+                throw new IllegalArgumentException("Null Motor");
+            }
+            if (motor.pulses != testPulse) {
+                throw new IllegalArgumentException("All motors must have the same pulses.");
+            }
+        }
+    }
+
+    private static void checkWheels(GearedMotor... motors) {
+        double testDiameter = motors[0].wheelDiameter;
+        for (GearedMotor motor : motors) {
+            if (motor.pulses != testDiameter) {
+                throw new IllegalArgumentException("All motors must have the same diameter.");
+            }
+        }
+    }
+
+    private static boolean motorsAreBusy(GearedMotor... motors) {
+        for (GearedMotor motor : motors) {
+            if (motor.isBusy()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int closestToZero(int i, int j) {
+        if (Math.abs(i) < Math.abs(j))
+            return i;
+
+        return j;
+    }
+
+    private static int getMinDistanceFromTarget(GearedMotor... motors)
+    {
+        int minDistance = Integer.MAX_VALUE;
+        for (GearedMotor motor : motors) {
+            int difference = motor.getTargetPosition() - motor.getCurrentPosition();
+            minDistance = closestToZero(minDistance, difference);
+        }
+        return minDistance;
+    }
+
+    private static void runMotorsRampedTicks(int ticks, double maxPower, GearedMotor... motors) {
+        int minTicks = motors[0].chain.calculateOutputRevolutions(motors[0].pulses, MIN_REVS);
+        int maxTicks = motors[0].chain.calculateOutputRevolutions(motors[0].pulses, MAX_REVS);
+        Ramp ramp = new ExponentialRamp(minTicks, MIN_POWER, maxTicks, maxPower);
+        while (motorsAreBusy(motors)) {
+            Thread.yield();
+            int distanceFromTarget = getMinDistanceFromTarget(motors);
+            double direction = FOWARD_DIRECTION;
+
+            if (distanceFromTarget < 0) {
+                distanceFromTarget = -distanceFromTarget;
+                direction = BACKWARD_DIRECTION;
+            }
+
+            double scaledPower = ramp.value(distanceFromTarget);
+
+            for (GearedMotor motor : motors) {
+                motor.setPower(direction * scaledPower);
+            }
+        }
     }
 }

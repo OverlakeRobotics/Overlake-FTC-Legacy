@@ -31,13 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
-import org.firstinspires.ftc.teamcode.robot.*;
-import org.firstinspires.ftc.teamcode.util.Handler;
 
 
 /**
@@ -49,20 +46,26 @@ import org.firstinspires.ftc.teamcode.util.Handler;
 @TeleOp(name="TeleOpMecanum", group="TeleOp")
 public class TeleOpMecanum extends BaseOpMode {
 
-	MecanumDriveSystem driveSystem;
+	private MecanumDriveSystem driveSystem;
+
+	public TeleOpMecanum() {
+		super("TeleOpMecanum");
+	}
 
 	@Override
 	public void init() {
-        initializeComponents("TeleOpMecanum");
-        this.driveSystem = (MecanumDriveSystem)getComponent("MecanumDriveSystem");
+		telemetry.update();
+        this.driveSystem = new MecanumDriveSystem(hardwareMap, telemetry);
+
+		telemetry.update();
 	}
 
 	@Override
 	public void loop()
 	{
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
-		handleButtons();
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
+		telemetry.update();
 	}
 
 	@Override
