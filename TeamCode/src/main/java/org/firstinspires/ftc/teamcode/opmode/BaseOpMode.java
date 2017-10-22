@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
@@ -17,8 +18,5 @@ public abstract class BaseOpMode extends OpMode {
         } catch (Exception e) {
             throw new IllegalArgumentException("OP MODE CONFIGURATION NOT FOUND \"" + opModeName + "\"");
         }
-    }
-
-    public void handleButtons() {
     }
 }

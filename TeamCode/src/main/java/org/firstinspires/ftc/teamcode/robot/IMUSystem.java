@@ -14,17 +14,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 public class IMUSystem extends System
 {
     public BNO055IMU imu;
-    public BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    public BNO055IMU.Parameters parameters;
 
     /* Constructor */
     public IMUSystem(HardwareMap hwMap, Telemetry telemetry){
         super(hwMap, telemetry, "IMUSystem");
 
+        this.parameters = new BNO055IMU.Parameters();
         this.parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         this.parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         this.parameters.loggingEnabled = true;
         this.parameters.loggingTag = "BNO055";
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        this.parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         this.imu = this.map.get(BNO055IMU.class, "imu");
         this.imu.initialize(parameters);
 

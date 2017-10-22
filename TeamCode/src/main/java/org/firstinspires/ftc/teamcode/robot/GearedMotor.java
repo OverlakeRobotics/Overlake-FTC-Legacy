@@ -82,6 +82,10 @@ public class GearedMotor {
         motor.setPower(power);
     }
 
+    public void setRunMode(DcMotor.RunMode mode) {
+        motor.setMode(mode);
+    }
+
     private void setTargetPosition(int ticks) {
         int current = motor.getCurrentPosition();
         motor.setTargetPosition(current + ticks);
@@ -104,42 +108,46 @@ public class GearedMotor {
         return getTargetPosition() - getCurrentPosition();
     }
 
-    public static void runMotorsRampedInches(double inches, double maxPower, GearedMotor... motors) {
+    public static void runMotorsRampedInches(double inches, double deltaInches, double maxPower, GearedMotor... motors) {
         checkLength(motors);
         checkPulses(motors);
         checkWheels(motors);
         int pulses = motors[0].pulses;
         int ticks = (int) Math.round(inches * motors[0].ticksPerInch);
-        runMotorsRampedTicks(ticks, maxPower, motors);
+        int deltaTicks = (int) Math.round(deltaInches * motors[0].ticksPerInch);
+        runMotorsRampedTicks(ticks, deltaTicks, maxPower, motors);
     }
 
-    public static void runMotosRampedInputRevolutions(double revolutions, double maxPower, GearedMotor... motors) {
+    public static void runMotosRampedInputRevolutions(double revolutions, double deltaRevolutions, double maxPower, GearedMotor... motors) {
         checkLength(motors);
         checkPulses(motors);
         int pulses = motors[0].pulses;
         int ticks = motors[0].chain.calculateInputRevolutions(pulses, revolutions);
-        runMotorsRampedTicks(ticks, maxPower, motors);
+        int deltaTicks = motors[0].chain.calculateInputRevolutions(pulses, deltaRevolutions);
+        runMotorsRampedTicks(ticks, deltaTicks, maxPower, motors);
     }
 
-    public static void runMotorsRampedOuputRevolutions(double revolutions, double maxPower, GearedMotor... motors) {
+    public static void runMotorsRampedOuputRevolutions(double revolutions, double deltaRevolutions, double maxPower, GearedMotor... motors) {
         checkLength(motors);
         checkPulses(motors);
         int pulses = motors[0].pulses;
         int ticks = motors[0].chain.calculateOutputRevolutions(pulses, revolutions);
-        runMotorsRampedTicks(ticks, maxPower, motors);
+        int deltaTicks = motors[0].chain.calculateOutputRevolutions(pulses, deltaRevolutions);
+        runMotorsRampedTicks(ticks, deltaTicks, maxPower, motors);
     }
 
-    public static void runMotorsRampedOutputTicks(int ticks, double maxPower, GearedMotor... motors) {
+    public static void runMotorsRampedOutputTicks(int ticks, int deltaTicks, double maxPower, GearedMotor... motors) {
         checkLength(motors);
         checkPulses(motors);
         int newTicks = motors[0].chain.calculateOuputTicks(ticks);
-        runMotorsRampedTicks(newTicks, maxPower, motors);
+        deltaTicks = motors[0].chain.calculateOuputTicks(deltaTicks);
+        runMotorsRampedTicks(newTicks, deltaTicks, maxPower, motors);
     }
 
-    public static void runMotorsRampedInputTicks(int ticks, double maxPower, GearedMotor... motors) {
+    public static void runMotorsRampedInputTicks(int ticks, int deltaTicks, double deltaRevs, double maxPower, GearedMotor... motors) {
         checkLength(motors);
         checkPulses(motors);
-        runMotorsRampedTicks(ticks, maxPower, motors);
+        runMotorsRampedTicks(ticks, deltaTicks, maxPower, motors);
     }
 
 
@@ -196,10 +204,10 @@ public class GearedMotor {
         return minDistance;
     }
 
-    private static void runMotorsRampedTicks(int ticks, double maxPower, GearedMotor... motors) {
+    private static void runMotorsRampedTicks(int ticks, int deltaTicks, double maxPower, GearedMotor... motors) {
+        setTargetPosition(ticks, motors);
         int minTicks = motors[0].chain.calculateOutputRevolutions(motors[0].pulses, MIN_REVS);
-        int maxTicks = motors[0].chain.calculateOutputRevolutions(motors[0].pulses, MAX_REVS);
-        Ramp ramp = new ExponentialRamp(minTicks, MIN_POWER, maxTicks, maxPower);
+        Ramp ramp = new ExponentialRamp(minTicks, MIN_POWER, deltaTicks, maxPower);
         while (motorsAreBusy(motors)) {
             Thread.yield();
             int distanceFromTarget = getMinDistanceFromTarget(motors);
@@ -215,6 +223,12 @@ public class GearedMotor {
             for (GearedMotor motor : motors) {
                 motor.setPower(direction * scaledPower);
             }
+        }
+    }
+
+    private static void setTargetPosition(int ticks, GearedMotor... motors) {
+        for (GearedMotor motor : motors) {
+            motor.setTargetPosition(ticks);
         }
     }
 }

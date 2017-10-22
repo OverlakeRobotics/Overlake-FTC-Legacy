@@ -13,10 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class MecanumDriveSystem extends System
-{
-    //TODO:
-    // 1) make all drive funcitons rampable
-    // 2) remove motor map, too 
+{ 
+    // 2) remove motor map, too unreadable and makes work to verbose
     private final float SCALE_FACTOR = 0.62f;
 
     public IMUSystem imuSystem;
@@ -65,14 +63,6 @@ public class MecanumDriveSystem extends System
         }
     }
 
-    public void driveInches(double inches, double power)
-    {
-        for (String key : motors.keySet()) {
-            GearedMotor motor = motors.get(key);
-            motor.runOutputWheelInches(inches, power);
-        }
-    }
-
     public void driveRevs(double revolutions, double power)
     {
         for (String key : motors.keySet()) {
@@ -110,6 +100,13 @@ public class MecanumDriveSystem extends System
         for (String key : motors.keySet()) {
             GearedMotor motor = motors.get(key);
             motor.setPower(power);
+        }
+    }
+
+    public void setRunMode(DcMotor.RunMode runMode) {
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.setRunMode(runMode);
         }
     }
 
@@ -174,14 +171,70 @@ public class MecanumDriveSystem extends System
         mecanumDriveXY(x, y);
     }
 
-    public void driveInchesPolar(double angle, double inches, double power, boolean shouldRamp) {
-        double radians = (angle * Math.PI) / 180.0;
-//        turn(radians);
-        if (shouldRamp) {
-            GearedMotor.runMotorsRampedInches(inches, power, motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft);
-        } else {
-            driveInches(inches, power);
+    public void driveInchesPolar(double inches, double direction, double maxPower, double deltaInches) {
+        turn(direction, maxPower);
+        GearedMotor.runMotorsRampedInches(
+                inches, deltaInches, maxPower, motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft
+        );
+    }
+
+    public void driveInchesXY(double x, double y, double maxPower, double deltaInches) {
+        double inches = Math.sqrt(x * x + y * y);
+        double direction = Math.atan2(y,x);
+        driveInchesPolar(inches, direction, maxPower, deltaInches);
+    }
+
+    public void driveInchesPolar(double inches, double direction, double power) {
+        turn(direction, power);
+        for (String key : motors.keySet()) {
+            GearedMotor motor = motors.get(key);
+            motor.runOutputWheelInches(inches, power);
         }
+    }
+
+    public void driveInchesXY(double x, double y, double power) {
+        double inches = Math.sqrt(x * x + y * y);
+        double direction = Math.atan2(y,x);
+        driveInchesPolar(inches, direction, power);
+    }
+
+    public void turn(double angle, double maxPower) {
+        double heading = imuSystem.getHeading();
+        double targetHeading = heading + angle;
+        if (targetHeading > 0) {
+            targetHeading = targetHeading % 360;
+        } else {
+            targetHeading = (360 + targetHeading) % 360;
+        }
+
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        Ramp ramp = new ExponentialRamp(2.0, 0.1, 130.0, maxPower);
+        while (computeDegreesDiff(targetHeading, heading) > 1) {
+            double sign = 1.0;
+            double diff = computeDegreesDiff(targetHeading, heading);
+            if (diff < 0)
+            {
+                sign = -1.0;
+                diff = -diff;
+            }
+
+            double power = sign*ramp.value(diff);
+            setLeftPower(power);
+            setRightPower(-power);
+            heading = imuSystem.getHeading();
+        }
+    }
+
+    private double computeDegreesDiff(double targetHeading, double heading) {
+        double diff = targetHeading - heading;
+        //TODO: This needs to be commented. Also, might be able to compute using mod.
+        if (Math.abs(diff) > 180)
+        {
+            diff = -(360 * (diff / Math.abs(diff)));
+        }
+
+        return Math.abs(diff);
     }
 
     float scaleJoystickValue(float joystickValue)
