@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,8 +18,8 @@ public class IMUSystem extends System
     public BNO055IMU.Parameters parameters;
 
     /* Constructor */
-    public IMUSystem(HardwareMap hwMap, Telemetry telemetry){
-        super(hwMap, telemetry, "IMUSystem");
+    public IMUSystem(OpMode opMode){
+        super(opMode, "IMUSystem");
 
         this.parameters = new BNO055IMU.Parameters();
         this.parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

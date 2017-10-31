@@ -7,13 +7,16 @@ import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
-public abstract class AutonomousOpMode extends LinearOpMode
+public abstract class AutonomousOpMode extends BaseOpMode
 {
     MecanumDriveSystem driveSystem;
     LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
     ColorSensorData colorSensorData;
 
+    public AutonomousOpMode() {
+        super("AutonomousOpMode");
+    }
 
     void initializeAllDevices()
     {

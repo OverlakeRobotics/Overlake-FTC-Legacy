@@ -88,9 +88,23 @@ public class GearedMotor {
 
     private void setTargetPosition(int ticks) {
         int current = motor.getCurrentPosition();
-        motor.setTargetPosition(current + ticks);
+        if (ticks > 0) {
+            switchDirection();
+            motor.setTargetPosition(current + ticks);
+        } else if (ticks < 0) {
+            ticks = -ticks;
+            switchDirection();
+            motor.setTargetPosition(current + ticks);
+        }
     }
 
+    public void switchDirection() {
+        if (motor.getDirection().equals(DcMotorSimple.Direction.FORWARD)) {
+            motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+    }
 
     public double getPower() {
         return motor.getPower();

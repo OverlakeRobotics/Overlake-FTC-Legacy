@@ -34,7 +34,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
-import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 
 
 /**
@@ -55,7 +54,7 @@ public class TeleOpMecanum extends BaseOpMode {
 	@Override
 	public void init() {
 		telemetry.update();
-        this.driveSystem = new MecanumDriveSystem(hardwareMap, telemetry);
+        this.driveSystem = new MecanumDriveSystem(this);
 
 		telemetry.update();
 	}
