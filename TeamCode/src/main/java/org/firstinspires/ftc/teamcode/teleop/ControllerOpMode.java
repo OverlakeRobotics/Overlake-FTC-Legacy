@@ -106,25 +106,6 @@ public class ControllerOpMode extends OpMode {
 
         //ELEVATOR
 
-        this.elevatorTopPos = new Button();
-        this.elevatorTopPos.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.dpad_up;
-                    }
-                };
-        this.elevatorTopPos.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.runMotorUp();
-                    }
-                };
 
         //Goes to zero
         this.elevatorLoadPosition1 = new Button();
@@ -235,7 +216,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.dpad_down;
+                        return gamepad2.dpad_up;
                     }
                 };
         this.elevatorStackPosition.pressedHandler =
@@ -263,6 +244,7 @@ public class ControllerOpMode extends OpMode {
         elevatorUnloadPosition1.testAndHandle();
         elevatorUnloadPosition2.testAndHandle();
         elevatorUnloadPosition3.testAndHandle();
+        elevatorStackPosition.testAndHandle();
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
 
     }

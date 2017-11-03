@@ -24,10 +24,11 @@ public class ElevatorSystem {
     int position;
     private int loadPos1Ticks = 0;
     private int loadPos2Ticks = 100;
-    private int unloadPos1Ticks = 400;
-    private int unloadStackTicks = 400;
+    private int unloadStackTicks = 300;
+    private int unloadPos1Ticks =400;
+
     private int unloadPos2Ticks = 600;
-    private int unloadPos3Ticks = 800;
+    private int unloadPos3Ticks = 1000;
 
     private boolean debouncing = false;
     private ElapsedTime debounceTime = new ElapsedTime();
@@ -35,8 +36,8 @@ public class ElevatorSystem {
 
     boolean isAtTop = false;
     boolean isAtBottom = false;
-    private double negativePower = -0.3;
-    private double positivePower = 0.3;
+    private double negativePower = -0.5;
+    private double positivePower = 0.5;
 
     Telemetry telemetry;
 
@@ -58,7 +59,7 @@ public class ElevatorSystem {
         while(touchSensorBottom.getState()==true) {
             telemetry.addData("touch Sensor" , touchSensorBottom.getState());
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            elevator.setPower(-0.5);
+            elevator.setPower(-0.3);
 
         }
         elevator.setPower(0.0);
@@ -83,25 +84,29 @@ public class ElevatorSystem {
 
         //On Rev, when configuring use the second input in digital
         touchSensorBottom.setMode(DigitalChannel.Mode.INPUT);
-        if((touchSensorBottom.getState() == false) && !isAtBottom) {
+        boolean bottomSwitchPushed = (touchSensorBottom.getState() == false);
+        if( bottomSwitchPushed&& !isAtBottom) {
             elevator.setPower(0.0);
             encoderVal = elevator.getCurrentPosition();
             position = loadPos1Ticks;
             isAtBottom = true;
-        } else {
+        } else if (isAtBottom) {
+
             if (!debouncing)
             {
                 debounceTime.reset();
+                debouncing = true;
             }
             else
             {
                 if (debounceTime.milliseconds() > 50) {
-                    isAtBottom = (touchSensorBottom.getState() == false);
+                    isAtBottom =  false; //(touchSensorBottom.getState() == false);
                     debouncing = false;
                 }
             }
 
         }
+        debouncing = false;
     }
 
     public void checkForTop() {
@@ -118,11 +123,12 @@ public class ElevatorSystem {
             if (!debouncing)
             {
                 debounceTime.reset();
+                debouncing = true;
             }
             else
             {
                 if (debounceTime.milliseconds() > 50) {
-                    isAtTop = (touchSensorBottom.getState() == false);
+                    isAtTop = false; //(touchSensorBottom.getState() == false);
                     debouncing = false;
                 }
             }
