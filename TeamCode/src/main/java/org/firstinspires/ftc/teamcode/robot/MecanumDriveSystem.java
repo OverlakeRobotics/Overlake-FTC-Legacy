@@ -9,7 +9,10 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -140,6 +143,37 @@ public class MecanumDriveSystem extends System
         this.motorBackRight.setPower(Range.clip(backRightPower, -1, 1));
         this.motorFrontLeft.setPower(Range.clip(frontLeftPower - leftX, -1, 1));
         this.motorBackLeft.setPower(Range.clip(backLeftPower + leftX, -1, 1));
+    }
+
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+        double angle = Math.atan2(leftX, leftY);
+        double changeOfDirectionSpeed = -rightX;
+
+        double frontLeft = speed * Math.sin(angle + Math.PI / 4) + changeOfDirectionSpeed;
+        double frontRight = speed * Math.cos(angle + Math.PI / 4) - changeOfDirectionSpeed;
+        double backLeft = speed * Math.cos(angle + Math.PI / 4) + changeOfDirectionSpeed;
+        double backRight = speed * Math.sin(angle + Math.PI / 4) - changeOfDirectionSpeed;
+
+        List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
+        clampPowers(powers);
+
+        motorFrontLeft.setPower(frontLeft);
+        motorFrontRight.setPower(frontRight);
+        motorBackLeft.setPower(backLeft);
+        motorBackRight.setPower(backRight);
+    }
+
+    private void clampPowers(List<Double> powers) {
+        double minPower = Collections.min(powers);
+        double maxPower = Collections.max(powers);
+        double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
+
+        if (maxMag > 1.0) {
+            for (int i = 0; i < powers.size(); i++) {
+                powers.set(i, powers.get(i) / maxMag);
+            }
+        }
     }
 
     public void mecanumDriveXY(double x, double y)
