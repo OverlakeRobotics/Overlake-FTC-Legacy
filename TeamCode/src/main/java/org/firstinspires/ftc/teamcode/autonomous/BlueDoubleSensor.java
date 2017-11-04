@@ -10,13 +10,13 @@ public class BlueDoubleSensor extends VuforiaBaseOpMode {
     public void runOpMode() {
         initializeAllDevices();
         waitForStart();
-        runFlail();
+        //runFlail();
         driveToPositionRevs(-1.5, DRIVE_POWER);
-        shoot();
+        //shoot();
         sleep(500);
-        load();
+        //load();
         sleep(1500);
-        shoot();
+        //shoot();
         sleep(500);
         turn(-35, 0.3);
         sleep(500);

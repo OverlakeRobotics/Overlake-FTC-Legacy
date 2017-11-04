@@ -22,13 +22,13 @@ public class RedCenterPark extends AutonomousOpMode {
     public void runOpMode() {
         initializeAllDevices();
         waitForStart();
-        runFlail();
+        //runFlail();
         driveToPositionRevs(-1.5, DRIVE_POWER);
-        shoot();
+        //shoot();
         sleep(500);
-        load();
+        //load();
         sleep(3000);
-        shoot();
+        //shoot();
         sleep(500);
         turn(-35, 0.3);
         sleep(500);

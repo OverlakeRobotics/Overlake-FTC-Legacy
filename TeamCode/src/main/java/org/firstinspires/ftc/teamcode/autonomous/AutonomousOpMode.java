@@ -6,6 +6,8 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.google.gson.annotations.Expose;
+
+import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 import java.io.*;
@@ -17,9 +19,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     MecanumDriveSystem driveSystem;
     LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
-    FlickerSystem flickerSystem;
-    BallLiftSystem ballSystem;
-    ColorSensorData colorSensorData;
+    Eye eye;
+    //PixyCam pixyCam;
 
 
     void initializeAllDevices()
@@ -29,13 +30,13 @@ public abstract class AutonomousOpMode extends LinearOpMode
         this.imuSystem = new IMUSystem();
         this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
+        this.eye = new Eye();
+        //this.pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
 //        this.lineFollowingSystem.init(this.hardwareMap);
-        this.flickerSystem = new FlickerSystem(this.hardwareMap);
-        this.ballSystem = new BallLiftSystem(this.hardwareMap);
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor
-    public void followColor(HueData hue, boolean followRightEdge)
+    /*public void followColor(HueData hue, boolean followRightEdge)
     {
         double increment = .05;
 
@@ -67,7 +68,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
         // positive increment forces it to drive a little to the right,
         // negative increment drives it a little to the left.
         driveSystem.tweakTankDrive(increment);
-    }
+    }*/
 
     void turn(double degrees, double maxPower)
     {
@@ -174,25 +175,6 @@ public abstract class AutonomousOpMode extends LinearOpMode
         telemetry.update();
     }
 
-    public void shoot() {
-        flickerSystem.setShootPosition();
-        sleep(500);
-        flickerSystem.shoot();
-        while (flickerSystem.isBusy()) {
-            this.idle();
-        }
-        sleep(500);
-        flickerSystem.setLoadPosition();
-    }
-
-    public void load() {
-        ballSystem.runLift(1.0);
-        ballSystem.runBelt(1.0);
-        while (ballSystem.isBusy()) {
-            this.idle();
-        }
-        sleep(500);
-    }
 
     public void park() {
         try {
@@ -200,14 +182,5 @@ public abstract class AutonomousOpMode extends LinearOpMode
         } catch (Exception e) {
 
         }
-    }
-    //public void colorCheck(){
-      //  if(ColorSensorData.fromJson()){
-
-        //}
-    //}
-    public void runFlail(){
-        ballSystem.runFlail(-1);
-
     }
 }

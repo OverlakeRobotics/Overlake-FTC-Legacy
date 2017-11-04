@@ -22,13 +22,13 @@ public class BlueCenterPark extends AutonomousOpMode {
     public void runOpMode() {
         initializeAllDevices();
         waitForStart();
-        runFlail();
+        //runFlail();
         driveToPositionRevs(-1.5, DRIVE_POWER);
-        shoot();
+        //shoot();
         sleep(250);
-        load();
+        //load();
         sleep(4000);
-        shoot();
+        //shoot();
         sleep(250);
         turn(35, 0.3);
         sleep(250);

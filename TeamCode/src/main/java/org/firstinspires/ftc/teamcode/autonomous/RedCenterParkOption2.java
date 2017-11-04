@@ -10,12 +10,12 @@ public class RedCenterParkOption2 extends AutonomousOpMode {
     public void runOpMode() {
         initializeAllDevices();
         waitForStart();
-        runFlail();
+        //runFlail();
         driveToPositionRevs(-2.2, DRIVE_POWER);
-        shoot();
-        load();
+        //shoot();
+        //load();
         sleep(4000);
-        shoot();
+        //shoot();
         sleep(1000);
         driveToPositionRevs(-1.5, DRIVE_POWER);
     }
