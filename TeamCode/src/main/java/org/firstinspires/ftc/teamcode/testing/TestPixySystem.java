@@ -17,76 +17,84 @@ import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 public class TestPixySystem extends LinearOpMode {
 
     private PixyCam pixyCam;
-    //private PixyCam pixyCam2;
+    private PixyCam pixyCam2;
 
-    private double rightServoCenter;
+    private double rightHorizServoCenter;
+    private double rightVertServoTop;
+    private double rightVertServoBottom;
+    private double leftHorizServoCenter;
+    private double leftVertServoTop;
+    private double leftVertServoBottom;
+
     private PixyCam.Block leftRedBlock;
     private PixyCam.Block leftBlueBlock;
-    //private PixyCam.Block rightRedBlock;
-    //private PixyCam.Block rightBlueBlock;
+    private PixyCam.Block rightRedBlock;
+    private PixyCam.Block rightBlueBlock;
 
-    //Servo rightVertServo;
+    Servo rightVertServo;
     Servo leftVertServo;
-    //Servo rightHorizServo;
+    Servo rightHorizServo;
     Servo leftHorizServo;
     boolean teamColorIsBlue;
 
     @Override
     public void runOpMode() {
         pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
-        //pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
+        pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
 
         this.teamColorIsBlue = true;
 
-        //this.rightVertServo = hardwareMap.servo.get("rightvertservo");
+        this.rightVertServo = hardwareMap.servo.get("rightvertservo");
         this.leftVertServo = hardwareMap.servo.get("leftvertservo");
-        //this.rightHorizServo = hardwareMap.servo.get("righthorizservo");
+        this.rightHorizServo = hardwareMap.servo.get("righthorizservo");
         this.leftHorizServo = hardwareMap.servo.get("lefthorizservo");
-        this.rightServoCenter = 0.4;
+        this.rightHorizServoCenter = 0.4;
+        this.rightVertServoTop = 1.0;
+        this.rightVertServoBottom = 0.0;
         waitForStart();
 
         if (teamColorIsBlue == true) {
             this.leftRedBlock = pixyCam.GetBiggestBlock(1);
             this.leftBlueBlock = pixyCam.GetBiggestBlock(2);
-            telemetry.addData("Red:", leftRedBlock.toString());
-            telemetry.addData("Blue:", leftBlueBlock.toString());
+            telemetry.addData("Red :", leftRedBlock.toString());
+            telemetry.addData("Blue :", leftBlueBlock.toString());
             telemetry.update();
             sleep(1000);
-            leftVertServo.setPosition(0.8);
+            leftVertServo.setPosition(1);
             sleep(1000);
             if (leftRedBlock.x < leftBlueBlock.x) {  // if red is further left than blue
-                leftHorizServo.setPosition(0.7); // then move the servo left
+                leftHorizServo.setPosition(0.8); // then move the servo left
                 sleep(1000);
                 leftHorizServo.setPosition(0.5);
             } else {
-                leftHorizServo.setPosition(0.3);
+                leftHorizServo.setPosition(0.2);
                 sleep(1000);
                 leftHorizServo.setPosition(0.5); // move the servo right -- also, if no values are found for x, it will go right
             }
             sleep(1000);
             leftVertServo.setPosition(0);
             sleep(1000);
-        } else { /*
-            //this.rightRedBlock = pixyCam2.GetBiggestBlock(1);
-            //this.rightBlueBlock = pixyCam2.GetBiggestBlock(2);
-            //telemetry.addData("Red:", rightRedBlock.toString());
-            //telemetry.addData("Blue:", rightBlueBlock.toString());
-            //telemetry.update();
+        } else {
+            this.rightRedBlock = pixyCam2.GetBiggestBlock(1);
+            this.rightBlueBlock = pixyCam2.GetBiggestBlock(2);
+            telemetry.addData("Red :", rightRedBlock.toString());
+            telemetry.addData("Blue :", rightBlueBlock.toString());
+            telemetry.update();
             sleep(1000);
-            rightVertServo.setPosition(0);
+            rightVertServo.setPosition(rightVertServoBottom);
             sleep(1000);
-            if (leftRedBlock.x < leftBlueBlock.x 1 < 2) {  // if red is further left than blue
-                rightHorizServo.setPosition(0.7); // then move the servo left
+            if (rightRedBlock.x < rightBlueBlock.x) {
+                rightHorizServo.setPosition(rightHorizServoCenter + 0.2);
                 sleep(1000);
-                rightHorizServo.setPosition(rightServoCenter);
+                rightHorizServo.setPosition(rightHorizServoCenter);
             } else {
-                rightHorizServo.setPosition(0.3);
+                rightHorizServo.setPosition(rightHorizServoCenter - 0.2);
                 sleep(1000);
-                rightHorizServo.setPosition(rightServoCenter); // move the servo right -- also, if no values are found for x, it will go right
+                rightHorizServo.setPosition(rightHorizServoCenter);
             }
             sleep(1000);
-            rightVertServo.setPosition(0.8);
-            sleep(1000); */
+            rightVertServo.setPosition(rightVertServoTop);
+            sleep(1000);
         }
         while (!isStopRequested())
         {
