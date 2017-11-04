@@ -45,6 +45,9 @@ public class CompetitionOpMode extends AutonomousOpMode {
     @Override
     public void runOpMode() {
         initializeAllDevices();
+        claw.setReleasePosition();
+        elevator.goToZero(telemetry);
+        waitForStart();
         /*pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
         //pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
 
@@ -101,33 +104,39 @@ public class CompetitionOpMode extends AutonomousOpMode {
             sleep(1000);
         }*/
         cryptoBox(0);
-        sleep(5000);
-        telemetry.addLine("test turn");
-        telemetry.update();
-        sleep(3000);
-        turn(90, 1);
-        sleep(3000);
-        telemetry.addLine("test picture determination");
-        telemetry.update();
-        sleep(7000);
-        eye.find();
-        telemetry.addLine("this is the " + eye.look() + " picture");
-        telemetry.update();
         stop();
     }
 
     public void cryptoBox(int zone) {
+        claw.setLoadPosition();
+        elevator.goToUnloadPos1();
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-            driveSystem.setTargetPositionInches(23);
+            driveToPositionInches(-33, 1);
+            telemetry.addLine("doi");
+            telemetry.update();
+            sleep(2000);
+            driveSystem.mecanumDriveXY(0, -1);
+            sleep(2000);
+            driveSystem.mecanumDriveXY(0, 0);
+            telemetry.addLine("doiiiiiii");
+            telemetry.update();
+            sleep(2000);
+            driveSystem.mecanumDriveXY(0, -1);
+            sleep(2000);
+            driveSystem.mecanumDriveXY(0, 0);
         } else if (zone == 1) {
 
-        } else if (zone == 2) {
-            driveSystem.setTargetPositionInches(23);
+        }  else if (zone == 2) {
+            driveToPositionInches(-33, 1);
+            driveSystem.mecanumDriveXY(0, -1);
+            sleep(2000);
+            driveSystem.mecanumDriveXY(0, 0);
         } else {
 
         }
+        claw.setReleasePosition();
     }
 
 }

@@ -20,6 +20,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
     LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
     Eye eye;
+    ElevatorSystem elevator;
+    ClawSystem claw;
     //PixyCam pixyCam;
 
 
@@ -31,6 +33,8 @@ public abstract class AutonomousOpMode extends LinearOpMode
         this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
         this.eye = new Eye();
+        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
+        this.claw = new ClawSystem(hardwareMap);
         //this.pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
 //        this.lineFollowingSystem.init(this.hardwareMap);
     }
@@ -156,6 +160,40 @@ public abstract class AutonomousOpMode extends LinearOpMode
         */
         Ramp ramp = new ExponentialRamp(driveSystem.revolutionsToTicks(0.01), minPower,
                                         driveSystem.revolutionsToTicks(1.0), maxPower);
+
+        // Wait until they are done
+        driveSystem.setPower(maxPower);
+        while (this.driveSystem.anyMotorsBusy())
+        {
+            telemetry.update();
+
+            this.idle();
+
+            this.driveSystem.adjustPower(ramp);
+        }
+
+        // Now that we've arrived, kill the motors so they don't just sit there buzzing
+        driveSystem.setPower(0);
+
+        // Always leave the screen looking pretty
+        telemetry.update();
+    }
+
+    void driveToPositionInches(double inches, double maxPower)
+    {
+        double minPower = 0.1;
+
+        this.driveSystem.setTargetPositionInches(inches);
+
+        /*
+            Create a Ramp that will map a distance in revolutions between 0.01 and 1.0
+            onto power values between minPower and maxPower.
+            When the robot is greater than 1.0 revolution from the target the power
+            will be set to maxPower, but when it gets within 1.0 revolutions, the power
+            will be ramped down to minPower
+        */
+        Ramp ramp = new ExponentialRamp(driveSystem.revolutionsToTicks(0.01), minPower,
+                driveSystem.revolutionsToTicks(1.0), maxPower);
 
         // Wait until they are done
         driveSystem.setPower(maxPower);
