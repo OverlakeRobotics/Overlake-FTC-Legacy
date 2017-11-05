@@ -40,29 +40,29 @@ public class TestPixySystem extends LinearOpMode {
     @Override
     public void runOpMode() {
         pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
-        pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
+        //pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
 
-        this.teamColorIsBlue = true;
+        this.teamColorIsBlue = false;
 
-        this.rightVertServo = hardwareMap.servo.get("rightvertservo");
+        //this.rightVertServo = hardwareMap.servo.get("rightvertservo");
         this.leftVertServo = hardwareMap.servo.get("leftvertservo");
-        this.rightHorizServo = hardwareMap.servo.get("righthorizservo");
+        //this.rightHorizServo = hardwareMap.servo.get("righthorizservo");
         this.leftHorizServo = hardwareMap.servo.get("lefthorizservo");
-        this.rightHorizServoCenter = 0.4;
-        this.rightVertServoTop = 1.0;
-        this.rightVertServoBottom = 0.0;
+        //this.rightHorizServoCenter = 0.4;
+        //this.rightVertServoTop = 1.0;
+        //this.rightVertServoBottom = 0.0;
+        this.leftRedBlock = pixyCam.GetBiggestBlock(1);
+        this.leftBlueBlock = pixyCam.GetBiggestBlock(2);
+        telemetry.addData("Red :", leftRedBlock.toString());
+        telemetry.addData("Blue :", leftBlueBlock.toString());
+        telemetry.update();
+        sleep(1000);
+        leftVertServo.setPosition(1);
+        sleep(1000);
         waitForStart();
 
         if (teamColorIsBlue == true) {
-            this.leftRedBlock = pixyCam.GetBiggestBlock(1);
-            this.leftBlueBlock = pixyCam.GetBiggestBlock(2);
-            telemetry.addData("Red :", leftRedBlock.toString());
-            telemetry.addData("Blue :", leftBlueBlock.toString());
-            telemetry.update();
-            sleep(1000);
-            leftVertServo.setPosition(1);
-            sleep(1000);
-            if (leftRedBlock.x < leftBlueBlock.x) {  // if red is further left than blue
+            if (this.leftRedBlock.x < this.leftBlueBlock.x) {  // if red is further left than blue
                 leftHorizServo.setPosition(0.8); // then move the servo left
                 sleep(1000);
                 leftHorizServo.setPosition(0.5);
@@ -75,6 +75,28 @@ public class TestPixySystem extends LinearOpMode {
             leftVertServo.setPosition(0);
             sleep(1000);
         } else {
+            if (leftRedBlock.x < leftBlueBlock.x) {  // if red is further left than blue
+                leftHorizServo.setPosition(0.2); // then move the servo left
+                sleep(1000);
+                leftHorizServo.setPosition(0.5);
+            } else {
+                leftHorizServo.setPosition(0.8);
+                sleep(1000);
+                leftHorizServo.setPosition(0.5); // move the servo right -- also, if no values are found for x, it will go right
+            }
+            sleep(1000);
+            leftVertServo.setPosition(0);
+            sleep(1000);
+
+
+
+
+
+
+
+
+
+            /*
             this.rightRedBlock = pixyCam2.GetBiggestBlock(1);
             this.rightBlueBlock = pixyCam2.GetBiggestBlock(2);
             telemetry.addData("Red :", rightRedBlock.toString());
@@ -94,7 +116,7 @@ public class TestPixySystem extends LinearOpMode {
             }
             sleep(1000);
             rightVertServo.setPosition(rightVertServoTop);
-            sleep(1000);
+            sleep(1000); */
         }
         while (!isStopRequested())
         {
