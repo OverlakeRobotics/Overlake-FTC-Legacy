@@ -33,7 +33,7 @@ public class PixySystem {
 
     }
 
-    public void pixyRun {
+    public void pixyRun() {
         if(isBlue) {
     
         }

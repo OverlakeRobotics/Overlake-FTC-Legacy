@@ -80,20 +80,20 @@ public class TeleOpMecanum extends OpMode {
 		// the robot more precisely at slower speeds.
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
 
-        flickerButton.testAndHandle();
-        flickerShootPositionButton.testAndHandle();
-        flickerLoadPositionButton.testAndHandle();
-        ballLiftFowardButton.testAndHandle();
-        ballLiftReverseButton.testAndHandle();
-        ballFlailFowardButton.testAndHandle();
-        ballFlailReverseButton.testAndHandle();
-        flickerDecrementAngle.testAndHandle();
-        flickerIncrementAngle.testAndHandle();
-        flickerSaveShootPos.testAndHandle();
-        flickerSaveLoadPos.testAndHandle();
+//        flickerButton.testAndHandle();
+//        flickerShootPositionButton.testAndHandle();
+//        flickerLoadPositionButton.testAndHandle();
+//        ballLiftFowardButton.testAndHandle();
+//        ballLiftReverseButton.testAndHandle();
+//        ballFlailFowardButton.testAndHandle();
+//        ballFlailReverseButton.testAndHandle();
+//        flickerDecrementAngle.testAndHandle();
+//        flickerIncrementAngle.testAndHandle();
+//        flickerSaveShootPos.testAndHandle();
+//        flickerSaveLoadPos.testAndHandle();
 
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
-        telemetry.addData("Angle", flicker.getServoAngle());
+//        telemetry.addData("Angle", flicker.getServoAngle());
 	}
 
 	/*

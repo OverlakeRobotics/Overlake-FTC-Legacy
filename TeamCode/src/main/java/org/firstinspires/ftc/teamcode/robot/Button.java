@@ -17,7 +17,11 @@ public abstract class Button implements ButtonCallback
         this.justReleased = (!pressed && this.wasPressed);
         this.wasPressed = pressed;
 
-        this.pressedHandler();
-        this.releasedHandler();
+        if (this.justPressed) {
+            this.pressedHandler();
+        }
+        if (this.justReleased) {
+            this.releasedHandler();
+        }
     }
 }

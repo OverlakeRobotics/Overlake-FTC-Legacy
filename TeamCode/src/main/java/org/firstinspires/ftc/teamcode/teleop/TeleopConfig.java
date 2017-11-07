@@ -22,9 +22,10 @@ public class TeleopConfig extends OpMode {
     private Controller controller1;
 
     public void init() {
-        c = new ConfigParser("test.omc");
-        telemetry.addData("all data", c.toString());
-        telemetry.addData("i", c.getInt("i"));
+//        c = new ConfigParser("test.omc");
+//        telemetry.addData("all data", c.toString());
+//        telemetry.addData("i", c.getInt("i"));
+        controller1 = new Controller();
         controller1.addButton(new Button() {
             @Override
             public boolean isPressed() {
@@ -33,12 +34,14 @@ public class TeleopConfig extends OpMode {
 
             @Override
             public void pressedHandler() {
-                telemetry.addData("pressed", "dogs");
+                telemetry.addData("pressed", System.currentTimeMillis());
+                telemetry.update();
             }
 
             @Override
             public void releasedHandler() {
-                telemetry.addData("released", "dogs");
+                telemetry.addData("released", System.currentTimeMillis());
+                telemetry.update();
             }
         });
     }

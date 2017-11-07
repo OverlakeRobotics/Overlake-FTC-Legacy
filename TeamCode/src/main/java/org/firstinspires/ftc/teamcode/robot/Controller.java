@@ -21,10 +21,8 @@ public class Controller {
     private List<Button> buttons;
     private Map<String, Boolean> controllerButtonMap;
 
-    public Controller(final Gamepad gamepad) {
-        this.gamepad = gamepad;
+    public Controller() {
         buttons = new ArrayList<Button>();
-        controllerButtonMap = new HashMap<String, Boolean>();
     }
 
     public void addButton(Button button) {
