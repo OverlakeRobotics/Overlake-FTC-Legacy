@@ -15,7 +15,7 @@ public class AutonomousTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        driveSystem = new MecanumDriveSystem(hardwareMap, telemetry);
+        driveSystem = new MecanumDriveSystem(this);
         telemetry.addData("here", "here");
         telemetry.update();
         driveSystem.driveInchesXY(50, 0, 0.5);

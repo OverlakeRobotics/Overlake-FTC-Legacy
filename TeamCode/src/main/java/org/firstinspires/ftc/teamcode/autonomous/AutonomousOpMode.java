@@ -20,8 +20,8 @@ public abstract class AutonomousOpMode extends BaseOpMode
 
     void initializeAllDevices()
     {
-        this.driveSystem = new MecanumDriveSystem(hardwareMap, telemetry);
-        this.imuSystem = new IMUSystem(this.hardwareMap, telemetry);
+        this.driveSystem = new MecanumDriveSystem(this);
+        this.imuSystem = new IMUSystem(this);
         this.lineFollowingSystem = new LineFollowingSystem();
     }
 
