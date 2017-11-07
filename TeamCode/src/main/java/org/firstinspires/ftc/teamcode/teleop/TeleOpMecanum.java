@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -46,6 +47,7 @@ import org.firstinspires.ftc.teamcode.util.Handler;
  */
 
 @TeleOp(name="TeleOpMecanum", group="TeleOp")
+@Disabled
 public class TeleOpMecanum extends OpMode {
 
 	//region Motors

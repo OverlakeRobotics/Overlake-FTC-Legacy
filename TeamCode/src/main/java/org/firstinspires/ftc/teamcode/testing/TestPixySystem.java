@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
  */
 
 @Autonomous(name="TextPixySystem", group="Bot")
+@Disabled
 public class TestPixySystem extends LinearOpMode {
 
     private PixyCam pixyCam;

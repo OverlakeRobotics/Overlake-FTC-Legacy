@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,6 +53,7 @@ import java.util.Date;
  */
 
 @Autonomous(name="TestTurnOpMode", group="Bot")
+@Disabled
 public class TestTurnOpMode extends AutonomousOpMode {
 
     private GyroSensor gyroSensor;

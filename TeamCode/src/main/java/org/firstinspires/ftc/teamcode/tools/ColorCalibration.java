@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tools;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.HueData;
 import org.firstinspires.ftc.teamcode.robot.*;
 
 @TeleOp(name="ColorCalibration")
+@Disabled
 public class ColorCalibration extends LinearOpMode
 {
     ColorSensor sensorRGB;

@@ -31,9 +31,9 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private PixyCam.Block rightRedBlock;
     private PixyCam.Block rightBlueBlock;
 
-    Servo rightVertServo;
+    //Servo rightVertServo;
     Servo leftVertServo;
-    Servo rightHorizServo;
+    //Servo rightHorizServo;
     Servo leftHorizServo;*/
     boolean teamColorIsBlue;
     //////////////////////////////////////////////////////
@@ -41,17 +41,19 @@ public class CompetitionOpMode extends AutonomousOpMode {
     @Override
     public void runOpMode() {
         initializeAllDevices();
+
         claw.setReleasePosition();
         elevator.goToZero(telemetry);
-        //initPixy();
         waitForStart();
-        teamColorIsBlue = (zone == 0 || zone == 1);
-
-
-        //doPixy();
-
-
+        //initPixy();
         cryptoBox(0);
+        //driveToPositionRevs(3,0.5);
+        //initPixy();
+        //driveToPositionInches(-40, 1);
+
+
+
+        //cryptoBox(0);
         stop();
     }
 
@@ -62,36 +64,47 @@ public class CompetitionOpMode extends AutonomousOpMode {
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-            driveToPositionInches(-33, 1);
-            turn(90, 1);
-            driveToPositionInches(-10, 1);
+            driveToPositionInches(-40, 1);
             turn(-90, 1);
+            driveToPositionInches(-18, 1);
+            turn(90, 1);
             elevator.goToZero(telemetry);
             claw.setReleasePosition();
             sleep(1000);
-            driveToPositionInches(-5, 1);
+            driveToPositionInches(-20, 1);
 
 
         } else if (zone == 1) {
-
-        } else if (zone == 2) {
-            driveToPositionInches(-33, 1);
-            turn(-90, 1);
-            driveToPositionInches(-10, 1);
+            driveToPositionInches(-50, 1);
             turn(90, 1);
             elevator.goToZero(telemetry);
             claw.setReleasePosition();
+            sleep(2000);
+            driveToPositionInches(-13, 1);
+        } else if (zone == 2) {
+            driveToPositionInches(40, 1);
+            turn(-90, 1);
+            driveToPositionInches(-18, 1);
+            turn(-90, 1);
+            elevator.goToZero(telemetry);
+            claw.setReleasePosition();
             sleep(1000);
-            driveToPositionInches(-5, 1);
+            driveToPositionInches(-18, 1);
         } else {
-
+            driveToPositionInches(-50, 1);
+            turn(-90, 1);
+            elevator.goToZero(telemetry);
+            claw.setReleasePosition();
+            sleep(2000);
+            driveToPositionInches(-18, 1);
         }
         claw.setReleasePosition();
     }
 
     /*public void initPixy() {
-        this.pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
-        this.pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
+        pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
+        //pixyCam2 = hardwareMap.get(PixyCam.class, "pixycam2");
+
         //this.rightVertServo = hardwareMap.servo.get("rightvertservo");
         this.leftVertServo = hardwareMap.servo.get("leftvertservo");
         //this.rightHorizServo = hardwareMap.servo.get("righthorizservo");
@@ -99,19 +112,18 @@ public class CompetitionOpMode extends AutonomousOpMode {
         //this.rightHorizServoCenter = 0.4;
         //this.rightVertServoTop = 1.0;
         //this.rightVertServoBottom = 0.0;
-    }
+        this.leftRedBlock = pixyCam.GetBiggestBlock(1);
+        this.leftBlueBlock = pixyCam.GetBiggestBlock(2);
+        telemetry.addData("Red: ", leftRedBlock.toString());
+        telemetry.addData("Blue: ", leftBlueBlock.toString());
+        telemetry.update();
+        sleep(1000);
+        leftVertServo.setPosition(1);
+        sleep(1000);
+        waitForStart();
 
-    public void doPixy() {
         if (teamColorIsBlue == true) {
-            this.leftRedBlock = pixyCam.GetBiggestBlock(1);
-            this.leftBlueBlock = pixyCam.GetBiggestBlock(2);
-            telemetry.addData("Red :", leftRedBlock.toString());
-            telemetry.addData("Blue :", leftBlueBlock.toString());
-            telemetry.update();
-            sleep(1000);
-            leftVertServo.setPosition(1);
-            sleep(1000);
-            if (leftRedBlock.x < leftBlueBlock.x) {  // if red is further left than blue
+            if (this.leftRedBlock.x < this.leftBlueBlock.x) {  // if red is further left than blue
                 leftHorizServo.setPosition(0.8); // then move the servo left
                 sleep(1000);
                 leftHorizServo.setPosition(0.5);
@@ -123,7 +135,29 @@ public class CompetitionOpMode extends AutonomousOpMode {
             sleep(1000);
             leftVertServo.setPosition(0);
             sleep(1000);
-        } /*else {
+        } else {
+            if (leftRedBlock.x < leftBlueBlock.x) {  // if red is further left than blue
+                leftHorizServo.setPosition(0.2); // then move the servo left
+                sleep(1000);
+                leftHorizServo.setPosition(0.5);
+            } else {
+                leftHorizServo.setPosition(0.8);
+                sleep(1000);
+                leftHorizServo.setPosition(0.5); // move the servo right -- also, if no values are found for x, it will go right
+            }
+            sleep(1000);
+            leftVertServo.setPosition(0);
+            sleep(1000);
+
+
+
+
+
+
+
+
+
+            /*
             this.rightRedBlock = pixyCam2.GetBiggestBlock(1);
             this.rightBlueBlock = pixyCam2.GetBiggestBlock(2);
             telemetry.addData("Red :", rightRedBlock.toString());

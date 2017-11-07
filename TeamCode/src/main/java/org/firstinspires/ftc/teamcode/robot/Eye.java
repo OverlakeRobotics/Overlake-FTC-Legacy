@@ -67,7 +67,7 @@ public class Eye {
         }
     }*/
 
-    public String look() {
+    public int look() {
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
             OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
@@ -76,18 +76,18 @@ public class Eye {
                 this.rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             }
             if (vuMark == RelicRecoveryVuMark.LEFT) {
-                //return 0;
-                return "left";
+                return 0;
+                //return "left";
             } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                //return 1;
-                return "right";
+                return 2;
+                //return "right";
             } else {
-                //return 2;
-                return "center";
+                return 1;
+                //return "center";
             }
         }
-        //return -1;
-        return "undetermined";
+        return -1;
+        //return "undetermined";
     }
 
     public int find() {

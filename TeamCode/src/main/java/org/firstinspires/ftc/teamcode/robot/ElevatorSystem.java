@@ -24,7 +24,7 @@ public class ElevatorSystem {
     int position;
     private int loadPos1Ticks = 0;
     private int loadPos2Ticks = 1200;
-    private int unloadStackTicks = 350;
+    private int unloadStackTicks = 150;
     private int unloadPos1Ticks = 800;
 
     private int unloadPos2Ticks = 1200;
@@ -36,8 +36,9 @@ public class ElevatorSystem {
 
     boolean isAtTop = false;
     boolean isAtBottom = false;
-    private double negativePower = -0.3;
-    private double positivePower = 0.3;
+    private double increment = 0.55;
+    private double negativePower = -0.55;
+    private double positivePower = 0.55;
 
     Telemetry telemetry;
 
@@ -59,7 +60,8 @@ public class ElevatorSystem {
         while(touchSensorBottom.getState()==true) {
             telemetry.addData("touch Sensor" , touchSensorBottom.getState());
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            elevator.setPower(-0.3);
+            //elevator.setPower(-0.3);
+            elevator.setPower(-increment);
 
         }
         elevator.setPower(0.0);
@@ -171,9 +173,9 @@ public class ElevatorSystem {
         telemetry.addData("to: ", loadPos2Ticks);
         double power;
         if(position > unloadPos2Ticks) {
-            power = -0.3;
+            power = negativePower;
         } else {
-            power = 0.3;
+            power = positivePower;
         }
         telemetry.addData("power: " , power);
         elevator.setPower(power);

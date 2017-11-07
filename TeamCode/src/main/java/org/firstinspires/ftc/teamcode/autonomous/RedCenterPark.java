@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
  * Created by EvanCoulson on 10/26/16.
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
  */
 @Autonomous(name="RedCenter1", group="Bot")
+@Disabled
 public class RedCenterPark extends AutonomousOpMode {
 
     private final double DRIVE_POWER = 0.2;

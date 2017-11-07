@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name="BlueAutonomous", group="Bot")
+@Disabled
 public class BlueDoubleSensor extends VuforiaBaseOpMode {
 
     private final double DRIVE_POWER = 0.2;
