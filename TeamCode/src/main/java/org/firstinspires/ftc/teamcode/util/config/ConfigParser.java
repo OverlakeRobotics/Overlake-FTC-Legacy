@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -118,5 +119,21 @@ public class ConfigParser {
         return results;
     }
 
-
+    public void updateKey(String key, String newVal) {
+        FileInputStream fis;
+        try {
+            Scanner input = new Scanner(file);
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            for (String keys : configData.keySet()) {
+                String[] args = configData.get(key);
+                if (args[1].equals(key)) {
+                    args[2] = newVal;
+                }
+                writer.write("[" + args[0] + "] " + args[1] + ": " + args[2]);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("File Input Stream Failure");
+        }
+    }
 }

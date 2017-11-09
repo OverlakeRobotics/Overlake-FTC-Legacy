@@ -18,8 +18,8 @@ import java.util.Set;
 
 public class MecanumDriveSystem extends System
 {
-    // 2) remove motor map, too unreadable and makes work to verbose
     private final float SCALE_FACTOR = 0.62f;
+    private final double WHEEL_DIAMETER_INCHES = 4.0;
 
     public IMUSystem imuSystem;
     public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
@@ -38,17 +38,17 @@ public class MecanumDriveSystem extends System
         imuSystem = new IMUSystem(opMode);
         startingIMUHeading = imuSystem.getHeading();
 
-        this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, map.dcMotor.get(config.getString("motorFL")), 4, 32, 16);
-        this.motorFrontRight = new GearedMotor(MOTOR_PULSES, map.dcMotor.get(config.getString("motorFR")), 4, 32, 16);
-        this.motorBackRight = new GearedMotor(MOTOR_PULSES, map.dcMotor.get(config.getString("motorBR")), 4, 32, 16);
-        this.motorBackLeft = new GearedMotor(MOTOR_PULSES, map.dcMotor.get(config.getString("motorBL")), 4, 32, 16);
+        this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
+        this.motorFrontRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
+        this.motorBackRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
+        this.motorBackLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
+        this.motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        this.motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Set PID coeffiecents
         setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
@@ -192,9 +192,6 @@ public class MecanumDriveSystem extends System
     }
 
     public void driveInchesPolar(double inches, double direction, double maxPower, double deltaInches) {
-        if (direction != 0) {
-            turn(direction, 0.8);
-        }
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         GearedMotor.runMotorsRampedInches(
                 inches, deltaInches, maxPower, motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft
@@ -202,9 +199,6 @@ public class MecanumDriveSystem extends System
     }
 
     public void driveInchesPolar(double inches, double direction, double power) {
-        if (direction != 0) {
-            turn(direction, 0.8);
-        }
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motorFrontRight.runOutputWheelInches(inches, power);
         this.motorBackRight.runOutputWheelInches(inches, power);

@@ -16,13 +16,14 @@ public class AutonomousTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         driveSystem = new MecanumDriveSystem(this);
-        telemetry.addData("here", "here");
+        waitForStart();
         telemetry.update();
-        driveSystem.driveInchesXY(50, 0, 0.5);
-        sleep(100000);
-//        telemetry.addData("sleep", "");
-//        sleep(5000);
-//        telemetry.addData("resume", "");
-//        driveSystem.driveInchesXY(5,5,0.8);
+        driveSystem.driveInchesXY(100, 0, 0.8, 25);
+        while(driveSystem.anyMotorsBusy()) {
+            this.idle();
+        }
+        while(!this.isStopRequested()) {
+            this.idle();
+        }
     }
 }

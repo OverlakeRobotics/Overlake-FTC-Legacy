@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
 
@@ -35,7 +36,7 @@ public class GearedMotor {
         this.chain = new GearChain(teeth);
         this.pulses = pulses;
         this.wheelDiameter = wheelDiameter;
-        this.ticksPerInch = (pulses * chain.calculateOutputRevolutions(pulses, 1)) / (wheelDiameter * Math.PI);
+        this.ticksPerInch = (chain.calculateOutputRevolutions(pulses, 1)) / (wheelDiameter * Math.PI);
         this.motor = motor;
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motor.setPower(0);
@@ -69,6 +70,7 @@ public class GearedMotor {
     }
 
     public void runOutputWheelInches(double inches, double power) {
+
         int ticks = (int) Math.round(inches * ticksPerInch);
         runMotor(ticks, power);
     }
@@ -88,22 +90,7 @@ public class GearedMotor {
 
     private void setTargetPosition(int ticks) {
         int current = motor.getCurrentPosition();
-        if (ticks > 0) {
-            switchDirection();
-            motor.setTargetPosition(current + ticks);
-        } else if (ticks < 0) {
-            ticks = -ticks;
-            switchDirection();
-            motor.setTargetPosition(current + ticks);
-        }
-    }
-
-    public void switchDirection() {
-        if (motor.getDirection().equals(DcMotorSimple.Direction.FORWARD)) {
-            motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        } else {
-            motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
+        motor.setTargetPosition(current + ticks);
     }
 
     public double getPower() {
@@ -186,8 +173,8 @@ public class GearedMotor {
     private static void checkWheels(GearedMotor... motors) {
         double testDiameter = motors[0].wheelDiameter;
         for (GearedMotor motor : motors) {
-            if (motor.pulses != testDiameter) {
-                throw new IllegalArgumentException("All motors must have the same diameter.");
+            if (motor.wheelDiameter != testDiameter) {
+                throw new IllegalArgumentException("All wheels must have the same diameter.");
             }
         }
     }
@@ -220,8 +207,7 @@ public class GearedMotor {
 
     private static void runMotorsRampedTicks(int ticks, int deltaTicks, double maxPower, GearedMotor... motors) {
         setTargetPosition(ticks, motors);
-        int minTicks = motors[0].chain.calculateOutputRevolutions(motors[0].pulses, MIN_REVS);
-        Ramp ramp = new ExponentialRamp(minTicks, MIN_POWER, deltaTicks, maxPower);
+        Ramp ramp = new ExponentialRamp(0, MIN_POWER, deltaTicks, maxPower);
         while (motorsAreBusy(motors)) {
             Thread.yield();
             int distanceFromTarget = getMinDistanceFromTarget(motors);
@@ -232,7 +218,12 @@ public class GearedMotor {
                 direction = BACKWARD_DIRECTION;
             }
 
-            double scaledPower = ramp.value(distanceFromTarget);
+            double scaledPower;
+            if (ticks - distanceFromTarget < deltaTicks) {
+                scaledPower = ramp.value(ticks - distanceFromTarget);
+            } else {
+                scaledPower = ramp.value(distanceFromTarget);
+            }
 
             for (GearedMotor motor : motors) {
                 motor.setPower(direction * scaledPower);
