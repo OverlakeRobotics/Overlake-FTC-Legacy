@@ -21,9 +21,9 @@ public class ClawSystem {
     private double LOAD_POSITION; //0.320;
     //left trigger
     private double RELEASE_POSITION;//0.345;
-
     //a
     private double REST_POSITION; //0.5;
+
     private ClawSystem.ServoPositions position;
 
     public double servoAngle;
@@ -51,20 +51,20 @@ public class ClawSystem {
         CLAWREST,
 
     }
-    public void setLoadPosition() {
+    public void goToLoadPosition() {
         servoAngle = LOAD_POSITION;
         claw.setPosition(servoAngle);
         //.5 or .6
         this.position = ServoPositions.CLAWLOAD;
     }
 
-    public void setReleasePosition() {
+    public void goToReleasePosition() {
         servoAngle = RELEASE_POSITION;
         claw.setPosition(servoAngle);
         this.position = ServoPositions.CLAWRELEASE;
     }
 
-    public void setRestPosition() {
+    public void goToRestPosition() {
         servoAngle = REST_POSITION;
         claw.setPosition(servoAngle);
         this.position = ServoPositions.CLAWREST;
@@ -75,9 +75,18 @@ public class ClawSystem {
         claw.setPosition(servoAngle);
     }
 
-    public void decrementLoad() {
+    public void decrementServo() {
         servoAngle -= 0.01;
         claw.setPosition(servoAngle);
+    }
+
+    public void setLoadPosition() {
+        LOAD_POSITION = claw.getPosition();
+
+    }
+
+    public void setReleasePosition() {
+        RELEASE_POSITION = claw.getPosition();
     }
 
 

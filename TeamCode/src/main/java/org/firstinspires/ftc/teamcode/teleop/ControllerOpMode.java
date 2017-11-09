@@ -17,16 +17,25 @@ import org.firstinspires.ftc.teamcode.util.Handler;
 public class ControllerOpMode extends OpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
-    private Button elevatorTopPos;
-    private Button clawRestPosition;
+
     private Button clawLoadPosition;
     private Button clawReleasePosition;
+    private Button clawIncrement;
+    public Button clawDecrement;
+
+    private Button clawSetLoadPosition;
+    private Button clawSetReleasePosition;
+
     private Button elevatorLoadPosition1;
-    private Button elevatorStackPosition;
-    private Button elevatorLoadPosition2;
     private Button elevatorUnloadPosition1;
     private Button elevatorUnloadPosition2;
     private Button elevatorUnloadPosition3;
+    private Button elevatorIncrementUp;
+    private Button elevatorIncrementDown;
+
+    private Button elevatorSetBlock2Pos;
+    private Button elevatorSetBlock3Pos;
+
     MecanumDriveSystem driveSystem;
 
 
@@ -50,7 +59,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad1.right_trigger>0.75;
+                        return gamepad2.right_trigger>0.75 && !gamepad2.left_bumper;
                     }
                 };
         this.clawLoadPosition.pressedHandler =
@@ -59,7 +68,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public void invoke()
                     {
-                        claw.setLoadPosition();
+                        claw.goToLoadPosition();
                     }
                 };
 
@@ -70,10 +79,51 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad1.left_trigger>0.75;
+                        return gamepad2.left_trigger>0.75 && !gamepad2.left_bumper;
+
                     }
                 };
         this.clawReleasePosition.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        claw.goToReleasePosition();
+                    }
+                };
+
+        this.clawSetLoadPosition = new Button();
+        this.clawSetLoadPosition.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.left_trigger>0.75 && gamepad2.left_bumper;
+                    }
+                };
+        this.clawSetLoadPosition.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        claw.setLoadPosition();
+                    }
+                };
+
+        this.clawSetReleasePosition = new Button();
+        this.clawSetReleasePosition.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.left_trigger>(0.75) && gamepad2.left_bumper;
+                    }
+                };
+        this.clawSetReleasePosition.pressedHandler =
                 new Handler()
                 {
                     @Override
@@ -83,48 +133,49 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
-        this.clawRestPosition = new Button();
-        this.clawRestPosition.isPressed =
+        this.clawIncrement = new Button();
+        this.clawIncrement.isPressed =
                 new Func<Boolean>()
                 {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad1.dpad_down;
+                        return gamepad2.dpad_right;
                     }
                 };
-        this.clawRestPosition.pressedHandler =
+        this.clawIncrement.pressedHandler =
                 new Handler()
                 {
                     @Override
                     public void invoke()
                     {
-                        claw.setRestPosition();
+                        claw.incrementServo();
                     }
                 };
+
+        this.clawDecrement = new Button();
+        this.clawDecrement.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.dpad_left;
+                    }
+                };
+        this.clawDecrement.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        claw.decrementServo();
+                    }
+                };
+
 
 
         //ELEVATOR
-        this.elevatorTopPos = new Button();
-        this.elevatorTopPos.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.left_bumper;
-                    }
-                };
-
-        this.elevatorTopPos.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.runMotorUp();
-                    }
-                };
 
         //Goes to zero
         this.elevatorLoadPosition1 = new Button();
@@ -147,27 +198,7 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
-
-        this.elevatorLoadPosition2 = new Button();
-        this.elevatorLoadPosition2.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.dpad_down;
-                    }
-                };
-        this.elevatorLoadPosition2.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.goToLoadPos2();
-                    }
-                };
-
+        //Goes to Block 2
         this.elevatorUnloadPosition1 = new Button();
         this.elevatorUnloadPosition1.isPressed =
                 new Func<Boolean>()
@@ -175,7 +206,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.b;
+                        return gamepad2.b && !gamepad2.left_bumper ;
                     }
                 };
         this.elevatorUnloadPosition1.pressedHandler =
@@ -184,7 +215,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public void invoke()
                     {
-                        elevator.goToUnloadPos1();
+                        elevator.goToUnloadBlock2();
                     }
                 };
 
@@ -195,7 +226,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.x;
+                        return gamepad2.x && !gamepad2.left_bumper;
                     }
                 };
         this.elevatorUnloadPosition2.pressedHandler =
@@ -204,7 +235,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public void invoke()
                     {
-                        elevator.goToUnloadPos2();
+                        elevator.goToUnloadBlock3();
                     }
                 };
 
@@ -224,12 +255,12 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public void invoke()
                     {
-                        elevator.goToUnloadPos3();
+                        elevator.runMotorUp();
                     }
                 };
 
-        this.elevatorStackPosition = new Button();
-        this.elevatorStackPosition.isPressed =
+        this.elevatorIncrementUp = new Button();
+        this.elevatorIncrementUp.isPressed =
                 new Func<Boolean>()
                 {
                     @Override
@@ -238,33 +269,100 @@ public class ControllerOpMode extends OpMode {
                         return gamepad2.dpad_up;
                     }
                 };
-        this.elevatorStackPosition.pressedHandler =
+        this.elevatorIncrementUp.pressedHandler =
                 new Handler()
                 {
                     @Override
                     public void invoke()
                     {
-                        elevator.goToStackPos();
+                        elevator.incrementUp();
                     }
                 };
 
+        this.elevatorIncrementDown = new Button();
+        this.elevatorIncrementDown.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.dpad_down;
+                    }
+                };
+        this.elevatorIncrementDown.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        elevator.incrementDown();
+                    }
+                };
 
+        this.elevatorSetBlock2Pos = new Button();
+        this.elevatorSetBlock2Pos.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.left_bumper && gamepad2.b;
+                    }
+                };
+        this.elevatorSetBlock2Pos.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        elevator.setPositionBlock2();
+                    }
+                };
+
+        this.elevatorSetBlock3Pos = new Button();
+        this.elevatorSetBlock3Pos.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.left_bumper && gamepad2.x;
+                    }
+                };
+        this.elevatorSetBlock3Pos.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        elevator.setPositionBlock3();
+                    }
+                };
 
     }
+
+
     @Override
     public void loop() {
-        clawRestPosition.testAndHandle();
+
         clawLoadPosition.testAndHandle();
         clawReleasePosition.testAndHandle();
+        clawDecrement.testAndHandle();
+        clawIncrement.testAndHandle();
+        clawSetReleasePosition.testAndHandle();
+        clawSetLoadPosition.testAndHandle();
+
         elevator.checkForBottom(telemetry);
         elevator.checkForTop();
         elevatorLoadPosition1.testAndHandle();
-        elevatorLoadPosition2.testAndHandle();
         elevatorUnloadPosition1.testAndHandle();
         elevatorUnloadPosition2.testAndHandle();
         elevatorUnloadPosition3.testAndHandle();
-        elevatorStackPosition.testAndHandle();
-        elevatorTopPos.testAndHandle();
+        elevatorIncrementDown.testAndHandle();
+        elevatorIncrementUp.testAndHandle();
+        elevatorSetBlock2Pos.testAndHandle();
+        elevatorSetBlock3Pos.testAndHandle();
+
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
 
     }

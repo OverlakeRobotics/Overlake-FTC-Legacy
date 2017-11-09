@@ -60,7 +60,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void cryptoBox(int zone) {
         claw.setLoadPosition();
         sleep(2000);
-        elevator.goToUnloadPos1();
+        elevator.goToUnloadBlock2();
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
