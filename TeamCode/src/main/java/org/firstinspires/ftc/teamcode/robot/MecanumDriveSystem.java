@@ -192,10 +192,10 @@ public class MecanumDriveSystem
         double backRightPower = leftY + rightX - leftX;
         double frontLeftPower = leftY - rightX - leftX;
         double backLeftPower = leftY - rightX + leftX;
-        motorFrontRight.setPower(Range.clip(leftY + rightX + leftX, -1, 1));
-        motorBackRight.setPower(Range.clip(leftY + rightX - leftX, -1, 1));
-        motorFrontLeft.setPower(Range.clip(leftY - rightX - leftX, -1, 1));
-        motorBackLeft.setPower(Range.clip(leftY - rightX + leftX, -1, 1));
+        motorFrontRight.setPower(Range.clip(frontRightPower, -1, 1));
+        motorBackRight.setPower(Range.clip(backRightPower, -1, 1));
+        motorFrontLeft.setPower(Range.clip(frontLeftPower, -1, 1));
+        motorBackLeft.setPower(Range.clip(backLeftPower, -1, 1));
     }
 
     public void mecanumDriveXY(double x, double y)
