@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
+import org.firstinspires.ftc.teamcode.util.ramp.LogarithmicRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
 
 /**
@@ -12,17 +13,15 @@ import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
  */
 
 public class GearedMotor {
-    private final static double MIN_POWER = 0.1d;
-    private final static double MIN_REVS = 0.01d;
-    private final static double MAX_REVS = 1.0d;
-    private final static double FOWARD_DIRECTION = 1d;
-    private final static double BACKWARD_DIRECTION = -1d;
+    public final static double MIN_POWER = 0.1d;
+    public final static double FOWARD_DIRECTION = 1d;
+    public final static double BACKWARD_DIRECTION = -1d;
 
     private GearChain chain;
     private DcMotor motor;
     private int pulses;
     private double wheelDiameter;
-    private double ticksPerInch;
+    public double ticksPerInch;
 
     public GearedMotor(int pulses, DcMotor motor) {
         this(pulses, 0, motor, 1, 1);
@@ -195,7 +194,7 @@ public class GearedMotor {
         return j;
     }
 
-    private static int getMinDistanceFromTarget(GearedMotor... motors)
+    public static int getMinDistanceFromTarget(GearedMotor... motors)
     {
         int minDistance = Integer.MAX_VALUE;
         for (GearedMotor motor : motors) {
@@ -207,7 +206,7 @@ public class GearedMotor {
 
     private static void runMotorsRampedTicks(int ticks, int deltaTicks, double maxPower, GearedMotor... motors) {
         setTargetPosition(ticks, motors);
-        Ramp ramp = new ExponentialRamp(0, MIN_POWER, deltaTicks, maxPower);
+        Ramp ramp = new LogarithmicRamp(0, MIN_POWER, deltaTicks, maxPower);
         while (motorsAreBusy(motors)) {
             Thread.yield();
             int distanceFromTarget = getMinDistanceFromTarget(motors);
@@ -231,9 +230,14 @@ public class GearedMotor {
         }
     }
 
-    private static void setTargetPosition(int ticks, GearedMotor... motors) {
+    public static void setTargetPosition(int ticks, GearedMotor... motors) {
         for (GearedMotor motor : motors) {
             motor.setTargetPosition(ticks);
         }
     }
+
+    public int inchesToTicks(double inches) {
+        return (int)Math.round(inches * ticksPerInch);
+    }
+
 }

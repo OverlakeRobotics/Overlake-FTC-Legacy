@@ -70,6 +70,8 @@ public class MecanumDriveSystem extends System
         motorBackRight.runOutputGearRevolutions(revolutions, power);
     }
 
+
+
     public void setDirection(DcMotorSimple.Direction direction) {
         motorFrontLeft.setDirection(direction);
         motorFrontRight.setDirection(direction);
@@ -158,10 +160,10 @@ public class MecanumDriveSystem extends System
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);
 
-        motorFrontLeft.setPower(frontLeft);
-        motorFrontRight.setPower(frontRight);
-        motorBackLeft.setPower(backLeft);
-        motorBackRight.setPower(backRight);
+        motorFrontLeft.setPower(powers.get(0));
+        motorFrontRight.setPower(powers.get(1));
+        motorBackLeft.setPower(powers.get(2));
+        motorBackRight.setPower(powers.get(3));
     }
 
     private void clampPowers(List<Double> powers) {
@@ -191,19 +193,21 @@ public class MecanumDriveSystem extends System
         mecanumDriveXY(x, y);
     }
 
-    public void driveInchesPolar(double inches, double direction, double maxPower, double deltaInches) {
+    public void driveInchesPolar(double inches, double angle, double maxPower, double deltaInches) {
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-        GearedMotor.runMotorsRampedInches(
-                inches, deltaInches, maxPower, motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft
-        );
+        int ticks = motorBackLeft.inchesToTicks(inches);
+        int deltaTicks = motorBackLeft.inchesToTicks(deltaInches);
+        rampMotors(ticks, angle, maxPower, deltaTicks);
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveInchesPolar(double inches, double direction, double power) {
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.motorFrontRight.runOutputWheelInches(inches, power);
-        this.motorBackRight.runOutputWheelInches(inches, power);
-        this.motorFrontLeft.runOutputWheelInches(inches, power);
-        this.motorBackLeft.runOutputWheelInches(inches, power);
+        this.motorFrontRight.runOutputWheelInches(inches, power * Math.sin(direction));
+        this.motorBackRight.runOutputWheelInches(inches, power * Math.cos(direction));
+        this.motorFrontLeft.runOutputWheelInches(inches, power * Math.cos(direction));
+        this.motorBackLeft.runOutputWheelInches(inches, power * Math.sin(direction));
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveInchesXY(double x, double y, double maxPower, double deltaInches) {
@@ -216,6 +220,33 @@ public class MecanumDriveSystem extends System
         double inches = Math.sqrt(x * x + y * y);
         double direction = Math.atan2(y,x);
         driveInchesPolar(inches, direction, power);
+    }
+
+    private void rampMotors(int ticks, double angle, double maxPower, int deltaTicks) {
+        GearedMotor.setTargetPosition(ticks, motorFrontLeft, motorFrontRight, motorBackLeft, motorFrontRight);
+        Ramp ramp = new LogarithmicRamp(0, GearedMotor.MIN_POWER, deltaTicks, maxPower);
+        while (anyMotorsBusy()) {
+            Thread.yield();
+            int distanceFromTarget = GearedMotor.getMinDistanceFromTarget(motorFrontLeft, motorBackRight, motorFrontRight, motorBackLeft);
+            double direction = GearedMotor.FOWARD_DIRECTION;
+
+            if (distanceFromTarget < 0) {
+                distanceFromTarget = -distanceFromTarget;
+                direction = GearedMotor.BACKWARD_DIRECTION;
+            }
+
+            double scaledPower;
+            if (ticks - distanceFromTarget < deltaTicks) {
+                scaledPower = ramp.value(ticks - distanceFromTarget);
+            } else {
+                scaledPower = ramp.value(distanceFromTarget);
+            }
+
+            this.motorFrontRight.runOutputGearTicks(ticks, direction * scaledPower * Math.sin(direction));
+            this.motorBackRight.runOutputWheelInches(ticks, direction * scaledPower * Math.cos(direction));
+            this.motorFrontLeft.runOutputWheelInches(ticks, direction * scaledPower * Math.cos(direction));
+            this.motorBackLeft.runOutputWheelInches(ticks, direction * scaledPower * Math.sin(direction));
+        }
     }
 
     public void turn(double angle, double maxPower) {
