@@ -104,9 +104,8 @@ public class ConfigParser {
     }
 
     public void updateKey(String key, String newVal) {
-        FileInputStream fis;
         try {
-            Scanner input = new Scanner(file);
+            StringBuilder sb = new StringBuilder();
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
             for (String keys : configData.keySet()) {
@@ -114,10 +113,11 @@ public class ConfigParser {
                 if (args[1].equals(key)) {
                     args[2] = newVal;
                 }
-                writer.write("[" + args[0] + "] " + args[1] + ": " + args[2]);
+                sb.append("[" + args[0] + "] " + args[1] + ": " + args[2] + "\n");
             }
+            writer.print(sb.toString());
         } catch (Exception e) {
-            throw new IllegalStateException("File Input Stream Failure");
+            throw new IllegalStateException("Error opening config file");
         }
     }
 }
