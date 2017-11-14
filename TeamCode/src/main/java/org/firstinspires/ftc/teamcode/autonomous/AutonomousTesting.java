@@ -18,7 +18,7 @@ public class AutonomousTesting extends LinearOpMode {
         driveSystem = new MecanumDriveSystem(this);
         waitForStart();
         telemetry.update();
-        driveSystem.driveInchesXY(100, 0, 0.8, 25);
+        driveSystem.driveInchesXY(100, 50, 0.8, 25);
         while(driveSystem.anyMotorsBusy()) {
             this.idle();
         }
