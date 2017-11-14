@@ -104,12 +104,13 @@ public class ConfigParser {
     }
 
     public void updateKey(String key, String newVal) {
+        FileInputStream fis;
         try {
             StringBuilder sb = new StringBuilder();
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
-            for (String keys : configData.keySet()) {
-                String[] args = configData.get(key);
+            for (String dataKey : configData.keySet()) {
+                String[] args = configData.get(dataKey);
                 if (args[1].equals(key)) {
                     args[2] = newVal;
                 }
@@ -117,7 +118,7 @@ public class ConfigParser {
             }
             writer.print(sb.toString());
         } catch (Exception e) {
-            throw new IllegalStateException("Error opening config file");
+            throw new IllegalStateException("Error opening config");
         }
     }
 }
