@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.util.config;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 /**
  * Created by evancoulson on 9/23/17.
@@ -104,11 +107,10 @@ public class ConfigParser {
     }
 
     public void updateKey(String key, String newVal) {
-        FileInputStream fis;
+        FileOutputStream fos;
         try {
             StringBuilder sb = new StringBuilder();
-            PrintWriter writer = new PrintWriter(file);
-            writer.print("");
+            fos = new FileOutputStream(file);
             for (String dataKey : configData.keySet()) {
                 String[] args = configData.get(dataKey);
                 if (args[1].equals(key)) {
@@ -116,7 +118,8 @@ public class ConfigParser {
                 }
                 sb.append("[" + args[0] + "] " + args[1] + ": " + args[2] + "\n");
             }
-            writer.print(sb.toString());
+            String str = sb.toString();
+            fos.write(str.getBytes());
         } catch (Exception e) {
             throw new IllegalStateException("Error opening config");
         }
