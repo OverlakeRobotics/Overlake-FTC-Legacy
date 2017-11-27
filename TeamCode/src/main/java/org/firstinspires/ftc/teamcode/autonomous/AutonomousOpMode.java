@@ -33,6 +33,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
         this.imuSystem.init(this.hardwareMap);
         this.lineFollowingSystem = new LineFollowingSystem();
         this.eye = new Eye();
+        this.eye.init(hardwareMap);
         this.elevator = new ElevatorSystem(hardwareMap, telemetry);
         this.claw = new ClawSystem(hardwareMap);
         //this.pixyCam = hardwareMap.get(PixyCam.class, "pixycam");

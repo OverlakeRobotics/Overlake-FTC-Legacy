@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 @Autonomous(name="EducayshunOpMode", group="Bot")
 public class EducayshunOpMode extends AutonomousOpMode {
     public final double DRIVE_POWER;
+    public final int ZONE = 0;
     //VectorF trans = null;
     //Orientation rot = null;
     //OpenGLMatrix pose = null;
@@ -25,9 +27,24 @@ public class EducayshunOpMode extends AutonomousOpMode {
     }
     public void runOpMode() {
         initializeAllDevices();
+        claw.setLoadPosition();
+        sleep(2000);
+        elevator.goToZero(telemetry);
+        int struggle = eye.find();
         waitForStart();
+        int determination = 1000000;
+        telemetry.addLine("" + struggle);
+        telemetry.update();
+        /*if (struggle == determination) {
+            cryptoBox(ZONE);
+            telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
+            telemetry.update();
+            sleep(3000);
+        } else {
+            vuforiaCryptoBox(ZONE);
+        }*/
+        vuforiaCryptoBox(ZONE);
 
-        vuforiaCryptoBox(0);
 
 
 
@@ -38,9 +55,6 @@ public class EducayshunOpMode extends AutonomousOpMode {
     }
 
     public void cryptoBox(int zone) {
-        claw.setLoadPosition();
-        sleep(2000);
-        elevator.goToUnloadBlock2();
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
@@ -81,28 +95,26 @@ public class EducayshunOpMode extends AutonomousOpMode {
     }
 
     public void vuforiaCryptoBox(int zone) {
-        int determination = 1000000;
+        //Todo @Michael: Tweak the amount of inches driven at different intervals and the inches per box in right and left cryptobox approach
+        /*int determination = 1000000;
         int struggle = eye.find(determination);
         if (struggle == determination) {
             cryptoBox(zone);
             telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
             telemetry.update();
             sleep(3000);
-        }
+        }*/
         int picNumber = eye.look(); // 0 = left   1 = center   2 = right
         telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
         telemetry.update();
         sleep(3000);
-        claw.setLoadPosition();
-        sleep(2000);
-        elevator.goToUnloadBlock2();
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (zone == 0) {
+        if (zone == 0) { // blue non-audience CLOSE TO GOOD
             driveToPositionInches(-40, 1);
             turn(-90, 1);
 
-            driveToPositionInches(-18, 1);
+            driveToPositionInches(-5, 1);
             telemetry.addLine("We're at the first cryptobox!");
             telemetry.update();
             sleep(5000);
@@ -113,7 +125,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
             claw.setReleasePosition();
             sleep(1000);
             driveToPositionInches(-20, 1);
-        } else if (zone == 1) {
+        } else if (zone == 1) { // blue audience
 
             driveToPositionInches(-50, 1);
             telemetry.addLine("We're at the first cryptobox!");
@@ -126,11 +138,11 @@ public class EducayshunOpMode extends AutonomousOpMode {
             claw.setReleasePosition();
             sleep(2000);
             driveToPositionInches(-20, 1);
-        } else if (zone == 2) {
+        } else if (zone == 2) { // red non-audience CLOSE TO GOOD
             driveToPositionInches(40, 1);
-            turn(-90, 1);
+            turn(90, 1);
 
-            driveToPositionInches(-18, 1);
+            driveToPositionInches(-5, 1);
             telemetry.addLine("We're at the first cryptobox!");
             telemetry.update();
             sleep(5000);
@@ -141,7 +153,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
             claw.setReleasePosition();
             sleep(1000);
             driveToPositionInches(-20, 1);
-        } else {
+        } else { // red audience
 
             driveToPositionInches(-50, 1);
             telemetry.addLine("We're at the first cryptobox!");
@@ -160,11 +172,13 @@ public class EducayshunOpMode extends AutonomousOpMode {
     }
 
     public void correctBoxLeftApproach(int boxNumber) {
-        driveToPositionInches((7 * eye.look()), 0.5);
+        int inchesPerBox = 11;
+        driveToPositionInches((-inchesPerBox * eye.look()), 0.5);
     }
 
     public void correctBoxRightApproach(int boxNumber) {
-        driveToPositionInches((14 - (eye.look() * 7)), 0.5);
+        int inchesPerBox = 11;
+        driveToPositionInches((14 - (eye.look() * -inchesPerBox)), 0.5);
     }
 
     public void fancyDrive(int x, int y, double power) {
