@@ -1,66 +1,97 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.autonomous.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 
-@Autonomous(name="PixyServos", group="Bot")
+@Autonomous(name="PixySystem", group="Bot")
 public class PixySystem {
-    private HardwareMap hwMap;
+    private LinearOpMode linearOpMode;
 
     private PixyCam pixyCam;
+
     private PixyCam.Block redBlock;
     private PixyCam.Block blueBlock;
 
-    Servo rightVertServo;
-    Servo leftVertServo;
-    Servo rightHorizServo;
-    Servo leftHorizServo;
-    boolean teamColorIsBlue;
+    private Servo horizServo;
+    private Servo vertServo;
+    private double HORIZ_CENTER;
+    private double VERT_BOTTOM;
+    private double VERT_TOP;
 
-    I2cDeviceSynchImpl pixyCamReader;
-    I2cAddr pixyCamAddress = I2cAddr.create8bit(0x1);
+    private boolean teamColorIsBlue;
 
-    public PixySystem(HardwareMap hwMap) {
-        this.hwMap = hwMap;
-        this.pixyCam = hwMap.get(PixyCam.class, "pixycam");
-        this.rightVertServo = hwMap.servo.get("rightvertservo");
-        this.leftVertServo = hwMap.servo.get("leftvertservo");
-        this.rightHorizServo = hwMap.servo.get("righthorizservo");
-        this.leftHorizServo = hwMap.servo.get("lefthorizservo");
-
-        this.teamColorIsBlue = true; // TO DO: Use config app values
+    public PixySystem (LinearOpMode linearOpMode, int blue) {
+        this.linearOpMode = linearOpMode;
+        if (blue == 0 || blue == 1) {
+            this.teamColorIsBlue = true;
+        } else {
+            this.teamColorIsBlue = false;
+        }
     }
 
-    public void rotateStuff() {
-        redBlock = pixyCam.GetBiggestBlock(1);
-        blueBlock = pixyCam.GetBiggestBlock(2);
-
+    public void initPixyStuff() {
         if (teamColorIsBlue) {
-            leftVertServo.setPosition(0.4);
-            if (redBlock.x < blueBlock.x) {  // if red is further left than blue
-                leftHorizServo.setPosition(0.3); // then move the servo left
-            } else {
-                leftHorizServo.setPosition(0.7); // move the servo right -- also, if no values are found for x, it will go right
-            }
+            this.pixyCam = linearOpMode.hardwareMap.get(PixyCam.class, "PixyCam1");
+            this.redBlock = pixyCam.GetBiggestBlock(1);
+            this.blueBlock = pixyCam.GetBiggestBlock(2);
+            this.horizServo = linearOpMode.hardwareMap.servo.get("lefthorizservo");
+            this.vertServo = linearOpMode.hardwareMap.servo.get("leftvertservo");
+            this.HORIZ_CENTER = 0.55;
+            this.VERT_BOTTOM = 0.85;
+            this.VERT_TOP = 1.0;
         } else {
-            rightVertServo.setPosition(0.4);
-            if (redBlock.x > blueBlock.x) {
-                rightHorizServo.setPosition(0.3);
+            this.pixyCam = linearOpMode.hardwareMap.get(PixyCam.class, "PixyCam2");
+            this.redBlock = pixyCam.GetBiggestBlock(1);
+            this.blueBlock = pixyCam.GetBiggestBlock(2);
+            this.horizServo = linearOpMode.hardwareMap.servo.get("righthorizservo");
+            this.vertServo = linearOpMode.hardwareMap.servo.get("rightvertservo");
+            this.HORIZ_CENTER = 0.415;
+            this.VERT_BOTTOM = 0.125;
+            this.VERT_TOP = 0.8;
+        }
+        linearOpMode.telemetry.addData("Red", this.redBlock.toString());
+        linearOpMode.telemetry.addData("Blue", this.blueBlock.toString());
+        linearOpMode.telemetry.update();
+    }
+
+    public void doServoStuff() {
+        linearOpMode.sleep(1000);
+        if (teamColorIsBlue) {
+            this.vertServo.setPosition(VERT_BOTTOM);
+            linearOpMode.sleep(1000);
+            this.horizServo.setPosition(HORIZ_CENTER);
+            linearOpMode.sleep(1000);
+
+            if (this.redBlock.x > this.blueBlock.x) {
+                this.horizServo.setPosition(HORIZ_CENTER - 0.2);
             } else {
-                rightHorizServo.setPosition(0.7);
+                this.horizServo.setPosition(HORIZ_CENTER + 0.2);
             }
 
+            linearOpMode.sleep(1000);
+            this.horizServo.setPosition(HORIZ_CENTER);
+            linearOpMode.sleep(1000);
+            this.vertServo.setPosition(0);
+            linearOpMode.sleep(1000);
+        } else {
+            this.vertServo.setPosition(VERT_BOTTOM);
+            linearOpMode.sleep(1000);
+            this.horizServo.setPosition(HORIZ_CENTER);
+            linearOpMode.sleep(1000);
+
+            if (this.redBlock.x > this.blueBlock.x) {
+                this.horizServo.setPosition(HORIZ_CENTER + 0.2);
+            } else {
+                this.horizServo.setPosition(HORIZ_CENTER - 0.2);
+            }
+
+            linearOpMode.sleep(1000);
+            this.horizServo.setPosition(HORIZ_CENTER);
+            linearOpMode.sleep(1000);
+            this.vertServo.setPosition(1);
+            linearOpMode.sleep(1000);
         }
     }
 }
