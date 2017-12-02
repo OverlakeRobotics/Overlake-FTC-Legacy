@@ -65,7 +65,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     {
         super(deviceSynch, true);
 
-        this.legoProtocolGeneralQueryReadWindow = new I2cDeviceSynch.ReadWindow(0x50, 6, I2cDeviceSynch.ReadMode.ONLY_ONCE);
+        this.legoProtocolGeneralQueryReadWindow = new I2cDeviceSynch.ReadWindow(0x50, 6, I2cDeviceSynch.ReadMode.REPEAT);
         this.legoProtocolSignatureQueryReadWindows = new I2cDeviceSynch.ReadWindow[7];
         for (int i = 1; i <= 7; i++)
             this.legoProtocolSignatureQueryReadWindows[i-1] = NewLegoProtocolSignatureQueryReadWindow(i);
@@ -77,7 +77,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
 
     private I2cDeviceSynch.ReadWindow NewLegoProtocolSignatureQueryReadWindow(int signature)
     {
-        return new I2cDeviceSynch.ReadWindow(0x50 + signature, 5, I2cDeviceSynch.ReadMode.ONLY_ONCE);
+        return new I2cDeviceSynch.ReadWindow(0x50 + signature, 5, I2cDeviceSynch.ReadMode.REPEAT);
     }
 
     private byte [] ReadEntireWindow(I2cDeviceSynch.ReadWindow readWindow)

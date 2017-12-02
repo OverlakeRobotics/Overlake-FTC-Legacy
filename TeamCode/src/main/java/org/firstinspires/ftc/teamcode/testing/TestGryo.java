@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.overlake.ftc.team_7330.Testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -48,6 +49,7 @@ import java.util.Date;
  */
 
 @TeleOp(name="TestGyro")
+@Disabled
 public class TestGryo extends OpMode {
 
   private String startDate;
