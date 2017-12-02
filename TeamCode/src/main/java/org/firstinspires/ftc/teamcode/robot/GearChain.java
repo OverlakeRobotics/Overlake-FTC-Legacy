@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
-
 /**
  * Created by EvanCoulson on 9/26/17.
  */
 
 public class GearChain {
+    public final static int NEVEREST20_PULSES = 960;
+    public final static int NEVEREST40_PULSES = 1120;
+    public final static int NEVEREST60_PULSES = 1680;
+
     private Gear input;
     private double chainRatio;
 
-    public GearChain(Telemetry telemetry, double... allTeeth) {
+    public GearChain(double... allTeeth) {
         input = new Gear(allTeeth[0]);
         Gear current = input;
         for (int i = 1; i < allTeeth.length; i++) {
@@ -19,7 +20,7 @@ public class GearChain {
             current.next = next;
             current = next;
         }
-        chainRatio = calculateChainRatio(telemetry);
+        chainRatio = calculateChainRatio();
     }
 
     public int calculateInputRevolutions(int pulses, double revolutions) {
@@ -30,18 +31,17 @@ public class GearChain {
         return (int) Math.round(pulses * revolutions * chainRatio);
     }
 
-    private double calculateChainRatio(Telemetry telemetry) {
+    public int calculateOuputTicks(int ticks) {
+        return (int) Math.round(ticks * chainRatio);
+    }
+
+    private double calculateChainRatio() {
         double ratio = 1d;
         Gear current = input;
         while (current.next != null) {
-            telemetry.addData("teeth1", current.teeth);
-            telemetry.addData("teeth2", current.next.teeth);
-            telemetry.addData("ratio", current.getRatio());
-
             ratio *= current.getRatio();
             current = current.next;
         }
-        telemetry.addData("ratio", ratio);
         return ratio;
     }
 

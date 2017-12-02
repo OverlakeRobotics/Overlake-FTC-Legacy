@@ -2,11 +2,18 @@ package org.firstinspires.ftc.teamcode.util.config;
 
 import android.os.Environment;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Created by evancoulson on 9/23/17.
@@ -37,7 +44,7 @@ public class ConfigParser {
                 configData.put(args[1], args);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("CONFIG FILE" + filename);
         }
     }
 
@@ -99,6 +106,40 @@ public class ConfigParser {
             }
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public Set<String> getKeys() {
+        return configData.keySet();
+    }
+
+    public Set<String> getKeysContaining(String segment) {
+        Set<String> results = new HashSet<String>();
+        for (String key : getKeys()) {
+            if (key.contains(segment)) {
+                results.add(key);
+            }
+        }
+        return results;
+    }
+
+    public void updateKey(String key, String newVal, Telemetry telemetry) {
+        FileInputStream fis;
+        try {
+            StringBuilder sb = new StringBuilder();
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            for (String dataKey : configData.keySet()) {
+                String[] args = configData.get(dataKey);
+                if (args[1].equals(key)) {
+                    args[2] = newVal;
+                }
+                telemetry.addData("config","[" + args[0] + "] " + args[1] + ": " + args[2] + "\n");
+                sb.append("[" + args[0] + "] " + args[1] + ": " + args[2] + "\n");
+            }
+            writer.print(sb.toString());
+        } catch (Exception e) {
+            throw new IllegalStateException("Error opening config");
         }
     }
 }

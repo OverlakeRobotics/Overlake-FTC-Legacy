@@ -1,189 +1,122 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
-public class MecanumDriveSystem
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class MecanumDriveSystem extends System
 {
-    public DcMotor motorFrontLeft = null;
-    public DcMotor motorFrontRight = null;
-    public DcMotor motorBackLeft = null;
-    public DcMotor motorBackRight = null;
+    private final float SCALE_FACTOR = 0.62f;
+    private final double WHEEL_DIAMETER_INCHES = 4.0;
 
-    private static final double ticksPerRotation = 1120; // This is for the Andymark Neverest motor
-    private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual value for this
-    private static final double gearRatio = wheelGearSize / motorGearSize;
-    private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
+    public IMUSystem imuSystem;
+    public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
 
-    HardwareMap hwMap = null;
+    public GearedMotor motorFrontLeft;
+    public GearedMotor motorFrontRight;
+    public GearedMotor motorBackLeft;
+    public GearedMotor motorBackRight;
 
-    public final double minimumPower = 0.1; //TODO: Figure out the best value for this.
+    private double startingIMUHeading;
 
     /* Constructor */
-    public MecanumDriveSystem()
-    {
-    }
+    public MecanumDriveSystem(OpMode opMode) {
+        super(opMode, "MecanumDrive");
 
-    /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hwMap)
-    {
-        this.hwMap = hwMap;
+        imuSystem = new IMUSystem(opMode);
+        startingIMUHeading = imuSystem.getHeading();
 
-        this.motorFrontLeft = this.hwMap.dcMotor.get("motor_front_left");
-        this.motorFrontRight = this.hwMap.dcMotor.get("motor_front_right");
-        this.motorBackLeft = this.hwMap.dcMotor.get("motor_back_left");
-        this.motorBackRight = this.hwMap.dcMotor.get("motor_back_right");
-        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
+        this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
+        this.motorFrontRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
+        this.motorBackRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
+        this.motorBackLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
 
+        this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        this.motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+
+        // Set PID coeffiecents
+        setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
         // Set all drive motors to zero power
         setPower(0);
-
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void setMode(DcMotor.RunMode runMode)
-    {
-        motorFrontLeft.setMode(runMode);
-        motorFrontRight.setMode(runMode);
-        motorBackLeft.setMode(runMode);
-        motorBackRight.setMode(runMode);
+    public void setDirection(DcMotorSimple.Direction direction) {
+        motorFrontLeft.setDirection(direction);
+        motorFrontRight.setDirection(direction);
+        motorBackLeft.setDirection(direction);
+        motorBackRight.setDirection(direction);
     }
 
-    public void setTargetPositionInches(double inches)
-    {
-        int ticks = this.inchesToTicks(inches);
-
-        setTargetPosition(ticks);
-    }
-
-    public void setTargetPositionRevs(double revolutions)
-    {
-        int ticks = this.revolutionsToTicks(revolutions);
-
-        setTargetPosition(ticks);
-
-    }
-
-    public void setTargetPosition(int position)
-    {
-        int frontLeftTarget = this.motorFrontLeft.getCurrentPosition() + position;
-        int frontRightTarget = this.motorFrontRight.getCurrentPosition() + position;
-        int backLeftTarget = this.motorBackLeft.getCurrentPosition() + position;
-        int backRightTarget = this.motorBackRight.getCurrentPosition() + position;
-
-        // Tell the motors where we are going
-        this.motorFrontLeft.setTargetPosition(frontLeftTarget);
-        this.motorFrontRight.setTargetPosition(frontRightTarget);
-        this.motorBackLeft.setTargetPosition(backLeftTarget);
-        this.motorBackRight.setTargetPosition(backRightTarget);
-
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void setAllMotorsPID(double P, double I, double D) {
+        //TODO
     }
 
     public boolean anyMotorsBusy()
     {
-        return (this.motorFrontLeft.isBusy() && this.motorFrontRight.isBusy() && this.motorBackRight.isBusy() && this.motorBackLeft.isBusy());
-    }
-
-    public int revolutionsToTicks(double revolutions)
-    {
-        return (int) Math.round(revolutions * this.ticksPerRotation);
-    }
-
-    public double ticksToRevolutions(int ticks) {
-        return ((double) ticks / this.ticksPerRotation);
-    }
-
-    public int inchesToTicks(double inches) {
-        return (int) Math.round(inches * this.ticksPerInch);
-    }
-
-    public double ticksToInches(int ticks) {
-        return ((double) ticks / this.ticksPerInch);
-    }
-
-    public int getMinimumDistanceFromTarget()
-    {
-        int d = this.motorFrontLeft.getTargetPosition() - this.motorFrontLeft.getCurrentPosition();
-        d = closestToZero(d, this.motorFrontRight.getTargetPosition() - this.motorFrontRight.getCurrentPosition());
-        d = closestToZero(d, this.motorBackLeft.getTargetPosition() - this.motorBackLeft.getCurrentPosition());
-        d = closestToZero(d, this.motorBackRight.getTargetPosition() - this.motorBackRight.getCurrentPosition());
-
-        return d;
-    }
-
-    private int closestToZero(int v1, int v2)
-    {
-        if (Math.abs(v1) < Math.abs(v2))
-            return v1;
-
-        return v2;
-    }
-
-    // Tweeks the left and right motors by increment.
-    // increment is added to the current power of the left wheels
-    /// and subtracted from the current power of the right wheels.
-    public void tweakTankDrive(double increment)
-    {
-        double leftMotorPower = this.motorBackLeft.getPower();
-        double rightMotorPower = this.motorBackRight.getPower();
-
-        tankDrive(leftMotorPower + increment, rightMotorPower - increment);
-    }
-
-    public void tankDrive(double leftPower, double rightPower)
-    {
-        this.motorFrontLeft.setPower(leftPower);
-        this.motorBackLeft.setPower(leftPower);
-        this.motorFrontRight.setPower(rightPower);
-        this.motorBackRight.setPower(rightPower);
+        return motorFrontLeft.isBusy() ||
+                motorFrontRight.isBusy() ||
+                motorBackLeft.isBusy() ||
+                motorBackRight.isBusy();
     }
 
     public void setPower(double power)
     {
-        this.motorFrontLeft.setPower(power);
-        this.motorFrontRight.setPower(power);
-        this.motorBackLeft.setPower(power);
-        this.motorBackRight.setPower(power);
+        motorFrontLeft.setPower(power);
+        motorFrontRight.setPower(power);
+        motorBackLeft.setPower(power);
+        motorBackRight.setPower(power);
     }
 
-    public void adjustPower(Ramp ramp)
-    {
-        // Adjust the motor power as we get closer to the target
-        int minDistance = this.getMinimumDistanceFromTarget();
+    public void setRunMode(DcMotor.RunMode runMode) {
+        motorFrontLeft.setRunMode(runMode);
+        motorFrontRight.setRunMode(runMode);
+        motorBackLeft.setRunMode(runMode);
+        motorBackRight.setRunMode(runMode);
+    }
 
-        // ramp assumes the distance away from the target is positive,
-        // so we make it positive here and account for the direction when
-        // the motor power is set.
-        double direction = 1.0;
-        if (minDistance < 0) {
-            minDistance = -minDistance;
-            direction = -1.0;
-        }
+    public void setRightPower(double power) {
+        motorBackRight.setPower(power);
+        motorFrontRight.setPower(power);
+    }
 
-        double scaledPower = ramp.value(minDistance);
+    public void setLeftPower(double power) {
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+    }
 
-        setPower(direction * scaledPower);
+    public void setForwardPower(double power) {
+        motorFrontLeft.setPower(power);
+        motorFrontRight.setPower(power);
+    }
+
+    public void setBackPower(double power) {
+        motorBackLeft.setPower(power);
+        motorBackRight.setPower(power);
     }
 
     public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
     {
         rightX = Range.clip(rightX, -1, 1);
-        rightY = Range.clip(rightY, -1, 1);
         leftX = Range.clip(leftX, -1, 1);
         leftY = Range.clip(leftY, -1, 1);
 
         rightX = scaleJoystickValue(rightX);
-        rightY = scaleJoystickValue(rightY);
         leftX = scaleJoystickValue(leftX);
         leftY = scaleJoystickValue(leftY);
 
@@ -192,39 +125,161 @@ public class MecanumDriveSystem
         double backRightPower = leftY + rightX - leftX;
         double frontLeftPower = leftY - rightX - leftX;
         double backLeftPower = leftY - rightX + leftX;
-        motorFrontRight.setPower(Range.clip(leftY + rightX + leftX, -1, 1));
-        motorBackRight.setPower(Range.clip(leftY + rightX - leftX, -1, 1));
-        motorFrontLeft.setPower(Range.clip(leftY - rightX - leftX, -1, 1));
-        motorBackLeft.setPower(Range.clip(leftY - rightX + leftX, -1, 1));
+        this.motorFrontRight.setPower(Range.clip(frontRightPower, -1, 1));
+        this.motorBackRight.setPower(Range.clip(backRightPower, -1, 1));
+        this.motorFrontLeft.setPower(Range.clip(frontLeftPower - leftX, -1, 1));
+        this.motorBackLeft.setPower(Range.clip(backLeftPower + leftX, -1, 1));
+    }
+
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+        double angle = Math.atan2(leftX, leftY);
+        double changeOfDirectionSpeed = -rightX;
+
+        double frontLeft = speed * Math.sin(angle + Math.PI / 4) + changeOfDirectionSpeed;
+        double frontRight = speed * Math.cos(angle + Math.PI / 4) - changeOfDirectionSpeed;
+        double backLeft = speed * Math.cos(angle + Math.PI / 4) + changeOfDirectionSpeed;
+        double backRight = speed * Math.sin(angle + Math.PI / 4) - changeOfDirectionSpeed;
+
+        List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
+        clampPowers(powers);
+
+        motorFrontLeft.setPower(powers.get(0));
+        motorFrontRight.setPower(powers.get(1));
+        motorBackLeft.setPower(powers.get(2));
+        motorBackRight.setPower(powers.get(3));
+    }
+
+    private void clampPowers(List<Double> powers) {
+        double minPower = Collections.min(powers);
+        double maxPower = Collections.max(powers);
+        double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
+
+        if (maxMag > 1.0) {
+            for (int i = 0; i < powers.size(); i++) {
+                powers.set(i, powers.get(i) / maxMag);
+            }
+        }
     }
 
     public void mecanumDriveXY(double x, double y)
     {
-        motorFrontRight.setPower(Range.clip(y + x, -1, 1));
-        motorBackRight.setPower(Range.clip(y - x, -1, 1));
-        motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
-        motorBackLeft.setPower(Range.clip(y + x, -1, 1));
+        this.motorFrontRight.setPower(Range.clip(y + x, -1, 1));
+        this.motorBackRight.setPower(Range.clip(y - x, -1, 1));
+        this.motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
+        this.motorBackLeft.setPower(Range.clip(y + x, -1, 1));
     }
 
     public void mecanumDrivePolar(double radians, double power)
     {
-        double x = Math.cos(radians)*power;
-        double y = Math.sin(radians)*power;
-
+        double x = Math.cos(radians) * power;
+        double y = Math.sin(radians) * power;
         mecanumDriveXY(x, y);
     }
 
+    public void driveInchesPolar(double inches, double angle, double maxPower, double deltaInches) {
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int ticks = motorBackLeft.inchesToTicks(inches);
+        int deltaTicks = motorBackLeft.inchesToTicks(deltaInches);
+        rampMotors(ticks, angle, maxPower, deltaTicks);
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveInchesPolar(double inches, double direction, double power) {
+        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("direction", direction);
+        telemetry.addData("driving", power * Math.sin(90 - direction));
+        telemetry.addData("driving", power * Math.cos(90 - direction));
+        this.motorFrontRight.runOutputWheelInches(inches, power * Math.sin(90 - direction));
+        this.motorBackRight.runOutputWheelInches(inches, power * Math.cos(90 - direction));
+        this.motorFrontLeft.runOutputWheelInches(inches, power * Math.cos(90 - direction));
+        this.motorBackLeft.runOutputWheelInches(inches, power * Math.sin(90 - direction));
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveInchesXY(double x, double y, double maxPower, double deltaInches) {
+        double inches = Math.sqrt(x * x + y * y);
+        double direction = Math.atan2(y,x);
+        driveInchesPolar(inches, direction, maxPower, deltaInches);
+    }
+
+    public void driveInchesXY(double x, double y, double power) {
+        double inches = Math.sqrt(x * x + y * y);
+        double direction = Math.atan2(y,x);
+        driveInchesPolar(inches, direction, power);
+    }
+
+    private void rampMotors(int ticks, double angle, double maxPower, int deltaTicks) {
+        GearedMotor.setTargetPosition(ticks, motorFrontLeft, motorFrontRight, motorBackLeft, motorFrontRight);
+        Ramp ramp = new LogarithmicRamp(0, GearedMotor.MIN_POWER, deltaTicks, maxPower);
+        while (anyMotorsBusy()) {
+            Thread.yield();
+            int distanceFromTarget = GearedMotor.getMinDistanceFromTarget(motorFrontLeft, motorBackRight, motorFrontRight, motorBackLeft);
+            double direction = GearedMotor.FOWARD_DIRECTION;
+
+            if (distanceFromTarget < 0) {
+                distanceFromTarget = -distanceFromTarget;
+                direction = GearedMotor.BACKWARD_DIRECTION;
+            }
+
+            double scaledPower;
+            if (ticks - distanceFromTarget < deltaTicks) {
+                scaledPower = ramp.value(ticks - distanceFromTarget);
+            } else {
+                scaledPower = ramp.value(distanceFromTarget);
+            }
+
+            this.motorFrontRight.setPower(direction * scaledPower * Math.sin(90 - angle));
+            this.motorBackRight.setPower(direction * scaledPower * Math.cos(90 - angle));
+            this.motorFrontLeft.setPower(direction * scaledPower * Math.cos(90 - angle));
+            this.motorBackLeft.setPower(direction * scaledPower * Math.sin(90 - angle));
+        }
+    }
+
+    public void turn(double angle, double maxPower) {
+        double heading = imuSystem.getHeading();
+        double targetHeading = heading + angle;
+        if (targetHeading > 0) {
+            targetHeading = targetHeading % 360;
+        } else {
+            targetHeading = (360 + targetHeading) % 360;
+        }
+
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        Ramp ramp = new ExponentialRamp(2.0, 0.1, 130.0, maxPower);
+        while (computeDegreesDiff(targetHeading, heading) > 1) {
+            double sign = 1.0;
+            double diff = computeDegreesDiff(targetHeading, heading);
+            if (diff < 0)
+            {
+                sign = -1.0;
+                diff = -diff;
+            }
+
+            double power = sign*ramp.value(diff);
+            setLeftPower(power);
+            setRightPower(-power);
+            heading = imuSystem.getHeading();
+        }
+    }
+
+    private double computeDegreesDiff(double targetHeading, double heading) {
+        double diff = targetHeading - heading;
+        //TODO: This needs to be commented. Also, might be able to compute using mod.
+        if (Math.abs(diff) > 180)
+        {
+            diff = -(360 * (diff / Math.abs(diff)));
+        }
+
+        return Math.abs(diff);
+    }
 
     float scaleJoystickValue(float joystickValue)
     {
-        if(joystickValue > 0)
-        {
-            return (float)((joystickValue*joystickValue)*.62);
-        }
-        else
-        {
-            return (float)(-(joystickValue*joystickValue)*.62);
-        }
+        return joystickValue > 0
+                ? ((joystickValue * joystickValue) * SCALE_FACTOR)
+                : (-(joystickValue * joystickValue) * SCALE_FACTOR);
     }
 }
 

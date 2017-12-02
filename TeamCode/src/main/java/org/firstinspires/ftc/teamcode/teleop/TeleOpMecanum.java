@@ -31,12 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.teamcode.robot.*;
-import org.firstinspires.ftc.teamcode.util.Handler;
+import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 
 
 /**
@@ -46,61 +43,29 @@ import org.firstinspires.ftc.teamcode.util.Handler;
  */
 
 @TeleOp(name="TeleOpMecanum", group="TeleOp")
-public class TeleOpMecanum extends OpMode {
+public class TeleOpMecanum extends BaseOpMode {
 
-	//region Motors
-	MecanumDriveSystem driveSystem;
+	private MecanumDriveSystem driveSystem;
 
 	public TeleOpMecanum() {
-
+		super("TeleOpMecanum");
 	}
 
-	/*
-	 * Code to run when the op mode is initialized goes here
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
-	 */
 	@Override
-	public void init()
-	{
-        driveSystem = new MecanumDriveSystem();
-        this.driveSystem.init(this.hardwareMap);
-
+	public void init() {
+		telemetry.update();
+        this.driveSystem = new MecanumDriveSystem(this);
+		telemetry.update();
 	}
 
-	/*
-	 * This method will be called repeatedly in a loop
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#run()
-	 */
 	@Override
 	public void loop()
 	{
-		// scale the joystick value to make it easier to control
-		// the robot more precisely at slower speeds.
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
-
-//        flickerButton.testAndHandle();
-//        flickerShootPositionButton.testAndHandle();
-//        flickerLoadPositionButton.testAndHandle();
-//        ballLiftFowardButton.testAndHandle();
-//        ballLiftReverseButton.testAndHandle();
-//        ballFlailFowardButton.testAndHandle();
-//        ballFlailReverseButton.testAndHandle();
-//        flickerDecrementAngle.testAndHandle();
-//        flickerIncrementAngle.testAndHandle();
-//        flickerSaveShootPos.testAndHandle();
-//        flickerSaveLoadPos.testAndHandle();
-
 		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
-//        telemetry.addData("Angle", flicker.getServoAngle());
+		telemetry.update();
 	}
 
-	/*
-	 * Code to run when the op mode is first disabled goes here
-	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-	 */
 	@Override
 	public void stop()
 	{
