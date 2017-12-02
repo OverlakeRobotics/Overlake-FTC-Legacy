@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.util.Handler;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,20 +19,29 @@ import java.util.concurrent.Callable;
 
 public class Controller {
     public Gamepad gamepad;
-    private List<Button> buttons;
-    private Map<String, Boolean> controllerButtonMap;
 
-    public Controller() {
-        buttons = new ArrayList<Button>();
-    }
+    private ConfigParser parser;
 
-    public void addButton(Button button) {
-        buttons.add(button);
-    }
+    public Button a;
+    public Button b;
+    public Button x;
+    public Button y;
+    public Button back;
+    public Button start;
+    public Button dPadDown;
+    public Button dPadUp;
+    public Button dPadLeft;
+    public Button dPadRight;
+    public Button leftBumper;
+    public Button leftStickButton;
+    public Button rightBumper;
+    public Button rightStickButton;
 
-    public void handle() {
-        for (Button b : buttons) {
-            b.testAndHandle();
-        }
+    public Controller(Gamepad gamepad) {
+        this.gamepad = gamepad;
+        a = new Button();
+        b = new Button();
+        x = new Button();
+        y = new Button()
     }
 }

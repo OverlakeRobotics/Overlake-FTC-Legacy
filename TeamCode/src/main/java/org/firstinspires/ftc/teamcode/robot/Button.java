@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.util.Handler;
 
-public abstract class Button implements ButtonCallback
+public class Button
 {
     private boolean wasPressed;
     public boolean justPressed;
@@ -24,4 +24,6 @@ public abstract class Button implements ButtonCallback
             this.releasedHandler();
         }
     }
+
+    public
 }
