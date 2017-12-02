@@ -1,6 +1,7 @@
 package org.overlake.ftc.team_7330.Testing;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
  * Created by Rohan on 10/16/2015.
  */
 @TeleOp(name="TestIMU")
+@Disabled
 public class TestIMU extends LinearOpMode {
     //----------------------------------------------------------------------------------------------
     // State
