@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
+import org.firstinspires.ftc.teamcode.robot.ConfigParser;
+import org.firstinspires.ftc.teamcode.robot.PixySystem;
 
 /**
  * Created by lexis on 23-Oct-17.
@@ -12,49 +14,154 @@ import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 
 @Autonomous(name="CompetitionOpMode", group="Bot")
 public class CompetitionOpMode extends AutonomousOpMode {
-    private final int zone = 0;
+    int zone;
 
+    PixySystem pixySystem;
+    ConfigParser config;
+    public static final String TAG = "Vuforia VuMark Sample";
 
-    //////////// PIXY DECLARATIONS/////////
-    /*private PixyCam pixyCam;
-    private PixyCam pixyCam2;
-
-    private double rightHorizServoCenter;
-    private double rightVertServoTop;
-    private double rightVertServoBottom;
-    private double leftHorizServoCenter;
-    private double leftVertServoTop;
-    private double leftVertServoBottom;
-
-    private PixyCam.Block leftRedBlock;
-    private PixyCam.Block leftBlueBlock;
-    private PixyCam.Block rightRedBlock;
-    private PixyCam.Block rightBlueBlock;
-
-    //Servo rightVertServo;
-    Servo leftVertServo;
-    //Servo rightHorizServo;
-    Servo leftHorizServo;*/
-    boolean teamColorIsBlue;
-    //////////////////////////////////////////////////////
+    public CompetitionOpMode() {
+        this.config = new ConfigParser("Autonomous.omc");
+        this.zone = config.getInt("zone");
+        this.pixySystem = new PixySystem(this, zone);
+    }
 
     @Override
     public void runOpMode() {
         initializeAllDevices();
-
-        claw.setReleasePosition();
-        elevator.goToZero(telemetry);
         waitForStart();
-        //initPixy();
-        cryptoBox(0);
-        //driveToPositionRevs(3,0.5);
-        //initPixy();
-        //driveToPositionInches(-40, 1);
+        elevator.goToZero(telemetry);
+        claw.goToLoadPosition();
+        sleep(1500);
+        elevator.goToUnloadBlock3();
 
+        //send in "this" and if the team color is blue (true) or red (false)
+        pixySystem = new PixySystem(this, zone);
+        pixySystem.initPixyStuff();
+        pixySystem.doServoStuff();
 
+        vuforiaCryptoBox(zone);
 
-        //cryptoBox(0);
         stop();
+    }
+
+    public void vuforiaCryptoBox(int zone) {
+        //Todo @Michael: Tweak the amount of inches driven at different intervals and the inches per box in right and left cryptobox approach
+
+        int picNumber = eye.look(); // 0 = left   1 = center   2 = right
+        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
+        telemetry.update();
+        sleep(50);
+
+        // pic 0 is left     pic 1 is right      pic 2 is center
+
+        // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
+        if (zone == 0) { // blue non-audience CLOSE TO GOOD
+            driveToPositionInches(-40, 0.6);
+            turn(-90, 1);
+
+            driveToPositionInches(-25, 1);
+            //telemetry.addLine("We're at the first cryptobox!");
+            //telemetry.update();
+            //sleep(1000);
+            //correctBoxLeftApproach(picNumber);
+
+            if (picNumber == 0) {
+                turn(117 , 1);
+            } else if (picNumber == 1) {
+                turn(90, 1);
+            } else {
+                turn(65, 1);
+            }
+            driveToPositionInches(-12, 1);
+            elevator.goToZero(telemetry);
+            sleep(1000);
+            claw.goToReleasePosition();
+            sleep(1000);
+            driveToPositionInches(5, 1);
+
+        } else if (zone == 1) { // blue audience
+
+            driveToPositionInches(-58, 0.6);
+            //telemetry.addLine("We're at the first cryptobox!");
+            //telemetry.update();
+            //sleep(2000);
+            //correctBoxLeftApproach(picNumber);
+
+            if (picNumber == 0) {
+                turn(117 , 1);
+            } else if (picNumber == 1) {
+                turn(90, 1);
+            } else {
+                turn(65, 1);
+            }
+            //turn(90, 1);
+            //sleep(2000);
+            driveToPositionInches(-12, 1);
+
+            elevator.goToZero(telemetry);
+            claw.goToReleasePosition();
+            sleep(1000);
+            driveToPositionInches(5, 1);
+        } else if (zone == 2) { // red non-audience CLOSE TO GOOD
+            driveToPositionInches(-40, 0.6);
+            turn(90, 1);
+
+            driveToPositionInches(-25, 1);
+            //telemetry.addLine("We're at the first cryptobox!");
+            //telemetry.update();
+            //sleep(1000);
+            //correctBoxLeftApproach(picNumber);
+
+            if (picNumber == 0) {
+                turn(-65 , 1);
+            } else if (picNumber == 1) {
+                turn(-90, 1);
+            } else {
+                turn(-117, 1);
+            }
+            driveToPositionInches(-12, 1);
+            elevator.goToZero(telemetry);
+            sleep(1000);
+            claw.goToReleasePosition();
+            sleep(1000);
+            driveToPositionInches(5, 1);
+        } else { // red audience
+
+            driveToPositionInches(-57, 0.6);
+            //telemetry.addLine("We're at the first cryptobox!");
+            //telemetry.update();
+            //sleep(2000);
+            //correctBoxLeftApproach(picNumber);
+
+            if (picNumber == 0) {
+                turn(-65, 1);
+            } else if (picNumber == 1) {
+                turn(-90, 1);
+            } else {
+                turn(-117, 1);
+            }
+            //turn(90, 1);
+            //sleep(2000);
+            driveToPositionInches(-12, 1);
+
+            elevator.goToZero(telemetry);
+            claw.goToReleasePosition();
+            sleep(1000);
+            driveToPositionInches(5, 1);
+        }
+    }
+
+    public void correctBoxLeftApproach(int boxNumber) {
+        int inchesPerBox = 15;
+        telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
+        telemetry.update();
+        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
+    }
+
+    public void correctBoxRightApproach(int boxNumber) {
+        int inchesPerBox = 11;
+        driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
     }
 
     public void cryptoBox(int zone) {

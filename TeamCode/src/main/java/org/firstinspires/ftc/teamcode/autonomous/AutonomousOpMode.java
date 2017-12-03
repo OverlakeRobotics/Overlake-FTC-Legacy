@@ -22,7 +22,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
     Eye eye;
     ElevatorSystem elevator;
     ClawSystem claw;
-    //PixyCam pixyCam;
+    PixySystem pixySystem;
 
 
     void initializeAllDevices()
@@ -36,7 +36,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
         this.eye.init(hardwareMap);
         this.elevator = new ElevatorSystem(hardwareMap, telemetry);
         this.claw = new ClawSystem(hardwareMap);
-        //this.pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
+
 //        this.lineFollowingSystem.init(this.hardwareMap);
     }
 

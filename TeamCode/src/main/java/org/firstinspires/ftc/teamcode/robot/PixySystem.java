@@ -58,7 +58,8 @@ public class PixySystem {
 
     public void doServoStuff() {
         linearOpMode.sleep(1000);
-        if (teamColorIsBlue) {
+        if (this.redBlock.x == 0 || this.blueBlock.x == 0) {
+        } else if (teamColorIsBlue) {
             this.vertServo.setPosition(VERT_BOTTOM);
             linearOpMode.sleep(1000);
             this.horizServo.setPosition(HORIZ_CENTER);
