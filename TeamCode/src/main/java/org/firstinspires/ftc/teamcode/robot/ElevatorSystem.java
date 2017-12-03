@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -30,12 +31,12 @@ public class ElevatorSystem {
     private boolean isAtTop = false;
     private boolean isAtBottom = false;
 
-    private int loadPosTicks = 0;
-    private int unloadBlock2Ticks = 600;
-    private int unloadBlock3Ticks = 1000;
+    private int loadPosTicks;
+    private int unloadBlock2Ticks;
+    private int unloadBlock3Ticks;
 
     //works the same for up and down
-    private int incrementTicks = 20;
+    private int incrementTicks = 30;
     private int competitionTicks = 100;
 
     private double negativePower = -0.55;
@@ -43,12 +44,15 @@ public class ElevatorSystem {
 
 
     public ElevatorSystem(HardwareMap map, Telemetry telemetry) {
-
+        this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("Elevator.omc");
         this.telemetry = telemetry;
         this.elevator = map.dcMotor.get("elevator");
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
         elevator.setDirection(DcMotor.Direction.REVERSE);
+        loadPosTicks = config.getInt("load_position");
+        unloadBlock2Ticks = config.getInt("block2_position");
+        unloadBlock3Ticks = config.getInt("block3_position");
     }
 
     //for autonomous
@@ -177,15 +181,26 @@ public class ElevatorSystem {
         position = position - incrementTicks;
     }
 
-    public void setPositionBlock2() {
-        unloadBlock2Ticks = position;
-        //use evan write directly into config
+    public void setPositionLoad() {
+        double ticks = position;
+        String tickString = Double.toString(ticks);
+        config.updateKey("load_position", tickString);
+        loadPosTicks = position;
 
     }
 
+    public void setPositionBlock2() {
+        double ticks = position;
+        String tickString = Double.toString(ticks);
+        config.updateKey("block2_position", tickString);
+        unloadBlock2Ticks = position;
+    }
+
     public void setPositionBlock3() {
+        double ticks = position;
+        String tickString = Double.toString(ticks);
+        config.updateKey("block3_position", tickString);
         unloadBlock3Ticks = position;
-        //use evan write directly into config
 
     }
 

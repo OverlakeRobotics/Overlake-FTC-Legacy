@@ -5,6 +5,7 @@ import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by Steven Abbott on 9/15/2017.
@@ -12,8 +13,11 @@ import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 
 @Autonomous(name="EducayshunOpMode", group="Bot")
 public class EducayshunOpMode extends AutonomousOpMode {
+    ConfigParser config;
+
     public final double DRIVE_POWER;
-    public final int ZONE = 0;
+
+    private int zone;
     //VectorF trans = null;
     //Orientation rot = null;
     //OpenGLMatrix pose = null;
@@ -24,6 +28,10 @@ public class EducayshunOpMode extends AutonomousOpMode {
 
     public EducayshunOpMode(){
         DRIVE_POWER = 1;
+        config = new ConfigParser("Autonomous.omc");
+
+        zone = config.getInt("zone");
+
     }
     public void runOpMode() {
         initializeAllDevices();
@@ -43,7 +51,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
         } else {
             vuforiaCryptoBox(ZONE);
         }*/
-        vuforiaCryptoBox(ZONE);
+        vuforiaCryptoBox(zone);
 
 
 
@@ -104,7 +112,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
             telemetry.update();
             sleep(3000);
         }*/
-        int picNumber = eye.look(); // 0 = left   1 = center   2 = right
+        int picNumber = 1; // 0 = left   1 = center   2 = right
         telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
         telemetry.update();
         sleep(3000);
@@ -209,7 +217,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
                 xp = power / yDiff * xDiff;
                 rp = power / yDiff * (rotDiff * (error / rotError));
             }
-            driveSystem.mecanumDrive((float)xp, (float)yp, (float)rp, 0);
+            driveSystem.mecanumDrive((float)xp, (float)yp, (float)rp, 0, false);
             sleep(50);
         }
     }

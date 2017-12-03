@@ -175,17 +175,17 @@ public class MecanumDriveSystem
         setPower(direction * scaledPower);
     }
 
-    public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
+    public void mecanumDrive(float rightX, float rightY, float leftX, float leftY, boolean slowDrive)
     {
         rightX = Range.clip(rightX, -1, 1);
         rightY = Range.clip(rightY, -1, 1);
         leftX = Range.clip(leftX, -1, 1);
         leftY = Range.clip(leftY, -1, 1);
 
-        rightX = scaleJoystickValue(rightX);
-        rightY = scaleJoystickValue(rightY);
-        leftX = scaleJoystickValue(leftX);
-        leftY = scaleJoystickValue(leftY);
+        rightX = scaleJoystickValue(rightX, slowDrive);
+        rightY = scaleJoystickValue(rightY, slowDrive);
+        leftX = scaleJoystickValue(leftX, slowDrive);
+        leftY = scaleJoystickValue(leftY, slowDrive);
 
         // write the values to the motors
         double frontRightPower = leftY + rightX + leftX;
@@ -197,6 +197,7 @@ public class MecanumDriveSystem
         motorFrontLeft.setPower(Range.clip(frontLeftPower, -1, 1));
         motorBackLeft.setPower(Range.clip(backLeftPower, -1, 1));
     }
+
 
     public void mecanumDriveXY(double x, double y)
     {
@@ -215,16 +216,20 @@ public class MecanumDriveSystem
     }
 
 
-    float scaleJoystickValue(float joystickValue)
+    float scaleJoystickValue(float joystickValue, boolean slowDrive)
     {
+        double scale = slowDrive ? 0.31 : 0.62;
         if(joystickValue > 0)
         {
-            return (float)((joystickValue*joystickValue)*.62);
+            return (float)((joystickValue*joystickValue)*scale);
         }
         else
         {
-            return (float)(-(joystickValue*joystickValue)*.62);
+            return (float)(-(joystickValue*joystickValue)*scale);
         }
     }
+
+
+
 }
 

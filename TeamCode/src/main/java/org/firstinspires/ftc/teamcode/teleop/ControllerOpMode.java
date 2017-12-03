@@ -17,14 +17,18 @@ import org.firstinspires.ftc.teamcode.util.Handler;
 public class ControllerOpMode extends OpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
+    private ParellelLiftSystem lifter;
+
 
     private Button clawLoadPosition;
     private Button clawReleasePosition;
+    private Button clawPinchPosition;
     private Button clawIncrement;
     public Button clawDecrement;
 
     private Button clawSetLoadPosition;
     private Button clawSetReleasePosition;
+    private Button clawSetPinchPosition;
 
     private Button elevatorLoadPosition1;
     private Button elevatorUnloadPosition1;
@@ -32,12 +36,15 @@ public class ControllerOpMode extends OpMode {
     private Button elevatorUnloadPosition3;
     private Button elevatorIncrementUp;
     private Button elevatorIncrementDown;
-
     private Button elevatorSetBlock2Pos;
     private Button elevatorSetBlock3Pos;
 
-    MecanumDriveSystem driveSystem;
+    private Button checkSlow;
 
+    private Button checkPotentiometerPos;
+
+    MecanumDriveSystem driveSystem;
+    boolean slowDrive = false;
 
     public ControllerOpMode(){
 
@@ -93,6 +100,29 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
+        this.clawPinchPosition = new Button();
+        this.clawPinchPosition.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.right_bumper;
+                    }
+                };
+        this.clawReleasePosition.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        claw.goToPinchPosition();
+                    }
+                };
+
+
+
+
         this.clawSetLoadPosition = new Button();
         this.clawSetLoadPosition.isPressed =
                 new Func<Boolean>()
@@ -100,7 +130,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.left_trigger>0.75 && gamepad2.left_bumper;
+                        return gamepad2.left_bumper && gamepad2.right_trigger > 0.5;
                     }
                 };
         this.clawSetLoadPosition.pressedHandler =
@@ -120,7 +150,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.left_trigger>(0.75) && gamepad2.left_bumper;
+                        return gamepad2.left_bumper && gamepad2.left_trigger > 0.5;
                     }
                 };
         this.clawSetReleasePosition.pressedHandler =
@@ -133,6 +163,28 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
+        this.clawSetPinchPosition = new Button();
+        this.clawSetPinchPosition.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad2.left_bumper && gamepad2.right_bumper;
+                    }
+                };
+        this.clawSetReleasePosition.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        claw.setPinchPosition();
+                    }
+                };
+
+
+
         this.clawIncrement = new Button();
         this.clawIncrement.isPressed =
                 new Func<Boolean>()
@@ -140,7 +192,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.dpad_right;
+                        return gamepad2.dpad_left;
                     }
                 };
         this.clawIncrement.pressedHandler =
@@ -160,7 +212,7 @@ public class ControllerOpMode extends OpMode {
                     @Override
                     public Boolean value()
                     {
-                        return gamepad2.dpad_left;
+                        return gamepad2.dpad_right;
                     }
                 };
         this.clawDecrement.pressedHandler =
@@ -339,6 +391,59 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
+
+        this.checkSlow = new Button();
+        this.checkSlow.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.left_trigger > 0.50;
+                    }
+                };
+        this.checkSlow.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        slowDrive = true;
+                    }
+                };
+
+        this.checkSlow.releasedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        slowDrive = false;
+                    }
+                };
+
+
+
+        /*this.checkPotentiometerPos = new Button();
+        this.checkPotentiometerPos.isPressed=
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.a;
+                    }
+                };
+        this.checkPotentiometerPos.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        lifter.goToBottom();
+                    }
+                }; */
+
     }
 
 
@@ -347,10 +452,14 @@ public class ControllerOpMode extends OpMode {
 
         clawLoadPosition.testAndHandle();
         clawReleasePosition.testAndHandle();
-        clawDecrement.testAndHandle();
-        clawIncrement.testAndHandle();
+        clawReleasePosition.testAndHandle();
         clawSetReleasePosition.testAndHandle();
         clawSetLoadPosition.testAndHandle();
+        clawSetPinchPosition.testAndHandle();
+        clawDecrement.testAndHandle();
+        clawIncrement.testAndHandle();
+
+
 
         elevator.checkForBottom(telemetry);
         elevator.checkForTop();
@@ -362,8 +471,15 @@ public class ControllerOpMode extends OpMode {
         elevatorIncrementUp.testAndHandle();
         elevatorSetBlock2Pos.testAndHandle();
         elevatorSetBlock3Pos.testAndHandle();
+        checkSlow.testAndHandle();
 
-        this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
+        //lifter.loop();
+        //checkPotentiometerPos.testAndHandle();
+
+        this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
+
+
+
 
     }
 
