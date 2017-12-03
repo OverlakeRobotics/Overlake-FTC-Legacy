@@ -1,25 +1,26 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.robot.ConfigParser;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+//import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by Steven Abbott on 9/15/2017.
  */
 
-@Autonomous(name="EducayshunOpMode", group="Bot")
-public class EducayshunOpMode extends AutonomousOpMode {
+@Autonomous(name="InBetweenMatchOpMode", group="Bot")
+public class InBetweenMatchOpMode extends AutonomousOpMode {
     public final double DRIVE_POWER = 0.8;
     public int zone;
 
     ConfigParser config;
 
-    public EducayshunOpMode() {
+    public InBetweenMatchOpMode() {
 
         this.config = new ConfigParser("Autonomous.omc");
 
@@ -38,14 +39,15 @@ public class EducayshunOpMode extends AutonomousOpMode {
     public void runOpMode() {
 
         initializeAllDevices();
-        sleep(2000);
         elevator.goToZero(telemetry);
-        claw.goToReleasePosition();
-        int struggle = eye.find();
+        //sleep(2000);
+        //elevator.goToZero(telemetry);
+        //claw.goToReleasePosition();
+        //int struggle = eye.find();
         waitForStart();
-        int determination = 1000000;
-        telemetry.addLine("" + struggle);
-        telemetry.update();
+        //int determination = 1000000;
+        //telemetry.addLine("" + struggle);
+        //telemetry.update();
         /*if (struggle == determination) {
             cryptoBox(ZONE);
             telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
@@ -54,7 +56,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
         } else {
             vuforiaCryptoBox(ZONE);
         }*/
-        vuforiaCryptoBox(zone);
+        //vuforiaCryptoBox(zone);
 
 
 
