@@ -18,12 +18,16 @@ public class CompetitionOpMode extends AutonomousOpMode {
 
     PixySystem pixySystem;
     ConfigParser config;
+    boolean isRedSide;
+    boolean isAudience;
     public static final String TAG = "Vuforia VuMark Sample";
 
     public CompetitionOpMode() {
         this.config = new ConfigParser("Autonomous.omc");
-        this.zone = config.getInt("zone");
-        this.pixySystem = new PixySystem(this, zone);
+        this.isRedSide = config.getBoolean("isRedSide");
+        this.isAudience = config.getBoolean("isAudience");
+
+        this.pixySystem = new PixySystem(this, isRedSide);
     }
 
     @Override
@@ -34,18 +38,18 @@ public class CompetitionOpMode extends AutonomousOpMode {
         claw.goToLoadPosition();
         sleep(1500);
         elevator.goToUnloadBlock3();
-
+        sleep(1000);
         //send in "this" and if the team color is blue (true) or red (false)
-        pixySystem = new PixySystem(this, zone);
+        pixySystem = new PixySystem(this, isRedSide);
         pixySystem.initPixyStuff();
         pixySystem.doServoStuff();
-
-        vuforiaCryptoBox(zone);
+        sleep(1000);
+        vuforiaCryptoBox(isRedSide, isAudience);
 
         stop();
     }
 
-    public void vuforiaCryptoBox(int zone) {
+    public void vuforiaCryptoBox(boolean isRedSide, boolean isAudience) {
         //Todo @Michael: Tweak the amount of inches driven at different intervals and the inches per box in right and left cryptobox approach
 
         int picNumber = eye.look(); // 0 = left   1 = center   2 = right
@@ -56,7 +60,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         // pic 0 is left     pic 1 is right      pic 2 is center
 
         // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (zone == 0) { // blue non-audience CLOSE TO GOOD
+        if (!isRedSide && !isAudience) { // blue non-audience CLOSE TO GOOD
             driveToPositionInches(-40, 0.6);
             turn(-90, 1);
 
@@ -71,16 +75,16 @@ public class CompetitionOpMode extends AutonomousOpMode {
             } else if (picNumber == 1) {
                 turn(90, 1);
             } else {
-                turn(65, 1);
+                turn(62, 1);
             }
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
             sleep(1000);
             driveToPositionInches(5, 1);
 
-        } else if (zone == 1) { // blue audience
+        } else if (!isRedSide && isAudience) { // blue audience
 
             driveToPositionInches(-58, 0.6);
             //telemetry.addLine("We're at the first cryptobox!");
@@ -93,7 +97,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             } else if (picNumber == 1) {
                 turn(90, 1);
             } else {
-                turn(65, 1);
+                turn(62, 1);
             }
             //turn(90, 1);
             //sleep(2000);
@@ -103,7 +107,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             claw.goToReleasePosition();
             sleep(1000);
             driveToPositionInches(5, 1);
-        } else if (zone == 2) { // red non-audience CLOSE TO GOOD
+        } else if (isRedSide && !isAudience) { // red non-audience CLOSE TO GOOD
             driveToPositionInches(-40, 0.6);
             turn(90, 1);
 
@@ -120,13 +124,13 @@ public class CompetitionOpMode extends AutonomousOpMode {
             } else {
                 turn(-117, 1);
             }
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
             sleep(1000);
             driveToPositionInches(5, 1);
-        } else { // red audience
+        } else if(isRedSide && isAudience){ // red audience
 
             driveToPositionInches(-57, 0.6);
             //telemetry.addLine("We're at the first cryptobox!");
@@ -143,7 +147,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             }
             //turn(90, 1);
             //sleep(2000);
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
 
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();

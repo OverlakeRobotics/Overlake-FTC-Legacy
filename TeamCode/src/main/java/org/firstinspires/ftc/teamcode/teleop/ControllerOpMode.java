@@ -110,7 +110,7 @@ public class ControllerOpMode extends OpMode {
                         return gamepad2.right_bumper;
                     }
                 };
-        this.clawReleasePosition.pressedHandler =
+        this.clawPinchPosition.pressedHandler =
                 new Handler()
                 {
                     @Override
@@ -452,7 +452,7 @@ public class ControllerOpMode extends OpMode {
 
         clawLoadPosition.testAndHandle();
         clawReleasePosition.testAndHandle();
-        clawReleasePosition.testAndHandle();
+        clawPinchPosition.testAndHandle();
         clawSetReleasePosition.testAndHandle();
         clawSetLoadPosition.testAndHandle();
         clawSetPinchPosition.testAndHandle();
@@ -477,9 +477,6 @@ public class ControllerOpMode extends OpMode {
         //checkPotentiometerPos.testAndHandle();
 
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
-
-
-
 
     }
 
