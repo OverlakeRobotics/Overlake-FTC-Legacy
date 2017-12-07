@@ -29,14 +29,14 @@ public class MecanumDriveSystem extends System
     public GearedMotor motorBackLeft;
     public GearedMotor motorBackRight;
 
-    private double startingIMUHeading;
+    private double initialHeading;
 
     /* Constructor */
     public MecanumDriveSystem(OpMode opMode) {
         super(opMode, "MecanumDrive");
 
         imuSystem = new IMUSystem(opMode);
-        startingIMUHeading = imuSystem.getHeading();
+        initialHeading = Math.toRadians(imuSystem.getHeading());
 
         this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
         this.motorFrontRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
@@ -132,14 +132,18 @@ public class MecanumDriveSystem extends System
     }
 
     public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+        double currentHeading = Math.toRadians(imuSystem.getHeading());
+        double headingDiff = currentHeading - initialHeading;
+
+
         double speed = Math.sqrt(leftX * leftX + leftY * leftY);
         double angle = Math.atan2(leftX, leftY);
         double changeOfDirectionSpeed = -rightX;
 
-        double frontLeft = speed * Math.sin(angle + Math.PI / 4) + changeOfDirectionSpeed;
-        double frontRight = speed * Math.cos(angle + Math.PI / 4) - changeOfDirectionSpeed;
-        double backLeft = speed * Math.cos(angle + Math.PI / 4) + changeOfDirectionSpeed;
-        double backRight = speed * Math.sin(angle + Math.PI / 4) - changeOfDirectionSpeed;
+        double frontLeft = speed * Math.sin(angle + headingDiff) + changeOfDirectionSpeed;
+        double frontRight = speed * Math.cos(angle + headingDiff) - changeOfDirectionSpeed;
+        double backLeft = speed * Math.cos(angle + headingDiff) + changeOfDirectionSpeed;
+        double backRight = speed * Math.sin(angle + headingDiff) - changeOfDirectionSpeed;
 
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);

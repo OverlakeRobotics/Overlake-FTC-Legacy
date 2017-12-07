@@ -34,14 +34,130 @@ public class Controller {
     public Button dPadRight;
     public Button leftBumper;
     public Button leftStickButton;
+    public Button leftTrigger;
     public Button rightBumper;
     public Button rightStickButton;
+    public Button rightTrigger;
 
-    public Controller(Gamepad gamepad) {
+    public Controller(final Gamepad gamepad) {
         this.gamepad = gamepad;
         a = new Button();
         b = new Button();
         x = new Button();
-        y = new Button()
+        y = new Button();
+        back = new Button();
+        start = new Button();
+        dPadDown = new Button();
+        dPadUp = new Button();
+        dPadLeft = new Button();
+        dPadRight = new Button();
+        leftBumper = new Button();
+        leftStickButton = new Button();
+        leftTrigger = new Button();
+        rightBumper = new Button();
+        rightStickButton = new Button();
+        rightTrigger = new Button();
+
+        a.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.a;
+            }
+        };
+
+        b.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.b;
+            }
+        };
+
+        x.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.x;
+            }
+        };
+
+        y.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.y;
+            }
+        };
+
+        back.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.back;
+            }
+        };
+
+        start.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.start;
+            }
+        };
+
+        dPadDown.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.dpad_down;
+            }
+        };
+
+        dPadLeft.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.dpad_left;
+            }
+        };
+
+        dPadRight.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.dpad_right;
+            }
+        };
+
+        dPadDown.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.dpad_down;
+            }
+        };
+
+        leftBumper.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.left_bumper;
+            }
+        };
+
+        leftStickButton.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.left_stick_button;
+            }
+        };
+
+        rightBumper.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.right_bumper;
+            }
+        };
+
+        rightStickButton.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad.right_stick_button;
+            }
+        };
+    }
+
+    public void handle() {
+
     }
 }
