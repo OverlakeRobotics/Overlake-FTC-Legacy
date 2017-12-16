@@ -17,25 +17,49 @@ import com.google.gson.annotations.*;
 public abstract class AutonomousOpMode extends LinearOpMode
 {
     MecanumDriveSystem driveSystem;
-    LineFollowingSystem lineFollowingSystem;
+    //LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
     Eye eye;
     ElevatorSystem elevator;
     ClawSystem claw;
-    PixySystem pixySystem;
 
 
     void initializeAllDevices()
     {
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
+        /*
+        telemetry.addLine("drive system done");
+        telemetry.update();
+        sleep(1000);
+        */
         this.imuSystem = new IMUSystem();
         this.imuSystem.init(this.hardwareMap);
-        this.lineFollowingSystem = new LineFollowingSystem();
+        /*
+        telemetry.addLine("imu system done");
+        telemetry.update();
+        sleep(1000);
+        */
+        //this.lineFollowingSystem = new LineFollowingSystem();
         this.eye = new Eye();
         this.eye.init(hardwareMap);
+        /*
+        telemetry.addLine("eye system done");
+        telemetry.update();
+        sleep(1000);
+        */
         this.elevator = new ElevatorSystem(hardwareMap, telemetry);
+        /*
+        telemetry.addLine("elevator system done");
+        telemetry.update();
+        sleep(1000);
+        */
         this.claw = new ClawSystem(hardwareMap);
+        /*
+        telemetry.addLine("claw system done");
+        telemetry.update();
+        sleep(1000);
+        */
 
 //        this.lineFollowingSystem.init(this.hardwareMap);
     }

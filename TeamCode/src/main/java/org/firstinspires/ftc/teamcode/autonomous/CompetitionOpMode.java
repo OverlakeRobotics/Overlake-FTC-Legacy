@@ -67,13 +67,13 @@ public class CompetitionOpMode extends AutonomousOpMode {
             //correctBoxLeftApproach(picNumber);
 
             if (picNumber == 0) {
-                turn(117 , 1);
+                turn(116 , 1);
             } else if (picNumber == 1) {
                 turn(90, 1);
             } else {
-                turn(65, 1);
+                turn(63, 1);
             }
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
@@ -97,7 +97,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             }
             //turn(90, 1);
             //sleep(2000);
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
 
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
@@ -120,7 +120,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             } else {
                 turn(-117, 1);
             }
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
@@ -143,7 +143,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             }
             //turn(90, 1);
             //sleep(2000);
-            driveToPositionInches(-12, 1);
+            driveToPositionInches(-14, 1);
 
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
@@ -151,6 +151,8 @@ public class CompetitionOpMode extends AutonomousOpMode {
             driveToPositionInches(5, 1);
         }
     }
+
+
 
     public void correctBoxLeftApproach(int boxNumber) {
         int inchesPerBox = 15;

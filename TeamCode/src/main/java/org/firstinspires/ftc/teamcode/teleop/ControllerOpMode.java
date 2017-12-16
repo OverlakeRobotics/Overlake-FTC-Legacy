@@ -41,7 +41,7 @@ public class ControllerOpMode extends OpMode {
 
     private Button checkSlow;
 
-    private Button checkPotentiometerPos;
+    //private Button checkPotentiometerPos;
 
     MecanumDriveSystem driveSystem;
     boolean slowDrive = false;
