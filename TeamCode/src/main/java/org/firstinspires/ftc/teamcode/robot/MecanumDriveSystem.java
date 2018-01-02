@@ -45,10 +45,10 @@ public class MecanumDriveSystem extends System
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        this.motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        this.motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
+        this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
 
         // Set PID coeffiecents
         setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
@@ -133,17 +133,19 @@ public class MecanumDriveSystem extends System
 
     public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
-        double headingDiff = currentHeading - initialHeading;
+        double headingDiff = initialHeading - currentHeading;
 
 
         double speed = Math.sqrt(leftX * leftX + leftY * leftY);
-        double angle = Math.atan2(leftX, leftY);
-        double changeOfDirectionSpeed = -rightX;
+        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
+        double changeOfDirectionSpeed = rightX;
+        double x = speed * Math.cos(angle);
+        double y = speed * Math.sin(angle);
 
-        double frontLeft = speed * Math.sin(angle + headingDiff) + changeOfDirectionSpeed;
-        double frontRight = speed * Math.cos(angle + headingDiff) - changeOfDirectionSpeed;
-        double backLeft = speed * Math.cos(angle + headingDiff) + changeOfDirectionSpeed;
-        double backRight = speed * Math.sin(angle + headingDiff) - changeOfDirectionSpeed;
+        double frontLeft = y - changeOfDirectionSpeed + x;
+        double frontRight = y + changeOfDirectionSpeed - x;
+        double backLeft = y - changeOfDirectionSpeed - x;
+        double backRight = y + changeOfDirectionSpeed + x;
 
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);
