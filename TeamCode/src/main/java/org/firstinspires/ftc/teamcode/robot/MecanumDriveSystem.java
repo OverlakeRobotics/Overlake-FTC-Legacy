@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.ramp.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MecanumDriveSystem
 {
@@ -21,14 +26,11 @@ public class MecanumDriveSystem
     private static final double gearRatio = wheelGearSize / motorGearSize;
     private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
-    HardwareMap hwMap = null;
+    private HardwareMap hwMap = null;
+    private IMUSystem imuSystem;
 
+    private double initialHeading;
     public final double minimumPower = 0.1; //TODO: Figure out the best value for this.
-
-    /* Constructor */
-    public MecanumDriveSystem()
-    {
-    }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap hwMap)
@@ -39,10 +41,14 @@ public class MecanumDriveSystem
         this.motorFrontRight = this.hwMap.dcMotor.get("motor_front_right");
         this.motorBackLeft = this.hwMap.dcMotor.get("motor_back_left");
         this.motorBackRight = this.hwMap.dcMotor.get("motor_back_right");
+        this.imuSystem = new IMUSystem();
+        this.imuSystem.init(hwMap);
         this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
+
+        this.initialHeading = this.imuSystem.getHeading();
 
         // Set all drive motors to zero power
         setPower(0);
@@ -198,6 +204,42 @@ public class MecanumDriveSystem
         motorBackLeft.setPower(Range.clip(backLeftPower, -1, 1));
     }
 
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+        double currentHeading = Math.toRadians(imuSystem.getHeading());
+        double headingDiff = initialHeading - currentHeading;
+
+
+        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
+        double changeOfDirectionSpeed = rightX;
+        double x = speed * Math.cos(angle);
+        double y = speed * Math.sin(angle);
+
+        double frontLeft = y - changeOfDirectionSpeed + x;
+        double frontRight = y + changeOfDirectionSpeed - x;
+        double backLeft = y - changeOfDirectionSpeed - x;
+        double backRight = y + changeOfDirectionSpeed + x;
+
+        List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
+        clampPowers(powers);
+
+        motorFrontLeft.setPower(powers.get(0));
+        motorFrontRight.setPower(powers.get(1));
+        motorBackLeft.setPower(powers.get(2));
+        motorBackRight.setPower(powers.get(3));
+    }
+
+    private void clampPowers(List<Double> powers) {
+        double minPower = Collections.min(powers);
+        double maxPower = Collections.max(powers);
+        double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
+
+        if (maxMag > 1.0) {
+            for (int i = 0; i < powers.size(); i++) {
+                powers.set(i, powers.get(i) / maxMag);
+            }
+        }
+    }
 
     public void mecanumDriveXY(double x, double y)
     {

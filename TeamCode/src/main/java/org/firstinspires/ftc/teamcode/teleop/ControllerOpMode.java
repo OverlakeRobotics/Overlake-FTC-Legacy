@@ -18,6 +18,7 @@ public class ControllerOpMode extends OpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
     private ParellelLiftSystem lifter;
+    private ConfigParser config;
 
 
     private Button clawLoadPosition;
@@ -52,6 +53,7 @@ public class ControllerOpMode extends OpMode {
 
     @Override
     public void init(){
+        this.config = new ConfigParser("TeleOpMecanum.omc");
         claw = new ClawSystem(this.hardwareMap);
         elevator = new ElevatorSystem(this.hardwareMap, telemetry);
 
@@ -475,8 +477,12 @@ public class ControllerOpMode extends OpMode {
 
         //lifter.loop();
         //checkPotentiometerPos.testAndHandle();
+        if (config.getBoolean("superDrive")) {
+            this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
+        } else  {
+            this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
+        }
 
-        this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
 
     }
 
