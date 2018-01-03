@@ -16,7 +16,7 @@ public class TestPixySystem extends LinearOpMode {
     @Override
     public void runOpMode() {
         //send in "this" and if the team color is blue (true) or red (false)
-        pixySystem = new PixySystem(this, 0);
+        pixySystem = new PixySystem(this, false);
         waitForStart();
         pixySystem.initPixyStuff();
         pixySystem.doServoStuff();

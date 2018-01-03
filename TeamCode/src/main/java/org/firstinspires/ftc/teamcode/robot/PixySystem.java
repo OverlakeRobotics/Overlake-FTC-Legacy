@@ -22,13 +22,9 @@ public class PixySystem {
 
     private boolean teamColorIsBlue;
 
-    public PixySystem (LinearOpMode linearOpMode, int blue) {
+    public PixySystem (LinearOpMode linearOpMode, boolean teamColorIsBlue) {
+        this.teamColorIsBlue = teamColorIsBlue;
         this.linearOpMode = linearOpMode;
-        if (blue == 0 || blue == 1) {
-            this.teamColorIsBlue = true;
-        } else {
-            this.teamColorIsBlue = false;
-        }
     }
 
     public void initPixyStuff() {
