@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.util.logger;
 
 /**
  * Created by EvanCoulson on 1/5/18.

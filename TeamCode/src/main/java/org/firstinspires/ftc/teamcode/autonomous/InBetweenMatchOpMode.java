@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.sun.tools.javac.comp.Todo;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
@@ -13,20 +9,17 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
  */
 
 @Autonomous(name="InBetweenMatchOpMode", group="Bot")
-public class InBetweenMatchOpMode extends AutonomousOpMode {
+public class InBetweenMatchOpMode extends BaseOpMode {
     public final double DRIVE_POWER = 0.8;
     public int zone;
 
     ConfigParser config;
 
     public InBetweenMatchOpMode() {
-
-        this.config = new ConfigParser("Autonomous.omc");
-
+        super("Autonomous");
         zone = config.getInt("zone");
-
-
     }
+
     //VectorF trans = null;
     //Orientation rot = null;
     //OpenGLMatrix pose = null;
@@ -36,8 +29,6 @@ public class InBetweenMatchOpMode extends AutonomousOpMode {
     //VuforiaLocalizer vuforia;
 
     public void runOpMode() {
-
-        initializeAllDevices();
         elevator.goToZero(telemetry);
         //sleep(2000);
         //elevator.goToZero(telemetry);

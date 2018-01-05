@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
-import org.firstinspires.ftc.teamcode.robot.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
 
 /**
  * Created by lexis on 23-Oct-17.

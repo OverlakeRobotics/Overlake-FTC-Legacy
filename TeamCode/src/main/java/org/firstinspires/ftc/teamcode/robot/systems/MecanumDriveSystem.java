@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.robot.GearChain;
+import org.firstinspires.ftc.teamcode.robot.GearedMotor;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
 import java.util.Arrays;
@@ -82,7 +84,7 @@ public class MecanumDriveSystem extends System
     }
 
     public void setRunMode(DcMotor.RunMode runMode) {
-        log(String.format("Run Mode: %s", runMode));
+        logger.log(String.format("Run Mode: %s", runMode));
         motorFrontLeft.setRunMode(runMode);
         motorFrontRight.setRunMode(runMode);
         motorBackLeft.setRunMode(runMode);

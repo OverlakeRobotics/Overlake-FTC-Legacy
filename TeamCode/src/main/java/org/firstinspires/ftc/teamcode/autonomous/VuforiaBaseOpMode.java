@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 
 
-public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
+public abstract class VuforiaBaseOpMode extends BaseOpMode {
 
     protected static class Target {
         public static int Wheels = 0;
@@ -29,8 +29,12 @@ public abstract class VuforiaBaseOpMode extends AutonomousOpMode {
 
     VuforiaTrackables beacons;
 
+    public VuforiaBaseOpMode() {
+        super("Vuforia Base OpMode");
+    }
+
+
     public void initialize() {
-        initializeAllDevices();
 
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;

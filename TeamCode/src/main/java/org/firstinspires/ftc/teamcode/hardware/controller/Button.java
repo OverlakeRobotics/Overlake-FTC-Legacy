@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.hardware.controller;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.util.Handler;

@@ -1,16 +1,10 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
-
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by jacks on 10/19/2017.

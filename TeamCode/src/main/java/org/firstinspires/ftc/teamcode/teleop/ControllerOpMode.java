@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robot.*;
+import org.firstinspires.ftc.teamcode.hardware.controller.TriggerType;
+import org.firstinspires.ftc.teamcode.robot.systems.ClawSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.util.Handler;
 
 /**
@@ -23,8 +26,8 @@ public class ControllerOpMode extends BaseOpMode {
 
     @Override
     public void init(){
-        claw = new ClawSystem(this.hardwareMap);
-        elevator = new ElevatorSystem(this.hardwareMap, telemetry);
+        claw = new ClawSystem(this);
+        elevator = new ElevatorSystem(this);
         lifter = new ParallelLiftSystem(this);
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
         initButtons();

@@ -1,18 +1,11 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
-import com.qualcomm.hardware.ams.AMSColorSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by jacks on 10/20/2017.
@@ -24,8 +17,8 @@ public class ElevatorSystem extends System {
     private DigitalChannel touchSensorTop;
     private ElapsedTime debounceTime = new ElapsedTime();
 
-    int encoderVal;
-    int position;
+    private int encoderVal;
+    private int position;
 
     private boolean debouncing = false;
     private boolean isAtTop = false;
@@ -44,7 +37,6 @@ public class ElevatorSystem extends System {
 
     public ElevatorSystem(OpMode mode) {
         super(mode, "Elevator");
-
         this.elevator = map.dcMotor.get("elevator");
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");

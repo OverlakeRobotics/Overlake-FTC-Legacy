@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.robot.ClawSystem;
-import org.firstinspires.ftc.teamcode.robot.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ClawSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.robot.Eye;
-import org.firstinspires.ftc.teamcode.robot.IMUSystem;
-import org.firstinspires.ftc.teamcode.robot.LineFollowingSystem;
-import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
-import org.firstinspires.ftc.teamcode.robot.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
@@ -21,7 +19,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public MecanumDriveSystem driveSystem;
     public IMUSystem imuSystem;
     public Eye eye;
-    public  ElevatorSystem elevator;
+    public ElevatorSystem elevator;
     public ClawSystem claw;
     public PixySystem pixySystem;
 
@@ -29,10 +27,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         config = new ConfigParser(opModeName + ".omc");
         this.driveSystem = new MecanumDriveSystem(this);
         this.imuSystem = new IMUSystem(this);
-        this.eye = new Eye();
-        this.eye.init(hardwareMap);
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
-        this.claw = new ClawSystem(hardwareMap);
+        this.eye = new Eye(this);
+        this.elevator = new ElevatorSystem(this);
+        this.claw = new ClawSystem(this);
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor
