@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.util.logger.FileLogger;
 
 /**
  * Created by EvanCoulson on 10/5/17.
@@ -20,6 +21,7 @@ enum LoggingService {
 
 public abstract class System {
     private LoggingService[] loggingServices;
+    private FileLogger fileLogger;
     private String system;
     private String fileName;
 
@@ -32,14 +34,9 @@ public abstract class System {
         this.map = opMode.hardwareMap;
         this.system = system;
         this.fileName = system + ".omc";
+        this.fileLogger = new FileLogger(this.system);
         this.telemetry = opMode.telemetry;
-
-
-        try {
-            config = new ConfigParser(fileName);
-        } catch(Exception e) {
-            throw new IllegalArgumentException("CONFIG FILE NOT FOUND AT \""+fileName+"\"");
-        }
+        this.config = new ConfigParser(fileName);
     }
 
     public void setDefaultServices(LoggingService... services) {
@@ -49,36 +46,27 @@ public abstract class System {
         }
     }
 
-    public void log(String level, String data) {
-        log(level, data, this.loggingServices);
+    public void log(String data) {
+        log(data, this.loggingServices);
     }
 
-    public void log(String level, String data, LoggingService[] loggingServices) {
+    public void log(String data, LoggingService[] loggingServices) {
         for (LoggingService service : this.loggingServices) {
             switch (service) {
                 case FILE:
-                    logFile(level, data);
+                    this.fileLogger.log(system, data);
                     break;
                 case TELEMETRY:
-                    logTelemetry(level, data);
+                    this.telemetry.addData(system, data);
                     break;
                 case LOGCAT:
-                    Log.i(level, data);
+                    Log.i(system, data);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown Logging Serivce " + service);
             }
         }
     }
-
-    private void logFile(String level, String data) {
-
-    }
-
-    private void logTelemetry(String level, String data) {
-        telemetry.addData("level", data);
-    }
-
 
     public String getFileName() {
         return fileName;

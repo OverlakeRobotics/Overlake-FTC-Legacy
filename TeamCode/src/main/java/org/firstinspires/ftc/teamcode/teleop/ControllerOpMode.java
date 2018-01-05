@@ -14,33 +14,12 @@ import org.firstinspires.ftc.teamcode.util.Handler;
  * Created by jacks on 10/5/2017.
  */
 @TeleOp(name="ContollerOpMode", group="TeleOp")
-public class ControllerOpMode extends OpMode {
+public class ControllerOpMode extends BaseOpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
 
-    private Button clawLoadPosition;
-    private Button clawReleasePosition;
-    private Button clawIncrement;
-    public Button clawDecrement;
-
-    private Button clawSetLoadPosition;
-    private Button clawSetReleasePosition;
-
-    private Button elevatorLoadPosition1;
-    private Button elevatorUnloadPosition1;
-    private Button elevatorUnloadPosition2;
-    private Button elevatorUnloadPosition3;
-    private Button elevatorIncrementUp;
-    private Button elevatorIncrementDown;
-
-    private Button elevatorSetBlock2Pos;
-    private Button elevatorSetBlock3Pos;
-
-    MecanumDriveSystem driveSystem;
-
-
     public ControllerOpMode(){
-
+        super("ControllerOpMode");
     }
 
     @Override
@@ -48,131 +27,48 @@ public class ControllerOpMode extends OpMode {
         claw = new ClawSystem(this.hardwareMap);
         elevator = new ElevatorSystem(this.hardwareMap, telemetry);
 
-        this.driveSystem = new MecanumDriveSystem(this);
-
         //Claw
-//        this.clawLoadPosition = new Button();
-//        this.clawLoadPosition.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.right_trigger>0.75 && !gamepad2.left_bumper;
-//                    }
-//                };
-//        this.clawLoadPosition.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.goToLoadPosition();
-//                    }
-//                };
-//
-//        this.clawReleasePosition = new Button();
-//        this.clawReleasePosition.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.left_trigger>0.75 && !gamepad2.left_bumper;
-//
-//                    }
-//                };
-//        this.clawReleasePosition.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.goToReleasePosition();
-//                    }
-//                };
-//
-//        this.clawSetLoadPosition = new Button();
-//        this.clawSetLoadPosition.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.left_trigger>0.75 && gamepad2.left_bumper;
-//                    }
-//                };
-//        this.clawSetLoadPosition.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.setLoadPosition();
-//                    }
-//                };
-//
-//        this.clawSetReleasePosition = new Button();
-//        this.clawSetReleasePosition.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.left_trigger>(0.75) && gamepad2.left_bumper;
-//                    }
-//                };
-//        this.clawSetReleasePosition.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.setReleasePosition();
-//                    }
-//                };
-//
-//        this.clawIncrement = new Button();
-//        this.clawIncrement.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.dpad_right;
-//                    }
-//                };
-//        this.clawIncrement.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.incrementServo();
-//                    }
-//                };
-//
-//        this.clawDecrement = new Button();
-//        this.clawDecrement.isPressed =
-//                new Func<Boolean>()
-//                {
-//                    @Override
-//                    public Boolean value()
-//                    {
-//                        return gamepad2.dpad_left;
-//                    }
-//                };
-//        this.clawDecrement.pressedHandler =
-//                new Handler()
-//                {
-//                    @Override
-//                    public void invoke()
-//                    {
-//                        claw.decrementServo();
-//                    }
-//                };
-//
-//
+        controller2.rightTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.goToLoadPosition();
+            }
+        };
+
+        controller2.leftTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.goToReleasePosition();
+            }
+        };
+
+        controller2.leftTriggerShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.setLoadPosition();
+            }
+        };
+
+        controller2.leftTriggerShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.setReleasePosition();
+            }
+        };
+
+        controller2.dPadRight.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.incrementServo();
+            }
+        };
+
+        controller2.dPadRight.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                claw.decrementServo();
+            }
+        };
 //
 //        //ELEVATOR
 //
@@ -343,24 +239,8 @@ public class ControllerOpMode extends OpMode {
 
     @Override
     public void loop() {
-
-//        clawLoadPosition.testAndHandle();
-//        clawReleasePosition.testAndHandle();
-//        clawDecrement.testAndHandle();
-//        clawIncrement.testAndHandle();
-//        clawSetReleasePosition.testAndHandle();
-//        clawSetLoadPosition.testAndHandle();
-//
-//        elevator.checkForBottom(telemetry);
-//        elevator.checkForTop();
-//        elevatorLoadPosition1.testAndHandle();
-//        elevatorUnloadPosition1.testAndHandle();
-//        elevatorUnloadPosition2.testAndHandle();
-//        elevatorUnloadPosition3.testAndHandle();
-//        elevatorIncrementDown.testAndHandle();
-//        elevatorIncrementUp.testAndHandle();
-//        elevatorSetBlock2Pos.testAndHandle();
-//        elevatorSetBlock3Pos.testAndHandle();
+//        controller1.handle();
+//        controller2.handle();
 
         this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
         telemetry.update();

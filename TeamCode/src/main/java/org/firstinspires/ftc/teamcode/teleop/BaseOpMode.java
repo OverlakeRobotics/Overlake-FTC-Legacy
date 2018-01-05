@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
@@ -11,17 +12,15 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
  */
 
 public abstract class BaseOpMode extends OpMode {
-    private ConfigParser config;
-    private Controller controller1;
-    private Controller controller2;
+    protected ConfigParser config;
+    protected Controller controller1;
+    protected Controller controller2;
+    protected MecanumDriveSystem driveSystem;
 
     public BaseOpMode(String opModeName) {
         this.controller1 = new Controller(gamepad1);
         this.controller2 = new Controller(gamepad2);
-        try {
-            config = new ConfigParser(opModeName + ".omc");
-        } catch (Exception e) {
-            throw new IllegalArgumentException("OP MODE CONFIGURATION NOT FOUND \"" + opModeName + "\"");
-        }
+        this.driveSystem = new MecanumDriveSystem(this);
+        config = new ConfigParser(opModeName + ".omc");
     }
 }

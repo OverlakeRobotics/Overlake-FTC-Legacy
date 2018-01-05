@@ -84,6 +84,7 @@ public class MecanumDriveSystem extends System
     }
 
     public void setRunMode(DcMotor.RunMode runMode) {
+        log(String.format("Run Mode: %s", runMode));
         motorFrontLeft.setRunMode(runMode);
         motorFrontRight.setRunMode(runMode);
         motorBackLeft.setRunMode(runMode);
