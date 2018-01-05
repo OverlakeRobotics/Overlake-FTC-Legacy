@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 enum LoggingService {
     TELEMETRY,
     FILE,
+    LOGCAT,
 }
 
 public abstract class System {
@@ -59,6 +62,11 @@ public abstract class System {
                 case TELEMETRY:
                     logTelemetry(level, data);
                     break;
+                case LOGCAT:
+                    Log.i(level, data);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown Logging Serivce " + service);
             }
         }
     }
@@ -68,7 +76,7 @@ public abstract class System {
     }
 
     private void logTelemetry(String level, String data) {
-        telemetry.addData();
+        telemetry.addData("level", data);
     }
 
 

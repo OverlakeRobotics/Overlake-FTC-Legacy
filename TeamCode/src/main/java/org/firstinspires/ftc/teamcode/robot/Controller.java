@@ -157,7 +157,22 @@ public class Controller {
         };
     }
 
-    public void handle() {
-
+    public void handle() throws Exception {
+        a.testAndHandle();
+        b.testAndHandle();
+        x.testAndHandle();
+        y.testAndHandle();
+        back.testAndHandle();
+        start.testAndHandle();
+        dPadDown.testAndHandle();
+        dPadUp.testAndHandle();
+        dPadLeft.testAndHandle();
+        dPadRight.testAndHandle();
+        leftBumper.testAndHandle();
+        leftStickButton.testAndHandle();
+        leftTrigger.testAndHandle();
+        rightBumper.testAndHandle();
+        rightStickButton.testAndHandle();
+        rightTrigger.testAndHandle();
     }
 }
