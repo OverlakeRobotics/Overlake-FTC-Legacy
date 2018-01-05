@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class MecanumDriveSystem extends System
 {
@@ -52,6 +47,9 @@ public class MecanumDriveSystem extends System
 
         // Set PID coeffiecents
         setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
+
+        this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
+
         // Set all drive motors to zero power
         setPower(0);
     }
@@ -111,7 +109,7 @@ public class MecanumDriveSystem extends System
         motorBackRight.setPower(power);
     }
 
-    public void mecanumDrive(float rightX, float rightY, float leftX, float leftY)
+    public void mecanumDrive(float rightX, float rightY, float leftX, float leftY, boolean slowDrive)
     {
         rightX = Range.clip(rightX, -1, 1);
         leftX = Range.clip(leftX, -1, 1);
@@ -167,6 +165,35 @@ public class MecanumDriveSystem extends System
                 powers.set(i, powers.get(i) / maxMag);
             }
         }
+    }
+
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY, float coeff) {
+        double currentHeading = Math.toRadians(imuSystem.getHeading());
+        double headingDiff = initialHeading - currentHeading;
+
+
+        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
+        double changeOfDirectionSpeed = rightX;
+        double x = coeff * speed * Math.cos(angle);
+        double y = coeff * speed * Math.sin(angle);
+
+        double frontLeft = y - changeOfDirectionSpeed + x;
+        double frontRight = y + changeOfDirectionSpeed - x;
+        double backLeft = y - changeOfDirectionSpeed - x;
+        double backRight = y + changeOfDirectionSpeed + x;
+
+        List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
+        clampPowers(powers);
+
+        motorFrontLeft.setPower(powers.get(0));
+        motorFrontRight.setPower(powers.get(1));
+        motorBackLeft.setPower(powers.get(2));
+        motorBackRight.setPower(powers.get(3));
+    }
+
+    public void resetInitialHeading() {
+        this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
     }
 
     public void mecanumDriveXY(double x, double y)
@@ -278,7 +305,6 @@ public class MecanumDriveSystem extends System
         {
             diff = -(360 * (diff / Math.abs(diff)));
         }
-
         return Math.abs(diff);
     }
 

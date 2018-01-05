@@ -1,19 +1,32 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveSystem;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by Steven Abbott on 9/15/2017.
  */
 
-@Autonomous(name="EducayshunOpMode", group="Bot")
-public class EducayshunOpMode extends AutonomousOpMode {
-    public final double DRIVE_POWER;
-    public final int ZONE = 0;
+@Autonomous(name="InBetweenMatchOpMode", group="Bot")
+public class InBetweenMatchOpMode extends AutonomousOpMode {
+    public final double DRIVE_POWER = 0.8;
+    public int zone;
+
+    ConfigParser config;
+
+    public InBetweenMatchOpMode() {
+
+        this.config = new ConfigParser("Autonomous.omc");
+
+        zone = config.getInt("zone");
+
+
+    }
     //VectorF trans = null;
     //Orientation rot = null;
     //OpenGLMatrix pose = null;
@@ -22,19 +35,18 @@ public class EducayshunOpMode extends AutonomousOpMode {
     //OpenGLMatrix lastLocation = null;
     //VuforiaLocalizer vuforia;
 
-    public EducayshunOpMode(){
-        DRIVE_POWER = 1;
-    }
     public void runOpMode() {
+
         initializeAllDevices();
-        claw.setLoadPosition();
-        sleep(2000);
         elevator.goToZero(telemetry);
-        int struggle = eye.find();
+        //sleep(2000);
+        //elevator.goToZero(telemetry);
+        //claw.goToReleasePosition();
+        //int struggle = eye.find();
         waitForStart();
-        int determination = 1000000;
-        telemetry.addLine("" + struggle);
-        telemetry.update();
+        //int determination = 1000000;
+        //telemetry.addLine("" + struggle);
+        //telemetry.update();
         /*if (struggle == determination) {
             cryptoBox(ZONE);
             telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
@@ -43,7 +55,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
         } else {
             vuforiaCryptoBox(ZONE);
         }*/
-        vuforiaCryptoBox(ZONE);
+        //vuforiaCryptoBox(zone);
 
 
 
@@ -63,14 +75,14 @@ public class EducayshunOpMode extends AutonomousOpMode {
 //            driveToPositionInches(-18, 1);
 //            turn(90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(1000);
 //            driveToPositionInches(-20, 1);
         } else if (zone == 1) {
 //            driveToPositionInches(-50, 1);
 //            turn(90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(2000);
 //            driveToPositionInches(-20, 1);
         } else if (zone == 2) {
@@ -79,18 +91,18 @@ public class EducayshunOpMode extends AutonomousOpMode {
 //            driveToPositionInches(-18, 1);
 //            turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(1000);
 //            driveToPositionInches(-20, 1);
         } else {
 //            driveToPositionInches(-50, 1);
 //            turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(2000);
 //            driveToPositionInches(-20, 1);
         }
-        claw.setReleasePosition();
+        claw.goToReleasePosition();
 //        driveToPositionInches(5, 1);
     }
 
@@ -104,27 +116,32 @@ public class EducayshunOpMode extends AutonomousOpMode {
             telemetry.update();
             sleep(3000);
         }*/
+        claw.goToLoadPosition();
+        sleep(1000);
+        elevator.goToUnloadBlock3();
+        sleep(1000);
         int picNumber = eye.look(); // 0 = left   1 = center   2 = right
         telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
         telemetry.update();
-        sleep(3000);
+        sleep(1000);
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) { // blue non-audience CLOSE TO GOOD
 //            driveToPositionInches(-40, 1);
 //            turn(-90, 1);
 
-//            driveToPositionInches(-5, 1);
+//            driveToPositionInches(-9, 1);
             telemetry.addLine("We're at the first cryptobox!");
             telemetry.update();
-            sleep(5000);
-            correctBoxLeftApproach(picNumber);
-
-//            turn(90, 1);
-            elevator.goToZero(telemetry);
-            claw.setReleasePosition();
             sleep(1000);
-//            driveToPositionInches(-20, 1);
+            correctBoxLeftApproach(picNumber);
+//            turn(90, 1);
+//            driveToPositionInches(-15, 1);
+            elevator.goToZero(telemetry);
+            sleep(1000);
+            claw.goToReleasePosition();
+            sleep(1000);
+//            driveToPositionInches(15, 1);
         } else if (zone == 1) { // blue audience
 
 //            driveToPositionInches(-50, 1);
@@ -135,7 +152,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
 
 //            turn(90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(2000);
 //            driveToPositionInches(-20, 1);
         } else if (zone == 2) { // red non-audience CLOSE TO GOOD
@@ -150,7 +167,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
 
 //            turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(1000);
 //            driveToPositionInches(-20, 1);
         } else { // red audience
@@ -163,22 +180,24 @@ public class EducayshunOpMode extends AutonomousOpMode {
 
 //            turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            claw.goToReleasePosition();
             sleep(2000);
 //            driveToPositionInches(-20, 1);
         }
-        claw.setReleasePosition();
+        claw.goToReleasePosition();
 //        driveToPositionInches(5, 1);
     }
 
     public void correctBoxLeftApproach(int boxNumber) {
-        int inchesPerBox = 11;
-//        driveToPositionInches((-inchesPerBox * eye.look()), 0.5);
+        int inchesPerBox = 15;
+        telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
+        telemetry.update();
+//        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
     }
 
     public void correctBoxRightApproach(int boxNumber) {
         int inchesPerBox = 11;
-//        driveToPositionInches((14 - (eye.look() * -inchesPerBox)), 0.5);
+//        driveToPositionInches((33 - (boxNumber * -inchesPerBox)), 1);
     }
 
     public void fancyDrive(int x, int y, double power) {
@@ -209,7 +228,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
                 xp = power / yDiff * xDiff;
                 rp = power / yDiff * (rotDiff * (error / rotError));
             }
-            driveSystem.mecanumDrive((float)xp, (float)yp, (float)rp, 0);
+            driveSystem.mecanumDrive((float)xp, (float)yp, (float)rp, 0, false);
             sleep(50);
         }
     }

@@ -16,10 +16,6 @@ import java.util.concurrent.Callable;
 /**
  * Created by EvanCoulson on 11/3/17.
  */
-enum TriggerType {
-    LEFT,
-    RIGHT,
-}
 
 public class Controller {
     public Gamepad gamepad;

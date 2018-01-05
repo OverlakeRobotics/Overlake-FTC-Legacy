@@ -26,15 +26,13 @@ public class Eye {
     OpenGLMatrix lastLocation;
     VuforiaLocalizer vuforia;
     int cameraMonitorViewId;
-    VuforiaLocalizer.Parameters parameters;
     VuforiaTrackables relicTrackables;
     VuforiaTrackable relicTemplate;
     float mmPerInch;
     //List<VuforiaTrackable> allTrackables;
     public VectorF trans;
     public Orientation rot;
-
-
+    VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
     public void init(HardwareMap hwMap) {
         this.hwMap = hwMap;

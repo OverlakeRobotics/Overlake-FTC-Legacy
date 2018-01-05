@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 @Autonomous(name="PixySystem", group="Bot")
 public class PixySystem {
     private LinearOpMode linearOpMode;
-
     private PixyCam pixyCam;
 
     private PixyCam.Block redBlock;
@@ -22,9 +21,9 @@ public class PixySystem {
 
     private boolean teamColorIsBlue;
 
-    public PixySystem (LinearOpMode linearOpMode, int blue) {
+    public PixySystem (LinearOpMode linearOpMode, boolean isRedSide) {
         this.linearOpMode = linearOpMode;
-        if (blue == 0 || blue == 1) {
+        if (!isRedSide) {
             this.teamColorIsBlue = true;
         } else {
             this.teamColorIsBlue = false;
@@ -58,7 +57,8 @@ public class PixySystem {
 
     public void doServoStuff() {
         linearOpMode.sleep(1000);
-        if (teamColorIsBlue) {
+        if (this.redBlock.x == 0 || this.blueBlock.x == 0) {
+        } else if (teamColorIsBlue) {
             this.vertServo.setPosition(VERT_BOTTOM);
             linearOpMode.sleep(1000);
             this.horizServo.setPosition(HORIZ_CENTER);

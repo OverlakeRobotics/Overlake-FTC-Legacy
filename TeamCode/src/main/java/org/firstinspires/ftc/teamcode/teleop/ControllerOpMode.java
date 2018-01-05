@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.Handler;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by jacks on 10/5/2017.
@@ -17,13 +18,19 @@ import org.firstinspires.ftc.teamcode.util.Handler;
 public class ControllerOpMode extends BaseOpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
+    private ParellelLiftSystem lifter;
+    private ConfigParser config;
+
+    boolean slowDrive;
 
     public ControllerOpMode(){
         super("ControllerOpMode");
+        this.slowDrive = false;
     }
 
     @Override
     public void init(){
+        this.config = new ConfigParser("TeleOpMecanum.omc");
         claw = new ClawSystem(this.hardwareMap);
         elevator = new ElevatorSystem(this.hardwareMap, telemetry);
 
@@ -142,6 +149,33 @@ public class ControllerOpMode extends BaseOpMode {
                 elevator.setPositionBlock3();
             }
         };
+
+        controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
+
+        controller1.leftTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                slowDrive = !slowDrive;
+            }
+        };
+
+        controller1.x.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                driveSystem.resetInitialHeading();
+            }
+        };
+
+        /*
+        controller1.a.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        lifter.goToBottom();
+                    }
+                }; */
     }
 
 
@@ -155,7 +189,13 @@ public class ControllerOpMode extends BaseOpMode {
         float lx = controller1.gamepad.left_stick_x;
         float ly = controller1.gamepad.left_stick_y;
 
-        this.driveSystem.mecanumDrive(rx, ry, lx, ly);
+        if (config.getBoolean("superDrive")) {
+            float coeff = slowDrive == true ? 0.5f : 1f;
+            this.driveSystem.driveGodMode(rx, ry, lx, ly, coeff);
+        } else  {
+            this.driveSystem.mecanumDrive(rx, ry, lx, ly, slowDrive);
+        }
+
         telemetry.update();
     }
 
