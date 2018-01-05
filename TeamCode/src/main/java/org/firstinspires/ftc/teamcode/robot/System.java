@@ -13,12 +13,6 @@ import org.firstinspires.ftc.teamcode.util.logger.FileLogger;
  * Created by EvanCoulson on 10/5/17.
  */
 
-enum LoggingService {
-    TELEMETRY,
-    FILE,
-    LOGCAT,
-}
-
 public abstract class System {
     private LoggingService[] loggingServices;
     private FileLogger fileLogger;

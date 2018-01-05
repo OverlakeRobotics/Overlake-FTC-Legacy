@@ -13,7 +13,7 @@ public class DcMotorServo
     public double forwardPower;
     public double reversePower;
 
-    public void init(HardwareMap hardwareMap, String motorName, String potentiometerName)
+    public DcMotorServo(HardwareMap hardwareMap, String motorName, String potentiometerName)
     {
         this.motor = hardwareMap.dcMotor.get(motorName);
         this.armPotentiometer = hardwareMap.analogInput.get(potentiometerName);

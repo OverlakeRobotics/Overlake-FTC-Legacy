@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
-import org.firstinspires.ftc.teamcode.robot.ConfigParser;
 import org.firstinspires.ftc.teamcode.robot.PixySystem;
 
 /**
@@ -13,26 +12,22 @@ import org.firstinspires.ftc.teamcode.robot.PixySystem;
  */
 
 @Autonomous(name="CompetitionOpMode", group="Bot")
-public class CompetitionOpMode extends AutonomousOpMode {
+public class CompetitionOpMode extends BaseOpMode {
     int zone;
 
-    PixySystem pixySystem;
-    ConfigParser config;
     boolean isRedSide;
     boolean isAudience;
     public static final String TAG = "Vuforia VuMark Sample";
 
     public CompetitionOpMode() {
-        this.config = new ConfigParser("Autonomous.omc");
-        this.isRedSide = config.getBoolean("isRedSide");
-        this.isAudience = config.getBoolean("isAudience");
-
+        super("Autonomous");
+        this.isRedSide = this.config.getBoolean("isRedSide");
+        this.isAudience = this.config.getBoolean("isAudience");
         this.pixySystem = new PixySystem(this, isRedSide);
     }
 
     @Override
     public void runOpMode() {
-        initializeAllDevices();
         waitForStart();
         elevator.goToZero(telemetry);
         claw.goToLoadPosition();
@@ -61,98 +56,98 @@ public class CompetitionOpMode extends AutonomousOpMode {
 
         // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (!isRedSide && !isAudience) { // blue non-audience CLOSE TO GOOD
-            driveToPositionInches(-40, 0.6);
-            turn(-90, 1);
+//            driveToPositionInches(-40, 0.6);
+//            turn(-90, 1);
 
-            driveToPositionInches(-25, 1);
+//            driveToPositionInches(-25, 1);
             //telemetry.addLine("We're at the first cryptobox!");
             //telemetry.update();
             //sleep(1000);
             //correctBoxLeftApproach(picNumber);
 
             if (picNumber == 0) {
-                turn(117 , 1);
+//                turn(117 , 1);
             } else if (picNumber == 1) {
-                turn(90, 1);
+//                turn(90, 1);
             } else {
-                turn(62, 1);
+//                turn(62, 1);
             }
-            driveToPositionInches(-14, 1);
+//            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(5, 1);
+//            driveToPositionInches(5, 1);
 
         } else if (!isRedSide && isAudience) { // blue audience
 
-            driveToPositionInches(-58, 0.6);
+//            driveToPositionInches(-58, 0.6);
             //telemetry.addLine("We're at the first cryptobox!");
             //telemetry.update();
             //sleep(2000);
             //correctBoxLeftApproach(picNumber);
 
             if (picNumber == 0) {
-                turn(117 , 1);
+//                turn(117 , 1);
             } else if (picNumber == 1) {
-                turn(90, 1);
+//                turn(90, 1);
             } else {
-                turn(62, 1);
+//                turn(62, 1);
             }
             //turn(90, 1);
             //sleep(2000);
-            driveToPositionInches(-12, 1);
+//            driveToPositionInches(-12, 1);
 
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(5, 1);
+//            driveToPositionInches(5, 1);
         } else if (isRedSide && !isAudience) { // red non-audience CLOSE TO GOOD
-            driveToPositionInches(-40, 0.6);
-            turn(90, 1);
+//            driveToPositionInches(-40, 0.6);
+//            turn(90, 1);
 
-            driveToPositionInches(-25, 1);
+//            driveToPositionInches(-25, 1);
             //telemetry.addLine("We're at the first cryptobox!");
             //telemetry.update();
             //sleep(1000);
             //correctBoxLeftApproach(picNumber);
 
             if (picNumber == 0) {
-                turn(-65 , 1);
+//                turn(-65 , 1);
             } else if (picNumber == 1) {
-                turn(-90, 1);
+//                turn(-90, 1);
             } else {
-                turn(-117, 1);
+//                turn(-117, 1);
             }
-            driveToPositionInches(-14, 1);
+//            driveToPositionInches(-14, 1);
             elevator.goToZero(telemetry);
             sleep(1000);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(5, 1);
+//            driveToPositionInches(5, 1);
         } else if(isRedSide && isAudience){ // red audience
 
-            driveToPositionInches(-57, 0.6);
+//            driveToPositionInches(-57, 0.6);
             //telemetry.addLine("We're at the first cryptobox!");
             //telemetry.update();
             //sleep(2000);
             //correctBoxLeftApproach(picNumber);
 
             if (picNumber == 0) {
-                turn(-65, 1);
+//                turn(-65, 1);
             } else if (picNumber == 1) {
-                turn(-90, 1);
+//                turn(-90, 1);
             } else {
-                turn(-117, 1);
+//                turn(-117, 1);
             }
             //turn(90, 1);
             //sleep(2000);
-            driveToPositionInches(-14, 1);
+//            driveToPositionInches(-14, 1);
 
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(5, 1);
+//            driveToPositionInches(5, 1);
         }
     }
 
@@ -160,12 +155,12 @@ public class CompetitionOpMode extends AutonomousOpMode {
         int inchesPerBox = 15;
         telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
         telemetry.update();
-        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
+//        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
     }
 
     public void correctBoxRightApproach(int boxNumber) {
         int inchesPerBox = 11;
-        driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
+//        driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
     }
 
     public void cryptoBox(int zone) {
