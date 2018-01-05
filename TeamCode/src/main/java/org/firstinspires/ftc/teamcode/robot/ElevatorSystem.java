@@ -74,6 +74,17 @@ public class ElevatorSystem {
 
     }
 
+    public void goToPosition(int ticks) {
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int thisPos = encoderVal + position;
+        elevator.setTargetPosition(thisPos + ticks);
+        if(position > ticks){
+            elevator.setPower(negativePower);
+        } else{
+            elevator.setPower(positivePower);
+        }
+    }
+
     public void runMotorDown() {
         elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         elevator.setPower(negativePower);
@@ -86,55 +97,6 @@ public class ElevatorSystem {
 
     }
 
-    public void checkForBottom(Telemetry telemetry){
-
-        //On Rev, when configuring use the second input in digital
-        touchSensorBottom.setMode(DigitalChannel.Mode.INPUT);
-        boolean bottomSwitchPushed = (touchSensorBottom.getState() == false);
-        if( bottomSwitchPushed&& !isAtBottom) {
-            elevator.setPower(0.0);
-            encoderVal = elevator.getCurrentPosition();
-            position = loadPosTicks;
-            isAtBottom = true;
-
-        } else if (isAtBottom) {
-            if(!bottomSwitchPushed && !debouncing) {
-                    debounceTime.reset();
-                    debouncing = true;
-
-            }
-            if (debouncing && debounceTime.milliseconds() > 50) {
-                isAtBottom =  false; //(touchSensorBottom.getState() == false);
-                debouncing = false;
-            }
-
-
-        }
-
-
-    }
-
-    public void checkForTop() {       //On Rev, when configuring use the second input in digital
-        touchSensorTop.setMode(DigitalChannel.Mode.INPUT);
-        boolean topSwitchPushed = (touchSensorTop.getState() == false);
-        if( topSwitchPushed&& !isAtTop) {
-            elevator.setPower(0.0);
-            isAtTop = true;
-        } else if (isAtTop) {
-
-            if (!debouncing) {
-                debounceTime.reset();
-                debouncing = true;
-            }
-            else {
-                if (debounceTime.milliseconds() > 50) {
-                    isAtTop =  false; //(touchSensorBottom.getState() == false);
-                    debouncing = false;
-                }
-            }
-
-        }
-    }
 
     //B button
     public void goToUnloadBlock2() {
@@ -203,6 +165,57 @@ public class ElevatorSystem {
         unloadBlock3Ticks = position;
 
     }
+
+    public void checkForBottom(Telemetry telemetry){
+
+        //On Rev, when configuring use the second input in digital
+        touchSensorBottom.setMode(DigitalChannel.Mode.INPUT);
+        boolean bottomSwitchPushed = (touchSensorBottom.getState() == false);
+        if( bottomSwitchPushed&& !isAtBottom) {
+            elevator.setPower(0.0);
+            encoderVal = elevator.getCurrentPosition();
+            position = loadPosTicks;
+            isAtBottom = true;
+
+        } else if (isAtBottom) {
+            if(!bottomSwitchPushed && !debouncing) {
+                debounceTime.reset();
+                debouncing = true;
+
+            }
+            if (debouncing && debounceTime.milliseconds() > 50) {
+                isAtBottom =  false; //(touchSensorBottom.getState() == false);
+                debouncing = false;
+            }
+
+
+        }
+
+
+    }
+
+    public void checkForTop() {       //On Rev, when configuring use the second input in digital
+        touchSensorTop.setMode(DigitalChannel.Mode.INPUT);
+        boolean topSwitchPushed = (touchSensorTop.getState() == false);
+        if( topSwitchPushed&& !isAtTop) {
+            elevator.setPower(0.0);
+            isAtTop = true;
+        } else if (isAtTop) {
+
+            if (!debouncing) {
+                debounceTime.reset();
+                debouncing = true;
+            }
+            else {
+                if (debounceTime.milliseconds() > 50) {
+                    isAtTop =  false; //(touchSensorBottom.getState() == false);
+                    debouncing = false;
+                }
+            }
+
+        }
+    }
+
 
     public enum MotorPositions {
         LOAD_POSITION1,

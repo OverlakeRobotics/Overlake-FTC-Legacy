@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 @Autonomous(name="PixySystem", group="Bot")
 public class PixySystem {
     private LinearOpMode linearOpMode;
-
     private PixyCam pixyCam;
 
     private PixyCam.Block redBlock;

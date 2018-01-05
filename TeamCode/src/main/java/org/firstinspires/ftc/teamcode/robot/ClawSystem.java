@@ -42,7 +42,6 @@ public class ClawSystem {
         RELEASE_POSITION = config.getDouble("release_position");
 
         //TODO: For competition please change this to pinch_ position and configure the correct value in the Config app.
-
         //To change the double value:
         //run Teleop and press and hold LBumper then press RBumper on controller 2.
         //      adjust this position but using the L and R dpad on Controller 2
@@ -62,7 +61,6 @@ public class ClawSystem {
     public void goToLoadPosition() {
         servoAngle = LOAD_POSITION;
         claw.setPosition(servoAngle);
-        //.5 or .6
         this.position = ServoPositions.CLAWLOAD;
     }
 
@@ -76,6 +74,13 @@ public class ClawSystem {
         servoAngle = PINCH_POSITION;
         claw.setPosition(servoAngle);
         this.position = ServoPositions.CLAWPINCH;
+    }
+
+    public void goToPosition(int angle) {
+        //use only for autonomous
+        servoAngle = angle;
+        claw.setPosition(servoAngle);
+
     }
 
     public void incrementServo() {
