@@ -42,7 +42,9 @@ public class ControllerOpMode extends OpMode {
 
     private Button checkSlow;
 
-    //private Button checkPotentiometerPos;
+    private Button resetHedingButton;
+
+    private Button checkPotentiometerPos;
 
     MecanumDriveSystem driveSystem;
     boolean slowDrive = false;
@@ -424,6 +426,25 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
+        this.resetHedingButton = new Button();
+        this.resetHedingButton.isPressed = new Func<Boolean>() {
+            @Override
+            public Boolean value() {
+                return gamepad1.x;
+            }
+        };
+        this.resetHedingButton.pressedHandler = new Handler() {
+            @Override
+            public void invoke() {
+//                driveSystem.resetInitialHeading();
+            }
+        };
+        this.resetHedingButton.releasedHandler = new Handler() {
+            @Override
+            public void invoke() {
+                driveSystem.resetInitialHeading();
+            }
+        };
 
 
         /*this.checkPotentiometerPos = new Button();
@@ -474,11 +495,13 @@ public class ControllerOpMode extends OpMode {
         elevatorSetBlock2Pos.testAndHandle();
         elevatorSetBlock3Pos.testAndHandle();
         checkSlow.testAndHandle();
+        resetHedingButton.testAndHandle();
 
         //lifter.loop();
         //checkPotentiometerPos.testAndHandle();
         if (config.getBoolean("superDrive")) {
-            this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
+            float coeff = slowDrive == true ? 0.5f : 1f;
+            this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, coeff);
         } else  {
             this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
         }
