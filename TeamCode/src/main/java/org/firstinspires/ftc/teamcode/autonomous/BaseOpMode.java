@@ -30,6 +30,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         this.eye = new Eye(this);
         this.elevator = new ElevatorSystem(this);
         this.claw = new ClawSystem(this);
+
+        telemetry.setMsTransmissionInterval(200);
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor

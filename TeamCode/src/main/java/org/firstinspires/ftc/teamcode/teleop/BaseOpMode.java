@@ -20,6 +20,8 @@ public abstract class BaseOpMode extends OpMode {
         this.controller1 = new Controller(gamepad1);
         this.controller2 = new Controller(gamepad2);
         this.driveSystem = new MecanumDriveSystem(this);
-        config = new ConfigParser(opModeName + ".omc");
+        this.config = new ConfigParser(opModeName + ".omc");
+
+        telemetry.setMsTransmissionInterval(200);
     }
 }
