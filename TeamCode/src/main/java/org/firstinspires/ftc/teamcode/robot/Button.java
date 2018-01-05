@@ -35,7 +35,8 @@ public class Button
         this.releasedHandler = releasedHandler;
     }
 
-    public void testAndHandle() throws Exception {
+    public void testAndHandle()
+    {
         Boolean pressed = this.isPressed.value();
 
         this.justPressed = (pressed && !this.wasPressed);
@@ -43,9 +44,17 @@ public class Button
         this.wasPressed = pressed;
 
         if (this.justPressed && this.pressedHandler != null)
-            this.pressedHandler.invoke();
+            try {
+                this.pressedHandler.invoke();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         if (this.justReleased && this.releasedHandler != null)
-            this.releasedHandler.invoke();
+            try {
+                this.releasedHandler.invoke();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }

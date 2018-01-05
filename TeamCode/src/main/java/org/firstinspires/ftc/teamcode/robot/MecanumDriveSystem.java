@@ -195,12 +195,12 @@ public class MecanumDriveSystem extends System
     public void driveInchesPolar(double inches, double direction, double power) {
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addData("direction", direction);
-        telemetry.addData("driving", power * Math.sin(90 - direction));
-        telemetry.addData("driving", power * Math.cos(90 - direction));
-        this.motorFrontRight.runOutputWheelInches(inches, power * Math.sin(90 - direction));
-        this.motorBackRight.runOutputWheelInches(inches, power * Math.cos(90 - direction));
-        this.motorFrontLeft.runOutputWheelInches(inches, power * Math.cos(90 - direction));
-        this.motorBackLeft.runOutputWheelInches(inches, power * Math.sin(90 - direction));
+        telemetry.addData("driving", power * Math.sin(Math.PI / 2 - direction));
+        telemetry.addData("driving", power * Math.cos(Math.PI / 2 - direction));
+        this.motorFrontRight.runOutputWheelInches(inches, power * Math.sin(Math.PI / 2 - direction));
+        this.motorBackRight.runOutputWheelInches(inches, power * Math.cos(Math.PI / 2 - direction));
+        this.motorFrontLeft.runOutputWheelInches(inches, power * Math.cos(Math.PI / 2 - direction));
+        this.motorBackLeft.runOutputWheelInches(inches, power * Math.sin(Math.PI / 2 - direction));
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 

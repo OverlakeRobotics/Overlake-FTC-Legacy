@@ -324,7 +324,7 @@ public class Controller {
         }
     }
 
-    public void handle() throws Exception {
+    public void handle() {
         a.testAndHandle();
         b.testAndHandle();
         x.testAndHandle();
