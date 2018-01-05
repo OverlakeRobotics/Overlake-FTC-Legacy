@@ -48,7 +48,7 @@ public class MecanumDriveSystem
         this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
 
-        this.initialHeading = this.imuSystem.getHeading();
+        this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
 
         // Set all drive motors to zero power
         setPower(0);
@@ -204,7 +204,7 @@ public class MecanumDriveSystem
         motorBackLeft.setPower(Range.clip(backLeftPower, -1, 1));
     }
 
-    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY, float coeff) {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
         double headingDiff = initialHeading - currentHeading;
 
@@ -212,8 +212,8 @@ public class MecanumDriveSystem
         double speed = Math.sqrt(leftX * leftX + leftY * leftY);
         double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
         double changeOfDirectionSpeed = rightX;
-        double x = speed * Math.cos(angle);
-        double y = speed * Math.sin(angle);
+        double x = coeff * speed * Math.cos(angle);
+        double y = coeff * speed * Math.sin(angle);
 
         double frontLeft = y - changeOfDirectionSpeed + x;
         double frontRight = y + changeOfDirectionSpeed - x;
@@ -239,6 +239,10 @@ public class MecanumDriveSystem
                 powers.set(i, powers.get(i) / maxMag);
             }
         }
+    }
+
+    public void resetInitialHeading() {
+        this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
     }
 
     public void mecanumDriveXY(double x, double y)
