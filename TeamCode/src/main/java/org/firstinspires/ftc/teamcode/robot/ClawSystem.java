@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -15,15 +16,17 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
  * Created by jacks on 10/19/2017.
  */
 
-public class ClawSystem {
-    public ConfigParser config;
+public class ClawSystem extends System {
     private Servo claw;
+
     //0.5 is the center point
     //one rotation on small gear is a value of 4.5
     //right trigger
     private double LOAD_POSITION; //0.320;
+
     //left trigger
     private double RELEASE_POSITION;//0.345;
+
     //TODO: this is added to controller 2 right bumber
     private double PINCH_POSITION; //TODO: find this value; implement in below todo
 
@@ -31,15 +34,22 @@ public class ClawSystem {
 
     public double servoAngle;
 
+    public enum ServoPositions {
+        CLAWLOAD,
+        CLAWRELEASE,
+        CLAWPINCH,
+    }
 
-    public ClawSystem(HardwareMap map) {
+    public ClawSystem(OpMode mode) {
+        super(mode, "Claw");
+        this.claw = this.map.servo.get("claw");
 
-        this.config = new ConfigParser("Claw.omc");
-        this.claw = map.servo.get("claw");
         ServoImplEx servo = (ServoImplEx)this.claw;
         ServoControllerEx controller = (ServoControllerEx) servo.getController();
+
         int portNumber = servo.getPortNumber();
         controller.setServoPwmRange(portNumber, new PwmControl.PwmRange(1000, 2000));
+
         LOAD_POSITION = config.getDouble("load_position");
         RELEASE_POSITION = config.getDouble("release_position");
 
@@ -50,16 +60,10 @@ public class ClawSystem {
         //or just add a postion to the config on the controller phone
         PINCH_POSITION  = config.getDouble("pinch_position");
 
-        //this.colorSensor = map.colorSensor.get("flickerColorDetector");
         this.position = ServoPositions.CLAWRELEASE;
         servoAngle = LOAD_POSITION;
     }
-    public enum ServoPositions {
-        CLAWLOAD,
-        CLAWRELEASE,
-        CLAWPINCH,
 
-    }
     public void goToLoadPosition() {
         servoAngle = LOAD_POSITION;
         claw.setPosition(servoAngle);
@@ -116,10 +120,4 @@ public class ClawSystem {
         //TODO: change this in the config too pls
         config.updateKey("pinch_position", tickStrings);
     }
-
-
-
-
-
-
 }
