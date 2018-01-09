@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.components;
 
 /**
  * Created by EvanCoulson on 9/26/17.
@@ -43,23 +43,5 @@ public class GearChain {
             current = current.next;
         }
         return ratio;
-    }
-
-    private class Gear {
-        private double teeth;
-        private Gear next;
-
-        public Gear(double teeth) {
-            this(teeth, null);
-        }
-
-        public Gear(double teeth, Gear next) {
-            this.next = next;
-            this.teeth = teeth;
-        }
-
-        public double getRatio() {
-            return next.teeth / this.teeth;
-        }
     }
 }

@@ -25,10 +25,11 @@ public class ControllerOpMode extends BaseOpMode {
     }
 
     @Override
-    public void init(){
+    public void init() {
         claw = new ClawSystem(this);
         elevator = new ElevatorSystem(this);
         lifter = new ParallelLiftSystem(this);
+
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
         initButtons();
     }

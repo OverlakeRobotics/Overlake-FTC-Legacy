@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.robot.DcMotorServo;
+import org.firstinspires.ftc.teamcode.robot.components.DcMotorServo;
 
 /**
  * Created by jacks on 11/28/2017.

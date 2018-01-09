@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot.systems.ClawSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
-import org.firstinspires.ftc.teamcode.robot.Eye;
+import org.firstinspires.ftc.teamcode.robot.systems.Eye;
 import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;

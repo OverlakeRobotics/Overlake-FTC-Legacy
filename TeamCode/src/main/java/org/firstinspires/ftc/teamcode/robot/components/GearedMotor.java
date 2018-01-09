@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.LogarithmicRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
 

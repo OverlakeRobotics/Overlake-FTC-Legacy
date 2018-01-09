@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.robot.GearChain;
-import org.firstinspires.ftc.teamcode.robot.GearedMotor;
+import org.firstinspires.ftc.teamcode.robot.components.GearChain;
+import org.firstinspires.ftc.teamcode.robot.components.GearedMotor;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
 import java.util.Arrays;

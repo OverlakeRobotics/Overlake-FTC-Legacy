@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.teamcode.robot.ColorSensorData;
-import org.firstinspires.ftc.teamcode.robot.HueData;
+import org.firstinspires.ftc.teamcode.robot.data.ColorSensorData;
+import org.firstinspires.ftc.teamcode.robot.data.HueData;
 
 @TeleOp(name="ColorCalibration")
 @Disabled

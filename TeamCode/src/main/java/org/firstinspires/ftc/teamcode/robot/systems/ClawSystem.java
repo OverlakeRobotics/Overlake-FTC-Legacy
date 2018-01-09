@@ -24,7 +24,7 @@ public class ClawSystem extends System {
     //TODO: this is added to controller 2 right bumber
     private double PINCH_POSITION; //TODO: find this value; implement in below todo
 
-    private ClawSystem.ServoPositions position;
+    private ServoPositions position;
 
     public double servoAngle;
 
