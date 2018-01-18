@@ -17,11 +17,10 @@ public class ControllerOpMode extends BaseOpMode {
     private ElevatorSystem elevator;
     private ParallelLiftSystem lifter;
 
-    boolean slowDrive;
+    private static boolean slowDrive = false;
 
     public ControllerOpMode(){
         super("ControllerOpMode");
-        this.slowDrive = false;
     }
 
     @Override
@@ -45,8 +44,8 @@ public class ControllerOpMode extends BaseOpMode {
         float ly = controller1.gamepad.left_stick_y;
 
         if (config.getBoolean("superDrive")) {
-            float coeff = slowDrive == true ? 0.5f : 1f;
-            this.driveSystem.driveGodMode(rx, ry, lx, ly, coeff);
+            float coefficient = slowDrive == true ? 0.5f : 1f;
+            this.driveSystem.driveGodMode(rx, ry, lx, ly, coefficient);
         } else  {
             this.driveSystem.mecanumDrive(rx, ry, lx, ly, slowDrive);
         }

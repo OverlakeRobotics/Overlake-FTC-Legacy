@@ -17,7 +17,7 @@ public class Logger {
     private String system;
 
     public Logger(OpMode mode, String system) {
-        this.loggingServices = new LoggingService[] { LoggingService.FILE };
+        this.loggingServices = new LoggingService[] { LoggingService.TELEMETRY };
         this.fileLogger = new FileLogger(system);
         this.telemetry = mode.telemetry;
         this.system = system;

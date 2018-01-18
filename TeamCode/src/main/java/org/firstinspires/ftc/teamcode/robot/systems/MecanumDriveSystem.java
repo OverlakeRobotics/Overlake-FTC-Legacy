@@ -157,6 +157,13 @@ public class MecanumDriveSystem extends System
         motorBackRight.setPower(powers.get(3));
     }
 
+    public void driveCircle(float power) {
+        float lx = power;
+        float rx = 0.33f * lx;
+
+        mecanumDrive(rx, 0f, lx, 0f, false);
+    }
+
     private void clampPowers(List<Double> powers) {
         double minPower = Collections.min(powers);
         double maxPower = Collections.max(powers);
