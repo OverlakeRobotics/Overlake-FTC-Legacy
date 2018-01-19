@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.robot.systems.ClawSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.util.Handler;
+import org.firstinspires.ftc.teamcode.util.logger.Logger;
+import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 
 /**
  * Created by jacks on 10/5/2017.
@@ -25,9 +27,16 @@ public class ControllerOpMode extends BaseOpMode {
 
     @Override
     public void init() {
+        Logger logger = new Logger(this, "baseOp");
+        logger.setLoggingServices(LoggingService.FILE);
+        logger.log("here 3");
+        telemetry.update();
         claw = new ClawSystem(this);
+        logger.log("here 4");
+        telemetry.update();
         elevator = new ElevatorSystem(this);
-        lifter = new ParallelLiftSystem(this);
+        logger.log("here 5");
+        telemetry.update();
 
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
         initButtons();
@@ -66,7 +75,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.rightTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.goToLoadPosition();
+//                claw.goToLoadPosition();
+                telemetry.addData("c2 press", "r trig");
             }
         };
 
@@ -74,23 +84,27 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.leftTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.goToReleasePosition();
+//                claw.goToReleasePosition();
+                telemetry.addData("c2 press", "l trig");
             }
         };
 
         // save load position
-        controller2.leftTriggerShifted.pressedHandler = new Handler() {
+        controller2.rightTriggerShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.setLoadPosition();
+//                claw.setLoadPosition();
+                telemetry.addData("c2 press", "S r trig");
             }
+
         };
 
         // save release position
         controller2.leftTriggerShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.setReleasePosition();
+//                claw.setReleasePosition();
+                telemetry.addData("c2 press", "S l trig");
             }
         };
 
@@ -98,15 +112,17 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadRight.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.incrementServo();
+//                claw.incrementServo();
+                telemetry.addData("c2 press", "dpad r");
             }
         };
 
         // decrement servo
-        controller2.dPadRight.pressedHandler = new Handler() {
+        controller2.dPadLeft.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                claw.decrementServo();
+//                claw.decrementServo();
+                telemetry.addData("c2 press", "dpad l");
             }
         };
 
@@ -116,7 +132,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.a.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.runMotorDown();
+//                elevator.runMotorDown();
+                telemetry.addData("c2 press", "a");
             }
         };
 
@@ -124,7 +141,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.b.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.goToUnloadBlock2();
+//                elevator.goToUnloadBlock2();
+                telemetry.addData("c2 press", "b");
             }
         };
 
@@ -132,7 +150,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.x.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.goToUnloadBlock3();
+//                elevator.goToUnloadBlock3();
+                telemetry.addData("c2 press", "x");
             }
         };
 
@@ -140,7 +159,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.y.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.runMotorUp();
+//                elevator.runMotorUp();
+                telemetry.addData("c2 press", "y");
             }
         };
 
@@ -148,7 +168,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadUp.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.incrementUp();
+//                elevator.incrementUp();
+                telemetry.addData("c2 press", "dpad up");
             }
         };
 
@@ -156,7 +177,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadDown.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.incrementDown();
+//                elevator.incrementDown();
+                telemetry.addData("c2 press", "dpad down");
             }
         };
 
@@ -164,7 +186,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.bShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.setPositionBlock2();
+//                elevator.setPositionBlock2();
+                telemetry.addData("c2 press", "b");
             }
         };
 
@@ -172,7 +195,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.xShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.setPositionBlock3();
+//                elevator.setPositionBlock3();
+                telemetry.addData("c2 press", "S x");
             }
         };
 
@@ -180,6 +204,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 slowDrive = !slowDrive;
+                telemetry.addData("c1 press", "l trig");
             }
         };
 
@@ -187,6 +212,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 driveSystem.resetInitialHeading();
+                telemetry.addData("c1 press", "x");
             }
         };
 
@@ -195,7 +221,8 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
 //                lifter.goToBottom();
-                throw new IllegalStateException("Lifter Not Implemented Yet");
+                telemetry.addData("c1 press", "a");
+//                throw new IllegalStateException("Lifter Not Implemented Yet");
             }
         };
     }

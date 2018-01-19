@@ -46,7 +46,7 @@ public class ConfigParser {
                 configData.put(args[1], args);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("CONFIG FILE" + filename);
+            throw new IllegalArgumentException("CONFIG FILE " + filename);
         }
     }
 

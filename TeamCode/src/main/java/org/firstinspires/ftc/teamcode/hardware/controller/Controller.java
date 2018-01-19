@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 public class Controller {
     public Gamepad gamepad;
 
-    private static final float DEFAULT_TRIGGER_VALUE = 0.75f;
+    private float DEFAULT_TRIGGER_VALUE;
 
     private float rightTriggerValue;
     private float leftTriggerValue;
@@ -53,10 +53,11 @@ public class Controller {
     public Button rightTriggerShifted;
 
     public Controller(final Gamepad gamepad) {
+        this.parser = new ConfigParser("Controller");
+        DEFAULT_TRIGGER_VALUE = parser.getFloat("default_trigger");
         this.rightTriggerValue = DEFAULT_TRIGGER_VALUE;
         this.leftTriggerValue = DEFAULT_TRIGGER_VALUE;
         this.gamepad = gamepad;
-        this.parser = new ConfigParser("Controller");
 
         a = new Button();
         b = new Button();

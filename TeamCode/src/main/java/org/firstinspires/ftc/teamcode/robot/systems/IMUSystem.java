@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.robot.systems.System;
+import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 
 /**
  * This is NOT an opmode.
@@ -19,6 +20,7 @@ public class IMUSystem extends System
     /* Constructor */
     public IMUSystem(OpMode opMode){
         super(opMode, "IMUSystem");
+        logger.setLoggingServices(LoggingService.FILE);
 
         this.parameters = new BNO055IMU.Parameters();
         this.parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -27,10 +29,13 @@ public class IMUSystem extends System
         this.parameters.loggingTag = "BNO055";
         this.parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         this.imu = this.map.get(BNO055IMU.class, "imu");
+        logger.log("I here 2");
         this.imu.initialize(parameters);
+        logger.log("I here 3");
 
         // Enable reporting of position using the naive integrator
         imu.startAccelerationIntegration(new Position(), new Velocity(), 50); //TODO: Is the last parameter good?
+        logger.log("I here 4");
     }
 
     public double getHeading()

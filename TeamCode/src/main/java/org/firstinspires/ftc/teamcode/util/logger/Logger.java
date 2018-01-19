@@ -23,7 +23,7 @@ public class Logger {
         this.system = system;
     }
 
-    public void setLoggingServices(LoggingService[] services) {
+    public void setLoggingServices(LoggingService... services) {
         this.loggingServices = services;
     }
 
