@@ -4,11 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robot.Robot;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.*;
 import org.firstinspires.ftc.teamcode.util.Handler;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by jacks on 10/5/2017.
@@ -17,15 +23,27 @@ import org.firstinspires.ftc.teamcode.util.Handler;
 public class ControllerOpMode extends OpMode {
     private ClawSystem claw;
     private ElevatorSystem elevator;
-    private ParellelLiftSystem lifter;
+    private ParallelLiftSystem lifter;
     private ConfigParser config;
+    private Claw2png meMotor;
 
 
     private Button clawLoadPosition;
     private Button clawReleasePosition;
     private Button clawPinchPosition;
+    private Button parallelBottom;
+    private Button parallelMiddle;
+    private Button parallelTop;
+
+    private Button clawBottom;
+    private Button clawMiddle;
+    private Button clawTop;
+    private Button runMotor;
+    private Button runMotorBack;
+
+
     private Button clawIncrement;
-    public Button clawDecrement;
+    private Button clawDecrement;
 
     private Button clawSetLoadPosition;
     private Button clawSetReleasePosition;
@@ -45,7 +63,6 @@ public class ControllerOpMode extends OpMode {
     private Button resetHedingButton;
 
     private Button checkPotentiometerPos;
-
     MecanumDriveSystem driveSystem;
     boolean slowDrive = false;
 
@@ -54,13 +71,15 @@ public class ControllerOpMode extends OpMode {
     }
 
     @Override
-    public void init(){
+    public void init() {
         this.config = new ConfigParser("TeleOpMecanum.omc");
         claw = new ClawSystem(this.hardwareMap);
         elevator = new ElevatorSystem(this.hardwareMap, telemetry);
-
+        meMotor = new Claw2png(this, telemetry);
+        lifter = new ParallelLiftSystem(this.hardwareMap, telemetry);
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
+
 
         //Claw
         this.clawLoadPosition = new Button();
@@ -229,7 +248,177 @@ public class ControllerOpMode extends OpMode {
                     }
                 };
 
+        this.clawBottom = new Button();
+        this.clawBottom.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.a;
+                    }
+                };
+        this.clawBottom.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        meMotor.goToBottom();
+                    }
+                };
 
+        this.clawMiddle = new Button();
+        this.clawMiddle.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.x;
+
+                    }
+                };
+        this.clawMiddle.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        meMotor.goToMiddle();
+                    }
+                };
+
+        this.clawTop = new Button();
+        this.clawTop.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.y;
+                    }
+                };
+        this.clawTop.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        meMotor.goToTop();
+                    }
+                };
+
+        this.runMotor = new Button();
+        this.runMotor.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.left_bumper;
+                    }
+                };
+        this.runMotor.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        meMotor.runMotor();
+                    }
+                };
+        this.runMotor.releasedHandler = new Handler() {
+            @Override
+            public void invoke() {
+                meMotor.stop();
+            }
+        };
+
+        this.runMotorBack = new Button();
+        this.runMotorBack.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.right_bumper;
+                    }
+                };
+        this.runMotorBack.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        meMotor.runMotorBack();
+                    }
+                };
+        this.runMotorBack.releasedHandler = new Handler() {
+            @Override
+            public void invoke() {
+                meMotor.stop();
+            }
+        };
+
+        this.parallelBottom = new Button();
+        this.parallelBottom.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.dpad_down;
+                    }
+                };
+        this.parallelBottom.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        lifter.runMotorDown();
+                    }
+                };
+
+        this.parallelMiddle = new Button();
+        this.parallelMiddle.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.dpad_right;
+                    }
+                };
+        this.parallelMiddle.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        lifter.goToMiddle();
+                    }
+                };
+        this.parallelTop = new Button();
+        this.parallelTop.isPressed =
+                new Func<Boolean>()
+                {
+                    @Override
+                    public Boolean value()
+                    {
+                        return gamepad1.dpad_up;
+                    }
+                };
+        this.parallelTop.pressedHandler =
+                new Handler()
+                {
+                    @Override
+                    public void invoke()
+                    {
+                        lifter.goToTop();
+                    }
+                };
 
         //ELEVATOR
 
@@ -430,7 +619,7 @@ public class ControllerOpMode extends OpMode {
         this.resetHedingButton.isPressed = new Func<Boolean>() {
             @Override
             public Boolean value() {
-                return gamepad1.x;
+                return gamepad1.b;
             }
         };
         this.resetHedingButton.pressedHandler = new Handler() {
@@ -468,11 +657,16 @@ public class ControllerOpMode extends OpMode {
                 }; */
 
     }
+    ElapsedTime i = new ElapsedTime();
 
+    public void logTime(String str) {
+        Long time = i.nanoseconds();
+        RobotLog.ee("Time " + str, time.toString());
+    }
 
     @Override
     public void loop() {
-
+        logTime("Loop Start");
         clawLoadPosition.testAndHandle();
         clawReleasePosition.testAndHandle();
         clawPinchPosition.testAndHandle();
@@ -482,8 +676,22 @@ public class ControllerOpMode extends OpMode {
         clawDecrement.testAndHandle();
         clawIncrement.testAndHandle();
 
+        clawBottom.testAndHandle();
+        clawMiddle.testAndHandle();
+        clawTop.testAndHandle();
+        runMotor.testAndHandle();
+        runMotorBack.testAndHandle();
+        logTime("meMotor Start");
+        meMotor.loop();
+        logTime("meMotor End");
 
+        //checkPotentiometerPos.testAndHandle();
 
+        parallelBottom.testAndHandle();
+        parallelMiddle.testAndHandle();
+        parallelTop.testAndHandle();
+        lifter.checkForBottom();
+        lifter.isPressed();
         elevator.checkForBottom(telemetry);
         elevator.checkForTop();
         elevatorLoadPosition1.testAndHandle();
@@ -496,16 +704,16 @@ public class ControllerOpMode extends OpMode {
         elevatorSetBlock3Pos.testAndHandle();
         checkSlow.testAndHandle();
         resetHedingButton.testAndHandle();
-
+        logTime("before mec");
         //lifter.loop();
         //checkPotentiometerPos.testAndHandle();
-        if (config.getBoolean("superDrive")) {
+        if (true) {
             float coeff = slowDrive == true ? 0.5f : 1f;
             this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, coeff);
         } else  {
             this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
         }
-
+        logTime("End");
 
     }
 

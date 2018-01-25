@@ -86,15 +86,17 @@ public class ElevatorSystem {
     }
 
     public void runMotorDown() {
-        elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        elevator.setPower(negativePower);
-
+        if(!isAtBottom) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(negativePower);
+        }
     }
 
     public void runMotorUp() {
-        elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        elevator.setPower(positivePower);
-
+        if(!isAtTop) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(positivePower);
+        }
     }
 
 

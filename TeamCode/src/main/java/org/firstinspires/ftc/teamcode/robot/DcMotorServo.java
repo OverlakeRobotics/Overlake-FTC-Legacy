@@ -1,8 +1,31 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import android.graphics.Path;
+import android.provider.MediaStore;
+
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
+
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.tools.MiniPID;
+import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
+import org.firstinspires.ftc.teamcode.util.ramp.LogarithmicRamp;
+import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
+
+import java.io.IOException;
+import java.util.Date;
 
 // Combines a DcMotor and a Potentiometer into make a servo
 public class DcMotorServo
@@ -10,44 +33,125 @@ public class DcMotorServo
     private DcMotor motor;
     private AnalogInput armPotentiometer;
     public double targetPosition;
-    public double forwardPower;
-    public double reversePower;
+    public double power;
+    LogarithmicRamp ramp;
+    Telemetry telemetry;
+    ElapsedTime elapsedTime = new ElapsedTime();
+    MiniPID miniPID;
+    ConfigParser config;
+    Date time;
+    DateFormat df;
+    FileOutputStream outputStream;
+    DataOutputStream dataStream;
+    PrintStream printStream;
+    String pow;
+    long i;
+    double P;
+    double I;
+    double D;
 
-    public void init(HardwareMap hardwareMap, String motorName, String potentiometerName)
-    {
+    public void init(HardwareMap hardwareMap, String motorName, String potentiometerName, Telemetry telemetry) {
+        this.telemetry = telemetry;
         this.motor = hardwareMap.dcMotor.get(motorName);
+        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.armPotentiometer = hardwareMap.analogInput.get(potentiometerName);
         this.targetPosition = this.getCurrentPosition();
-        this.forwardPower = 0.5;
-        this.reversePower = 0.1;
+        this.time = new Date();
+        this.df = new SimpleDateFormat("dd-MM-yy HH-mm-ss");
+        try {
+            this.printStream = new PrintStream("/sdcard/FIRST/Claw Power " + df.format(time));
+        }
+        catch (FileNotFoundException e) {
+            telemetry.addData("File Not Found: " , e.getLocalizedMessage());
+        }
+
+        this.config = new org.firstinspires.ftc.teamcode.robot.ConfigParser("PID.omc");
+        P = config.getDouble("P");
+        I = config.getDouble("I");
+        D  = config.getDouble("D");
+        this.miniPID = new MiniPID(P, I, D);
+
+        this.targetPosition = 0.2;
+        this.power = 0.6;
     }
 
     public double getCurrentPosition()
     {
-        return this.armPotentiometer.getVoltage();
+        return Range.scale(this.armPotentiometer.getVoltage(), 0.0, 3.3, 0.0, 1.0 );
     }
 
-    public void loop()
-    {
-        double currentPosition = getCurrentPosition();
+    private long lastTime = 0;
 
-        if (this.targetPosition > currentPosition)
-        {
-            this.motor.setPower(adjustedPower(currentPosition, this.targetPosition, this.forwardPower));
+
+    public void loop(double targetPosition) {
+        i = elapsedTime.nanoseconds();
+        if(i > lastTime + 10000 ) {
+            lastTime = i;
+
+        double finalPow = pidPower(targetPosition);
+        RobotLog.ee("Claw PID ", targetPosition + ", " + getCurrentPosition() + ", " + finalPow + ", " + miniPID.errorSum + ", " +
+                    (getCurrentPosition()-miniPID.lastActual) + ", " + i);
+        this.motor.setPower(finalPow);
+
         }
-        else
-        {
-            this.motor.setPower(adjustedPower(currentPosition, this.targetPosition, this.reversePower));
-        }
+            //telemetry.addData("Time: ", i);
+
     }
 
-    double adjustedPower(double currentPos, double targetPos, double maxPower)
-    {
+        /*if(printStream != null) {
+            printStream.println(targetPosition + ", " + getCurrentPosition() + ", " + finalPow + ", " + miniPID.errorSum + ", " +
+                    (getCurrentPosition()-miniPID.lastActual));
+        }*/
+
+
+    public void runMotor(){
+        this.motor.setPower(0.5);
+    }
+    public void runMotorBack(){
+        this.motor.setPower(-0.5);
+    }
+    public void stop(){
+        this.motor.setPower(0);
+    }
+
+    public double pidPower(double targetPosition) {
+        miniPID.setSetpoint(targetPosition);
+        miniPID.setOutputLimits(0.6);
+        return miniPID.getOutput(getCurrentPosition(), targetPosition);
+    }
+
+
+
+
+
+
+    double adjustedPower(double currentPos, double targetPos, double maxPower) {
+        //x's are potentiometer
+        //x1 is target vale
+        //x2 1.0
+        //y1 1.0
+        //y2 0.01
+        double minPower = 0.2;
+        double minVoltage = 0.1;
+        double maxVoltage = 1.0;
         double delta = targetPos - currentPos;
-        double absDelta = Math.abs(delta);
-        if (delta < 0)
-            maxPower = -maxPower;
+        //
+        Ramp ramp = new ExponentialRamp(minVoltage, minPower, maxVoltage, maxPower);
 
-        return maxPower * (Math.log((Math.min(Math.E - 1, (Math.E - 1) * absDelta / 130.0) + 1))); // TODO: 130.0 is wrong
+        double power = getPower(ramp, delta, maxPower);
+
+        if (Math.abs(power) <= minPower) {
+            power = 0;
+        }
+
+        telemetry.addData("Power: ", power);
+        return  power;
     }
-}
+    private double getPower(Ramp ramp, double delta, double maxPower) {
+        double absDelta = Math.abs(delta);
+
+        return ((delta < 0) ? -1 : 1) * ramp.value(absDelta);
+    }
+
+
+    }
