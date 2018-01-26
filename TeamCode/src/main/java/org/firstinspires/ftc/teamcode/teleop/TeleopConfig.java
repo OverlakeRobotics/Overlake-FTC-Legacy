@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
-
+@Disabled
 @TeleOp(name="TeleOpConfig", group="TeleOp")
 
 public class TeleopConfig extends OpMode {

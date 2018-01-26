@@ -21,13 +21,9 @@ public class PixySystem {
 
     private boolean teamColorIsBlue;
 
-    public PixySystem (LinearOpMode linearOpMode, boolean isRedSide) {
+    public PixySystem (LinearOpMode linearOpMode, boolean teamColorIsBlue) {
+        this.teamColorIsBlue = teamColorIsBlue;
         this.linearOpMode = linearOpMode;
-        if (!isRedSide) {
-            this.teamColorIsBlue = true;
-        } else {
-            this.teamColorIsBlue = false;
-        }
     }
 
     public void initPixyStuff() {
@@ -56,13 +52,14 @@ public class PixySystem {
     }
 
     public void doServoStuff() {
-        linearOpMode.sleep(1000);
+        int pause = 600;
+        //linearOpMode.sleep(1000);
         if (this.redBlock.x == 0 || this.blueBlock.x == 0) {
         } else if (teamColorIsBlue) {
             this.vertServo.setPosition(VERT_BOTTOM);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.horizServo.setPosition(HORIZ_CENTER);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
 
             if (this.redBlock.x > this.blueBlock.x) {
                 this.horizServo.setPosition(HORIZ_CENTER - 0.2);
@@ -70,16 +67,16 @@ public class PixySystem {
                 this.horizServo.setPosition(HORIZ_CENTER + 0.2);
             }
 
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.horizServo.setPosition(HORIZ_CENTER);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.vertServo.setPosition(0);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
         } else {
             this.vertServo.setPosition(VERT_BOTTOM);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.horizServo.setPosition(HORIZ_CENTER);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
 
             if (this.redBlock.x > this.blueBlock.x) {
                 this.horizServo.setPosition(HORIZ_CENTER + 0.2);
@@ -87,11 +84,11 @@ public class PixySystem {
                 this.horizServo.setPosition(HORIZ_CENTER - 0.2);
             }
 
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.horizServo.setPosition(HORIZ_CENTER);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
             this.vertServo.setPosition(1);
-            linearOpMode.sleep(1000);
+            linearOpMode.sleep(pause);
         }
     }
 }

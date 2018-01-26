@@ -14,146 +14,120 @@ import org.firstinspires.ftc.teamcode.robot.PixySystem;
 
 @Autonomous(name="CompetitionOpMode", group="Bot")
 public class CompetitionOpMode extends AutonomousOpMode {
-    int zone;
-
+    private int zone;
+    private int inchesToReferenceBoxNonAudience;
+    private int inchesToReferenceBoxAudience;
+    private double powerSetting1;
+    private double powerSetting2;
+    private int cryptoApproachInches;
+    private boolean isBlue;
+    private boolean isAudienceSide;
+    private ConfigParser config;
+    private int b;
     PixySystem pixySystem;
-    ConfigParser config;
-    boolean isRedSide;
-    boolean isAudience;
-    public static final String TAG = "Vuforia VuMark Sample";
 
-    public CompetitionOpMode() {
+    public CompetitionOpMode() {}
+
+    private void init2() {
         this.config = new ConfigParser("Autonomous.omc");
-        this.isRedSide = config.getBoolean("isRedSide");
-        this.isAudience = config.getBoolean("isAudience");
-
-        this.pixySystem = new PixySystem(this, isRedSide);
+        this.inchesToReferenceBoxNonAudience = config.getInt("InchesToReferenceBoxNonAudience"); // the length of the first drive forward, ending at the refernce box
+        this.inchesToReferenceBoxAudience = config.getInt("InchesToReferenceBoxAudience"); // the length of the first drive forward, ending at the refernce box
+        this.zone = config.getInt("zone"); // sets which starting zone you are in
+        this.powerSetting1 = config.getDouble("powerSetting1"); // the power setting for driving off the stone
+        this.powerSetting2 = config.getDouble("powerSetting2"); // the power setting for everything other than getting off the stone
+        this.cryptoApproachInches = config.getInt("cryptoApproachInches"); // the length of the drive forward to place the cube
+        this.b = config.getInt("b");
+        this.isBlue = config.getBoolean("isBlue");
+        this.isAudienceSide = config.getBoolean("isAudienceSide");
+        syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
+        this.pixySystem = new PixySystem(this, this.isBlue);
     }
 
-    @Override
+
+
     public void runOpMode() {
+        init2();
         initializeAllDevices();
-        waitForStart();
         elevator.goToZero(telemetry);
-        claw.goToLoadPosition();
-        sleep(1500);
-        elevator.goToUnloadBlock3();
-        sleep(1000);
-        //send in "this" and if the team color is blue (true) or red (false)
-        pixySystem = new PixySystem(this, isRedSide);
+        double startHeading = imuSystem.getHeading();
+
+        ////
+        waitForStart();
+        ////
+
         pixySystem.initPixyStuff();
         pixySystem.doServoStuff();
-        sleep(1000);
-        vuforiaCryptoBox(isRedSide, isAudience);
 
+        grabBlock();
+        vuforiaCryptoBox(zone);
+
+
+        ////
         stop();
+        ////
     }
 
-    public void vuforiaCryptoBox(boolean isRedSide, boolean isAudience) {
-        //Todo @Michael: Tweak the amount of inches driven at different intervals and the inches per box in right and left cryptobox approach
-
-        int picNumber = eye.look(); // 0 = left   1 = center   2 = right
-        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
+    public void vuforiaCryptoBox(int zone) {
+        double inchesPerBox = b;
+        int boxNumber = eye.look(); // 0 = left   1 = center   2 = right
+        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + boxNumber);
         telemetry.update();
         sleep(50);
 
-        // pic 0 is left     pic 1 is right      pic 2 is center
-
         // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (!isRedSide && !isAudience) { // blue non-audience CLOSE TO GOOD
-            driveToPositionInches(-40, 0.6);
-            turn(-90, 1);
-
-            driveToPositionInches(-25, 1);
-            //telemetry.addLine("We're at the first cryptobox!");
-            //telemetry.update();
-            //sleep(1000);
-            //correctBoxLeftApproach(picNumber);
-
-            if (picNumber == 0) {
-                turn(117 , 1);
-            } else if (picNumber == 1) {
-                turn(90, 1);
-            } else {
-                turn(62, 1);
-            }
-            driveToPositionInches(-14, 1);
-            elevator.goToZero(telemetry);
-            sleep(1000);
-            claw.goToReleasePosition();
-            sleep(1000);
-            driveToPositionInches(5, 1);
-
-        } else if (!isRedSide && isAudience) { // blue audience
-
-            driveToPositionInches(-58, 0.6);
-            //telemetry.addLine("We're at the first cryptobox!");
-            //telemetry.update();
-            //sleep(2000);
-            //correctBoxLeftApproach(picNumber);
-
-            if (picNumber == 0) {
-                turn(117 , 1);
-            } else if (picNumber == 1) {
-                turn(90, 1);
-            } else {
-                turn(62, 1);
-            }
-            //turn(90, 1);
-            //sleep(2000);
-            driveToPositionInches(-12, 1);
-
-            elevator.goToZero(telemetry);
-            claw.goToReleasePosition();
-            sleep(1000);
-            driveToPositionInches(5, 1);
-        } else if (isRedSide && !isAudience) { // red non-audience CLOSE TO GOOD
-            driveToPositionInches(-40, 0.6);
-            turn(90, 1);
-
-            driveToPositionInches(-25, 1);
-            //telemetry.addLine("We're at the first cryptobox!");
-            //telemetry.update();
-            //sleep(1000);
-            //correctBoxLeftApproach(picNumber);
-
-            if (picNumber == 0) {
-                turn(-65 , 1);
-            } else if (picNumber == 1) {
-                turn(-90, 1);
-            } else {
-                turn(-117, 1);
-            }
-            driveToPositionInches(-14, 1);
-            elevator.goToZero(telemetry);
-            sleep(1000);
-            claw.goToReleasePosition();
-            sleep(1000);
-            driveToPositionInches(5, 1);
-        } else if(isRedSide && isAudience){ // red audience
-
-            driveToPositionInches(-57, 0.6);
-            //telemetry.addLine("We're at the first cryptobox!");
-            //telemetry.update();
-            //sleep(2000);
-            //correctBoxLeftApproach(picNumber);
-
-            if (picNumber == 0) {
-                turn(-65, 1);
-            } else if (picNumber == 1) {
-                turn(-90, 1);
-            } else {
-                turn(-117, 1);
-            }
-            //turn(90, 1);
-            //sleep(2000);
-            driveToPositionInches(-14, 1);
-
-            elevator.goToZero(telemetry);
-            claw.goToReleasePosition();
-            sleep(1000);
-            driveToPositionInches(5, 1);
+        if (zone == 0) { // blue non-audience
+            driveToPositionInches(-42, powerSetting1);
+            returnToHeading(-90, powerSetting2);
+            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            turn(60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 1) { // blue audience
+            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 2) { // red non-audience
+            driveToPositionInches(-40, powerSetting1);
+            returnToHeading(90, powerSetting2);
+            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            turn(-60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 3) { // red audience
+            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(-60, 1);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 4) { //this is a test zone to test inches per box
+            driveToPositionInches(-inchesPerBox, powerSetting2);
+            sleep(2000);
+            driveToPositionInches(-inchesPerBox, powerSetting2);
         }
+    }
+
+    public void returnToHeading(double heading, double power) {
+        double correctionNeeded = heading - imuSystem.getHeading();
+        telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
+        telemetry.update();
+        turn(correctionNeeded, power);
+    }
+
+    public void placeBlock() {
+        elevator.goToZero(telemetry);
+        claw.goToReleasePosition();
+        sleep(1000);
+    }
+
+    public void grabBlock() {
+        claw.goToLoadPosition();
+        sleep(500);
+        elevator.goToUnloadBlock3();
+        sleep(1000);
     }
 
     public void correctBoxLeftApproach(int boxNumber) {
@@ -166,6 +140,34 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void correctBoxRightApproach(int boxNumber) {
         int inchesPerBox = 11;
         driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
+    }
+    // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
+    public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide) {
+        if (zone > 4) {
+            if (isBlue && isAudienceSide) {
+                this.zone = 1;
+            } else if (isBlue && !isAudienceSide) {
+                this.zone = 0;
+            } else if (!isBlue && isAudienceSide) {
+                this.zone = 3;
+            } else if (!isBlue && !isAudienceSide){
+                this.zone = 1;
+            }
+        } else {
+            if (zone == 0) {
+                this.isBlue = true;
+                this.isAudienceSide = false;
+            } else if (zone == 1) {
+                this.isBlue = true;
+                this.isAudienceSide = true;
+            } else if (zone == 2) {
+                this.isBlue = false;
+                this.isAudienceSide = false;
+            } else if (zone == 3){
+                this.isBlue = false;
+                this.isAudienceSide = true;
+            }
+        }
     }
 
     public void cryptoBox(int zone) {
