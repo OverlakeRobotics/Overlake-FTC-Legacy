@@ -39,8 +39,8 @@ public class ElevatorSystem {
     private int incrementTicks = 30;
     private int competitionTicks = 100;
 
-    private double negativePower = -0.55;
-    private double positivePower = 0.55;
+    private double negativePower = -0.95;
+    private double positivePower = 0.95;
 
 
     public ElevatorSystem(HardwareMap map, Telemetry telemetry) {
@@ -53,6 +53,11 @@ public class ElevatorSystem {
         loadPosTicks = config.getInt("load_position");
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
+    }
+
+    public void elevatorLoop() {
+            
+
     }
 
     //for autonomous
