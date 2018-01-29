@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.ArrayList;
+
 /**
  * Created by jacks on 10/20/2017.
  */
@@ -223,15 +225,13 @@ public class ElevatorSystem {
         }
     }
 
-
-    public enum MotorPositions {
+    public enum ElevatorPosition {
         LOAD_POSITION1,
         LOAD_POSITION2,
         UNLOAD_POSITION1,
         STACK_POSITION_UNLOAD,
         UNLOAD_POSITION2,
         UNLOAD_POSITION3,
-
     }
 
 }

@@ -145,13 +145,13 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide) {
         if (zone > 4) {
             if (isBlue && isAudienceSide) {
-                this.zone = 1;
-            } else if (isBlue && !isAudienceSide) {
                 this.zone = 0;
-            } else if (!isBlue && isAudienceSide) {
-                this.zone = 3;
-            } else if (!isBlue && !isAudienceSide){
+            } else if (isBlue && !isAudienceSide) {
                 this.zone = 1;
+            } else if (!isBlue && isAudienceSide) {
+                this.zone = 2;
+            } else if (!isBlue && !isAudienceSide){
+                this.zone = 3;
             }
         } else {
             if (zone == 0) {
