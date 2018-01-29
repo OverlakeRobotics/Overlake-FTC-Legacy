@@ -30,13 +30,10 @@ public class IMUSystem extends System
         this.parameters.loggingTag = "BNO055";
         this.parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         this.imu = this.map.get(BNO055IMU.class, "imu");
-        logger.log("I here 2");
         this.imu.initialize(parameters);
-        logger.log("I here 3");
 
         // Enable reporting of position using the naive integrator
         imu.startAccelerationIntegration(new Position(), new Velocity(), 50); //TODO: Is the last parameter good?
-        logger.log("I here 4");
     }
 
     public double getHeading()

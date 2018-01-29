@@ -17,7 +17,7 @@ public abstract class System {
     private String system;
     private String fileName;
 
-    public HardwareMap map;
+    protected HardwareMap map;
     public ConfigParser config;
     public Telemetry telemetry;
 

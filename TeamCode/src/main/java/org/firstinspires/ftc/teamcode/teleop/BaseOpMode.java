@@ -14,20 +14,22 @@ import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 
 public abstract class BaseOpMode extends OpMode {
     protected final ConfigParser config;
-    protected final Controller controller1;
-    protected final Controller controller2;
-    protected final MecanumDriveSystem driveSystem;
+    protected Controller controller1;
+    protected Controller controller2;
+    protected MecanumDriveSystem driveSystem;
+    protected Logger logger;
 
     public BaseOpMode(String opModeName) {
-        Logger logger = new Logger(this, "baseOp");
+        this.logger = new Logger(this, opModeName);
         logger.setLoggingServices(LoggingService.FILE);
+        this.config = new ConfigParser(opModeName + ".omc");
+
+        telemetry.setMsTransmissionInterval(200);
+    }
+
+    public void initBaseSystems() {
         this.controller1 = new Controller(gamepad1);
         this.controller2 = new Controller(gamepad2);
         this.driveSystem = new MecanumDriveSystem(this);
-        logger.log("here 1");
-        this.config = new ConfigParser(opModeName + ".omc");
-        logger.log("here 2");
-
-        telemetry.setMsTransmissionInterval(200);
     }
 }

@@ -32,6 +32,7 @@ public class Logger {
     }
 
     public void log(String data, LoggingService[] loggingServices) {
+        data += "\n";
         for (LoggingService service : this.loggingServices) {
             switch (service) {
                 case FILE:

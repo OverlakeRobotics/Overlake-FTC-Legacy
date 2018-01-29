@@ -33,31 +33,29 @@ public class MecanumDriveSystem extends System
     public MecanumDriveSystem(OpMode opMode) {
         super(opMode, "MecanumDrive");
         logger.setLoggingServices(LoggingService.FILE);
-        logger.log("M here 1");
+
         imuSystem = new IMUSystem(opMode);
-        logger.log("M here 2");
+
         initialHeading = Math.toRadians(imuSystem.getHeading());
-        logger.log("M here 3");
+
         this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
         this.motorFrontRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
         this.motorBackRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
         this.motorBackLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
-        logger.log("M here 4");
+
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        logger.log("M here 5");
+
         this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         this.motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         this.motorBackRight.setDirection(DcMotor.Direction.FORWARD);
-        logger.log("M here 6");
+
         // Set PID coeffiecents
         setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
-        logger.log("M here 7");
         this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
-        logger.log("M here 8");
+
         // Set all drive motors to zero power
         setPower(0);
-        logger.log("M here 9");
     }
 
     public void setDirection(DcMotorSimple.Direction direction) {
