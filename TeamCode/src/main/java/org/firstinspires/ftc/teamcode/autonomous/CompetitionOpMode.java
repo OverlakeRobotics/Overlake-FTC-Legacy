@@ -28,8 +28,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private ConfigParser config;
     private int b;
     PixySystem pixySystem;
-    Claw2png neoClaw;
-    ParallelLiftSystem parrallelLiftSystem;
+
 
     public CompetitionOpMode() {}
 
@@ -45,9 +44,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isBlue = config.getBoolean("isBlue");
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
-        this.pixySystem = new PixySystem(this, this.isBlue);
-        this.neoClaw = new Claw2png(this, telemetry);
-        this.parrallelLiftSystem = new ParallelLiftSystem(hardwareMap, telemetry);
+        this.pixySystem = new PixySystem(this, zone);
     }
 
 
@@ -63,8 +60,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         waitForStart();
         ////
 
-        pixySystem.initPixyStuff();
-        pixySystem.doServoStuff();
+        pixySystem.runPixySystem();
 
         grabBlock();
         vuforiaCryptoBox(zone);

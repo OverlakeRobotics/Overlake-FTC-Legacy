@@ -40,6 +40,7 @@ public class ParallelLiftSystem {
         private int bottom = 0;
         private int gameBottom;
         private int middle;
+        private int park;
         private int top;
         private int encoderVal;
         private int position;
@@ -59,8 +60,8 @@ public class ParallelLiftSystem {
             this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("lifter.omc");
             this.parallelMotor = map.dcMotor.get("parallelMotor");
             this.parallelTouch = map.get(DigitalChannel.class, "parallelTouch");
-            this.initPosition= config.getInt("init"); // A D D  T O  S T U F F
-
+            initPosition = config.getInt("init"); // A D D  T O  S T U F F
+            park = config.getInt("park"); // A D D  T O  S T U F F
             middle = config.getInt("middle");
             top = config.getInt("top");
         }
@@ -91,16 +92,20 @@ public class ParallelLiftSystem {
         }
 
         public void runMotorDown() {
+            runMotorDown(positivePower);
+        }
+
+        public void runMotorDown(double power) {
             telemetry.addData("Is pressed: ", parallelTouch.getState());
 
             if(!touched) {
                 parallelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                parallelMotor.setPower(positivePower);
+                parallelMotor.setPower(power);
                 position = bottom;
             } else {
                 parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 parallelMotor.setTargetPosition(encoderVal + 250);
-                parallelMotor.setPower(positivePower);
+                parallelMotor.setPower(power);
                 position = bottom + 250;
             }
 
@@ -144,13 +149,27 @@ public class ParallelLiftSystem {
 
         parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         parallelMotor.setTargetPosition(encoderVal + initPosition);
-        if(position > top) {
+        if(position > initPosition) {
             parallelMotor.setPower(negativePower);
         } else {
             parallelMotor.setPower(positivePower);
 
         }
-        position = top;
+        position = initPosition;
+    }
+
+    public void goToPark() {
+        telemetry.addData("Is pressed: ", parallelTouch.getState());
+
+        parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        parallelMotor.setTargetPosition(encoderVal + park);
+        if(position > park) {
+            parallelMotor.setPower(negativePower);
+        } else {
+            parallelMotor.setPower(positivePower);
+
+        }
+        position = park;
     }
 
         public void isPressed(){

@@ -144,11 +144,11 @@ public class ElevatorSystem {
     public void goToBottomLifterDown() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        elevator.setTargetPosition(encoderVal + unloadBlock3Ticks);
+        elevator.setTargetPosition(encoderVal + bottomLifterDown);
         telemetry.addData("position: " , position);
-        telemetry.addData("to: ", unloadBlock3Ticks);
+        telemetry.addData("to: ", bottomLifterDown);
         double power;
-        if(position > unloadBlock3Ticks) {
+        if(position > bottomLifterDown) {
             elevator.setPower(negativePower);
         } else {
             elevator.setPower(positivePower);

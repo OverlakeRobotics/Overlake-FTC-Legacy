@@ -21,10 +21,14 @@ public abstract class AutonomousOpMode extends LinearOpMode
     IMUSystem imuSystem;
     Eye eye;
     ElevatorSystem elevator;
+    Claw2png neoClaw;
+    ParallelLiftSystem parrallelLiftSystem;
 
 
     void initializeAllDevices()
     {
+        this.neoClaw = new Claw2png(this, telemetry);
+        this.parrallelLiftSystem = new ParallelLiftSystem(hardwareMap, telemetry);
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
         /*
