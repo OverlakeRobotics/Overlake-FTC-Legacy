@@ -43,6 +43,7 @@ public class ParallelLiftSystem {
         private int top;
         private int encoderVal;
         private int position;
+        private int initPosition;
         private boolean touched = false;
         private boolean isAtBottom = false;
         private boolean debouncing = false;
@@ -58,6 +59,7 @@ public class ParallelLiftSystem {
             this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("lifter.omc");
             this.parallelMotor = map.dcMotor.get("parallelMotor");
             this.parallelTouch = map.get(DigitalChannel.class, "parallelTouch");
+            this.initPosition= config.getInt("init"); // A D D  T O  S T U F F
 
             middle = config.getInt("middle");
             top = config.getInt("top");
@@ -122,19 +124,34 @@ public class ParallelLiftSystem {
         }
 
         public void goToTop() {
-            telemetry.addData("Is pressed: ", parallelTouch.getState());
+        telemetry.addData("Is pressed: ", parallelTouch.getState());
 
 
-            parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            parallelMotor.setTargetPosition(encoderVal + top);
-            if(position > top) {
-                parallelMotor.setPower(negativePower);
-            } else {
-                parallelMotor.setPower(positivePower);
+        parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        parallelMotor.setTargetPosition(encoderVal + top);
+        if(position > top) {
+            parallelMotor.setPower(negativePower);
+        } else {
+            parallelMotor.setPower(positivePower);
 
-            }
-            position = top;
         }
+        position = top;
+    }
+
+    public void goToInitPosition() {
+        telemetry.addData("Is pressed: ", parallelTouch.getState());
+
+
+        parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        parallelMotor.setTargetPosition(encoderVal + initPosition);
+        if(position > top) {
+            parallelMotor.setPower(negativePower);
+        } else {
+            parallelMotor.setPower(positivePower);
+
+        }
+        position = top;
+    }
 
         public void isPressed(){
             telemetry.addData("Is Pressed: ", parallelTouch.getState());

@@ -37,6 +37,8 @@ public class ElevatorSystem {
     private int unloadBlock2Ticks;
     private int unloadBlock3Ticks;
 
+    private int bottomLifterDown;
+
     //works the same for up and down
     private int incrementTicks = 30;
     private int competitionTicks = 100;
@@ -55,6 +57,7 @@ public class ElevatorSystem {
         loadPosTicks = config.getInt("load_position");
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
+        bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
     }
 
     public void elevatorLoop() {
@@ -136,6 +139,22 @@ public class ElevatorSystem {
         }
 
         position = unloadBlock3Ticks;
+    }
+
+    public void goToBottomLifterDown() {
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        elevator.setTargetPosition(encoderVal + unloadBlock3Ticks);
+        telemetry.addData("position: " , position);
+        telemetry.addData("to: ", unloadBlock3Ticks);
+        double power;
+        if(position > unloadBlock3Ticks) {
+            elevator.setPower(negativePower);
+        } else {
+            elevator.setPower(positivePower);
+        }
+
+        position = bottomLifterDown;
     }
 
     public void incrementUp() {
