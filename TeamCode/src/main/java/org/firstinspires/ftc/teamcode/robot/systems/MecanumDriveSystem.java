@@ -77,6 +77,13 @@ public class MecanumDriveSystem extends System
                 motorBackRight.isBusy();
     }
 
+    public void setTargetPosition(int ticks) {
+        motorBackLeft.motor.setTargetPosition(ticks);
+        motorBackRight.motor.setTargetPosition(ticks);
+        motorFrontLeft.motor.setTargetPosition(ticks);
+        motorFrontRight.motor.setTargetPosition(ticks);
+    }
+
     public void setPower(double power)
     {
         motorFrontLeft.setPower(power);
@@ -91,26 +98,6 @@ public class MecanumDriveSystem extends System
         motorFrontRight.setRunMode(runMode);
         motorBackLeft.setRunMode(runMode);
         motorBackRight.setRunMode(runMode);
-    }
-
-    public void setRightPower(double power) {
-        motorBackRight.setPower(power);
-        motorFrontRight.setPower(power);
-    }
-
-    public void setLeftPower(double power) {
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-    }
-
-    public void setForwardPower(double power) {
-        motorFrontLeft.setPower(power);
-        motorFrontRight.setPower(power);
-    }
-
-    public void setBackPower(double power) {
-        motorBackLeft.setPower(power);
-        motorBackRight.setPower(power);
     }
 
     public void mecanumDrive(float rightX, float rightY, float leftX, float leftY, boolean slowDrive)
@@ -134,31 +121,6 @@ public class MecanumDriveSystem extends System
         this.motorBackLeft.setPower(Range.clip(backLeftPower + leftX, -1, 1));
     }
 
-    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
-        double currentHeading = Math.toRadians(imuSystem.getHeading());
-        double headingDiff = initialHeading - currentHeading;
-
-
-        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
-        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
-        double changeOfDirectionSpeed = rightX;
-        double x = speed * Math.cos(angle);
-        double y = speed * Math.sin(angle);
-
-        double frontLeft = y - changeOfDirectionSpeed + x;
-        double frontRight = y + changeOfDirectionSpeed - x;
-        double backLeft = y - changeOfDirectionSpeed - x;
-        double backRight = y + changeOfDirectionSpeed + x;
-
-        List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
-        clampPowers(powers);
-
-        motorFrontLeft.setPower(powers.get(0));
-        motorFrontRight.setPower(powers.get(1));
-        motorBackLeft.setPower(powers.get(2));
-        motorBackRight.setPower(powers.get(3));
-    }
-
     public void driveCircle(float power) {
         float lx = power;
         float rx = 0.33f * lx;
@@ -176,6 +138,10 @@ public class MecanumDriveSystem extends System
                 powers.set(i, powers.get(i) / maxMag);
             }
         }
+    }
+
+    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+        driveGodMode(rightX, rightY, leftX, leftY, 1);
     }
 
     public void driveGodMode(double rightX, float rightY, float leftX, float leftY, float coeff) {
@@ -222,63 +188,29 @@ public class MecanumDriveSystem extends System
         mecanumDriveXY(x, y);
     }
 
-    public void driveInchesPolar(double inches, double angle, double maxPower, double deltaInches) {
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = motorBackLeft.inchesToTicks(inches);
-        int deltaTicks = motorBackLeft.inchesToTicks(deltaInches);
-        rampMotors(ticks, angle, maxPower, deltaTicks);
-        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
+    public void driveTicksXY(int x, int y, double maxPower, int deltaTicks) {
+        throw new IllegalArgumentException("Unimplemented Function");
     }
 
-    public void driveInchesPolar(double inches, double direction, double power) {
-        setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.addData("direction", direction);
-        telemetry.addData("driving", power * Math.sin(Math.PI / 2 - direction));
-        telemetry.addData("driving", power * Math.cos(Math.PI / 2 - direction));
-        this.motorFrontRight.runOutputWheelInches(inches, power * Math.sin(Math.PI / 2 - direction));
-        this.motorBackRight.runOutputWheelInches(inches, power * Math.cos(Math.PI / 2 - direction));
-        this.motorFrontLeft.runOutputWheelInches(inches, power * Math.cos(Math.PI / 2 - direction));
-        this.motorBackLeft.runOutputWheelInches(inches, power * Math.sin(Math.PI / 2 - direction));
-        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
+    public void driveRevolutionsXY(double x, double y, double maxPower, double deltaRevs) {
+        throw new IllegalArgumentException("Unimplemented Function");
     }
 
+    // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
+    public void driveRevolutionsXY(double x, double y, double power) {
+        throw new IllegalArgumentException("Unimplemented Function");
+    }
+
+    // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
     public void driveInchesXY(double x, double y, double maxPower, double deltaInches) {
-        double inches = Math.sqrt(x * x + y * y);
-        double direction = Math.atan2(y,x);
-        driveInchesPolar(inches, direction, maxPower, deltaInches);
+        throw new IllegalArgumentException("Unimplemented Function");
     }
 
+    // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
     public void driveInchesXY(double x, double y, double power) {
-        double inches = Math.sqrt(x * x + y * y);
-        double direction = Math.atan2(y,x);
-        driveInchesPolar(inches, direction, power);
-    }
-
-    private void rampMotors(int ticks, double angle, double maxPower, int deltaTicks) {
-        GearedMotor.setTargetPosition(ticks, motorFrontLeft, motorFrontRight, motorBackLeft, motorFrontRight);
-        Ramp ramp = new LogarithmicRamp(0, GearedMotor.MIN_POWER, deltaTicks, maxPower);
-        while (anyMotorsBusy()) {
-            Thread.yield();
-            int distanceFromTarget = GearedMotor.getMinDistanceFromTarget(motorFrontLeft, motorBackRight, motorFrontRight, motorBackLeft);
-            double direction = GearedMotor.FOWARD_DIRECTION;
-
-            if (distanceFromTarget < 0) {
-                distanceFromTarget = -distanceFromTarget;
-                direction = GearedMotor.BACKWARD_DIRECTION;
-            }
-
-            double scaledPower;
-            if (ticks - distanceFromTarget < deltaTicks) {
-                scaledPower = ramp.value(ticks - distanceFromTarget);
-            } else {
-                scaledPower = ramp.value(distanceFromTarget);
-            }
-
-            this.motorFrontRight.setPower(direction * scaledPower * Math.sin(90 - angle));
-            this.motorBackRight.setPower(direction * scaledPower * Math.cos(90 - angle));
-            this.motorFrontLeft.setPower(direction * scaledPower * Math.cos(90 - angle));
-            this.motorBackLeft.setPower(direction * scaledPower * Math.sin(90 - angle));
-        }
+        throw new IllegalArgumentException("Unimplemented Function");
     }
 
     public void turn(double angle, double maxPower) {
@@ -303,8 +235,10 @@ public class MecanumDriveSystem extends System
             }
 
             double power = sign*ramp.value(diff);
-            setLeftPower(power);
-            setRightPower(-power);
+            motorBackLeft.setPower(power);
+            motorFrontLeft.setPower(power);
+            motorBackRight.setPower(-power);
+            motorFrontRight.setPower(-power);
             heading = imuSystem.getHeading();
         }
     }

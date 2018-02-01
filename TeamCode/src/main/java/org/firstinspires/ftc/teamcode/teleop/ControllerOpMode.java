@@ -19,44 +19,35 @@ public class ControllerOpMode extends BaseOpMode {
     private ElevatorSystem elevator;
     private ParallelLiftSystem lifter;
 
-    private static boolean slowDrive = false;
-
     public ControllerOpMode(){
         super("ControllerOpMode");
     }
 
+    private static boolean slowDrive = false;
+
     @Override
     public void init() {
         this.initBaseSystems();
-        Logger logger = new Logger(this, "baseOp");
-        logger.setLoggingServices(LoggingService.FILE);
-        telemetry.update();
         claw = new ClawSystem(this);
-        telemetry.update();
         elevator = new ElevatorSystem(this);
-        telemetry.update();
+
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
-        initButtons();
     }
 
     @Override
     public void loop() {
-        logger.log("here 10");
         controller1.handle();
         controller2.handle();
-        logger.log("here 20");
+
         float rx = controller1.gamepad.right_stick_x;
         float ry = controller1.gamepad.right_stick_y;
         float lx = controller1.gamepad.left_stick_x;
         float ly = controller1.gamepad.left_stick_y;
 
-        logger.log("here 30");
         if (config.getBoolean("superDrive")) {
-            logger.log("here 31");
             float coefficient = slowDrive == true ? 0.5f : 1f;
             this.driveSystem.driveGodMode(rx, ry, lx, ly, coefficient);
         } else  {
-            logger.log("here 32");
             this.driveSystem.mecanumDrive(rx, ry, lx, ly, slowDrive);
         }
 
@@ -69,6 +60,7 @@ public class ControllerOpMode extends BaseOpMode {
 
     }
 
+    @Override
     public void initButtons() {
         //Claw
 

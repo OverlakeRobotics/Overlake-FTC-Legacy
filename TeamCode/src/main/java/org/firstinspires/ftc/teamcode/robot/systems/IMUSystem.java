@@ -41,5 +41,13 @@ public class IMUSystem extends System
         Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         return orientation.firstAngle;
     }
+
+    public Acceleration getAcceleration() {
+        return imu.getLinearAcceleration();
+    }
+
+    public Velocity getVelocity() {
+        return imu.getVelocity();
+    }
 }
 

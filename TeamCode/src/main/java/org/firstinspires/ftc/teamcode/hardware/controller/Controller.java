@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.hardware.controller.Button;
 import org.firstinspires.ftc.teamcode.hardware.controller.TriggerType;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.util.logger.Logger;
 
 /**
  * Created by EvanCoulson on 11/3/17.
@@ -138,10 +139,10 @@ public class Controller {
             }
         };
 
-        dPadDown.isPressed = new Func<Boolean>() {
+        dPadUp.isPressed = new Func<Boolean>() {
             @Override
             public Boolean value() {
-                return gamepad.dpad_down && !gamepad.left_bumper;
+                return gamepad.dpad_up && !gamepad.left_bumper;
             }
         };
 
@@ -259,10 +260,10 @@ public class Controller {
             }
         };
 
-        dPadDownShifted.isPressed = new Func<Boolean>() {
+        dPadUpShifted.isPressed = new Func<Boolean>() {
             @Override
             public Boolean value() {
-                return gamepad.dpad_down && gamepad.left_bumper;
+                return gamepad.dpad_up && gamepad.left_bumper;
             }
         };
 

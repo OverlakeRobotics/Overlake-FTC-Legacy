@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.controller.Controller;
+import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 import org.firstinspires.ftc.teamcode.util.logger.Logger;
@@ -31,5 +32,9 @@ public abstract class BaseOpMode extends OpMode {
         this.controller1 = new Controller(gamepad1);
         this.controller2 = new Controller(gamepad2);
         this.driveSystem = new MecanumDriveSystem(this);
+        t
+        initButtons();
     }
+
+    public abstract void initButtons();
 }

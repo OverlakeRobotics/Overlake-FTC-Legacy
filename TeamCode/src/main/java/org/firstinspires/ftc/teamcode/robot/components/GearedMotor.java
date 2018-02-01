@@ -15,9 +15,9 @@ public class GearedMotor {
     public final static double FOWARD_DIRECTION = 1d;
     public final static double BACKWARD_DIRECTION = -1d;
 
-    private GearChain chain;
-    private DcMotor motor;
-    private int pulses;
+    public GearChain chain;
+    public DcMotor motor;
+    public int pulses;
     private double wheelDiameter;
     public double ticksPerInch;
 
@@ -67,7 +67,6 @@ public class GearedMotor {
     }
 
     public void runOutputWheelInches(double inches, double power) {
-
         int ticks = (int) Math.round(inches * ticksPerInch);
         runMotor(ticks, power);
     }
