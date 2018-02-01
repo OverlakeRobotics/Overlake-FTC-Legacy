@@ -2,193 +2,226 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.robot.ConfigParser;
+//import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by Steven Abbott on 9/15/2017.
  */
 
-@Autonomous(name="InBetweenMatchOpMode", group="Bot")
-public class InBetweenMatchOpMode extends BaseOpMode {
-    public final double DRIVE_POWER = 0.8;
-    public int zone;
+@Autonomous(name="EducayshunOpMode", group="Bot")
+public class EducayshunOpMode extends AutonomousOpMode {
+    private int zone;
+    private int inchesToReferenceBoxNonAudience;
+    private int inchesToReferenceBoxAudience;
+    private double powerSetting1;
+    private double powerSetting2;
+    private int cryptoApproachInches;
+    private ConfigParser config;
+    private int b;
 
-    ConfigParser config;
-
-    public InBetweenMatchOpMode() {
-        super("Autonomous");
-        zone = config.getInt("zone");
+    public EducayshunOpMode() {
+        this.config = new ConfigParser("Autonomous.omc");
+        this.inchesToReferenceBoxNonAudience = config.getInt("InchesToReferenceBoxNonAudience"); // the length of the first drive forward, ending at the refernce box
+        this.inchesToReferenceBoxAudience = config.getInt("InchesToReferenceBoxAudience"); // the length of the first drive forward, ending at the refernce box
+        this.zone = config.getInt("zone"); // sets which starting zone you are in
+        this.powerSetting1 = config.getDouble("powerSetting1"); // the power setting for driving off the stone
+        this.powerSetting2 = config.getDouble("powerSetting2"); // the power setting for everything other than getting off the stone
+        this.cryptoApproachInches = config.getInt("cryptoApproachInches"); // the length of the drive forward to place the cube
+        this.b = config.getInt("b");
     }
-
-    //VectorF trans = null;
-    //Orientation rot = null;
-    //OpenGLMatrix pose = null;
-    //double  position = (1 - 0) / 2; // Start at halfway position
-    public static final String TAG = "Vuforia VuMark Sample";
-    //OpenGLMatrix lastLocation = null;
-    //VuforiaLocalizer vuforia;
 
     public void runOpMode() {
+
+
+        initializeAllDevices();
         elevator.goToZero(telemetry);
-        //sleep(2000);
-        //elevator.goToZero(telemetry);
-        //claw.goToReleasePosition();
-        //int struggle = eye.find();
+        double startHeading = imuSystem.getHeading();
+
+        ////
         waitForStart();
-        //int determination = 1000000;
-        //telemetry.addLine("" + struggle);
-        //telemetry.update();
-        /*if (struggle == determination) {
-            cryptoBox(ZONE);
-            telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
-            telemetry.update();
-            sleep(3000);
-        } else {
-            vuforiaCryptoBox(ZONE);
-        }*/
-        //vuforiaCryptoBox(zone);
+        ////
 
 
+        grabBlock();
+        vuforiaCryptoBox(zone);
 
 
-
-
-
+        ////
         stop();
+        ////
     }
+
+    public void vuforiaCryptoBox(int zone) {
+        double inchesPerBox = b;
+        int boxNumber = eye.look(); // 0 = left   1 = center   2 = right
+        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + boxNumber);
+        telemetry.update();
+        sleep(50);
+
+        // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
+        if (zone == 0) { // blue non-audience
+            driveToPositionInches(-42, powerSetting1);
+            returnToHeading(-90, powerSetting2);
+            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            turn(60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 1) { // blue audience
+            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 2) { // red non-audience
+            driveToPositionInches(-40, powerSetting1);
+            returnToHeading(90, powerSetting2);
+            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            turn(-60, powerSetting2);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 3) { // red audience
+            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(-60, 1);
+            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveToPositionInches(5, powerSetting2);
+        } else if (zone == 4) { //this is a test zone to test inches per box
+            driveToPositionInches(-inchesPerBox, powerSetting2);
+            sleep(2000);
+            driveToPositionInches(-inchesPerBox, powerSetting2);
+        }
+    }
+
+    public enum StartPositions {
+        BLUE_NON_AUDIENCE,
+        BLUE_AUDIENCE,
+        RED_NON_AUDIENCE,
+        RED_AUDIENCE,
+    }
+
+
+    public void returnToHeading(double heading, double power) {
+        double correctionNeeded = heading - imuSystem.getHeading();
+        telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
+        telemetry.update();
+        turn(correctionNeeded, power);
+    }
+
+    public void placeBlock() {
+        elevator.goToZero(telemetry);
+        claw.goToReleasePosition();
+        sleep(1000);
+    }
+
+    public void grabBlock() {
+        claw.goToLoadPosition();
+        sleep(500);
+        elevator.goToUnloadBlock3();
+        sleep(1000);
+    }
+
+    /*public void correctBoxLeftApproach(int boxNumber) {
+        if (boxNumber == 0) {
+            turn(116 , 1);
+        } else if (boxNumber == 1) {
+            turn(90, 1);
+        } else {
+            turn(63, 1);
+        }
+    }
+
+    public void correctBoxRightApproach(int boxNumber) {
+        if (boxNumber == 0) {
+            turn(-65 , 1);
+        } else if (boxNumber == 1) {
+            turn(-90, 1);
+        } else {
+            turn(-117, 1);
+        }
+    }
+
+    /*
+    driveToPositionInches(-58, 0.6);
+            //telemetry.addLine("We're at the first cryptobox!");
+            //telemetry.update();
+            //sleep(2000);
+            //correctBoxLeftApproach(picNumber);
+
+            if (picNumber == 0) {
+                turn(117 , 1);
+            } else if (picNumber == 1) {
+                turn(90, 1);
+            } else {
+                turn(65, 1);
+            }
+            //turn(90, 1);
+            //sleep(2000);
+            driveToPositionInches(-14, 1);
+
+            elevator.goToZero(telemetry);
+            claw.goToReleasePosition();
+            sleep(1000);
+            driveToPositionInches(5, 1);
+     */
+
+    /*public void correctBoxLeftApproach(int boxNumber) {
+        int inchesPerBox = 15;
+        telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
+        telemetry.update();
+        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
+    }
+
+    public void correctBoxRightApproach(int boxNumber) {
+        int inchesPerBox = 11;
+        driveToPositionInches((33 - (boxNumber * -inchesPerBox)), 1);
+    }*/
+
 
     public void cryptoBox(int zone) {
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-//            driveToPositionInches(-40, 1);
-//            turn(-90, 1);
-//            driveToPositionInches(-18, 1);
-//            turn(90, 1);
+            driveToPositionInches(-40, 1);
+            turn(-90, 1);
+            driveToPositionInches(-18, 1);
+            turn(90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-//            driveToPositionInches(-20, 1);
+            driveToPositionInches(-20, 1);
         } else if (zone == 1) {
-//            driveToPositionInches(-50, 1);
-//            turn(90, 1);
+            driveToPositionInches(-50, 1);
+            turn(90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(2000);
-//            driveToPositionInches(-20, 1);
+            driveToPositionInches(-20, 1);
         } else if (zone == 2) {
-//            driveToPositionInches(40, 1);
-//            turn(-90, 1);
-//            driveToPositionInches(-18, 1);
-//            turn(-90, 1);
+            driveToPositionInches(40, 1);
+            turn(-90, 1);
+            driveToPositionInches(-18, 1);
+            turn(-90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-//            driveToPositionInches(-20, 1);
+            driveToPositionInches(-20, 1);
         } else {
-//            driveToPositionInches(-50, 1);
-//            turn(-90, 1);
+            driveToPositionInches(-50, 1);
+            turn(-90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(2000);
-//            driveToPositionInches(-20, 1);
+            driveToPositionInches(-20, 1);
         }
         claw.goToReleasePosition();
-//        driveToPositionInches(5, 1);
+        driveToPositionInches(5, 1);
     }
 
-    public void vuforiaCryptoBox(int zone) {
-        //Todo @Michael: Tweak the amount of inches driven at different intervals and the inches per box in right and left cryptobox approach
-        /*int determination = 1000000;
-        int struggle = eye.find(determination);
-        if (struggle == determination) {
-            cryptoBox(zone);
-            telemetry.addLine("Could not determine the picture. Running on dead reckoning.");
-            telemetry.update();
-            sleep(3000);
-        }*/
-        claw.goToLoadPosition();
-        sleep(1000);
-        elevator.goToUnloadBlock3();
-        sleep(1000);
-        int picNumber = eye.look(); // 0 = left   1 = center   2 = right
-        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + picNumber);
-        telemetry.update();
-        sleep(1000);
-        // pic 0 is left     pic 1 is right      pic 2 is center
-        // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (zone == 0) { // blue non-audience CLOSE TO GOOD
-//            driveToPositionInches(-40, 1);
-//            turn(-90, 1);
-
-//            driveToPositionInches(-9, 1);
-            telemetry.addLine("We're at the first cryptobox!");
-            telemetry.update();
-            sleep(1000);
-            correctBoxLeftApproach(picNumber);
-//            turn(90, 1);
-//            driveToPositionInches(-15, 1);
-            elevator.goToZero(telemetry);
-            sleep(1000);
-            claw.goToReleasePosition();
-            sleep(1000);
-//            driveToPositionInches(15, 1);
-        } else if (zone == 1) { // blue audience
-
-//            driveToPositionInches(-50, 1);
-            telemetry.addLine("We're at the first cryptobox!");
-            telemetry.update();
-            sleep(5000);
-            correctBoxLeftApproach(picNumber);
-
-//            turn(90, 1);
-            elevator.goToZero(telemetry);
-            claw.goToReleasePosition();
-            sleep(2000);
-//            driveToPositionInches(-20, 1);
-        } else if (zone == 2) { // red non-audience CLOSE TO GOOD
-//            driveToPositionInches(40, 1);
-//            turn(90, 1);
-
-//            driveToPositionInches(-5, 1);
-            telemetry.addLine("We're at the first cryptobox!");
-            telemetry.update();
-            sleep(5000);
-            correctBoxRightApproach(picNumber);
-
-//            turn(-90, 1);
-            elevator.goToZero(telemetry);
-            claw.goToReleasePosition();
-            sleep(1000);
-//            driveToPositionInches(-20, 1);
-        } else { // red audience
-
-//            driveToPositionInches(-50, 1);
-            telemetry.addLine("We're at the first cryptobox!");
-            telemetry.update();
-            sleep(5000);
-            correctBoxRightApproach(picNumber);
-
-//            turn(-90, 1);
-            elevator.goToZero(telemetry);
-            claw.goToReleasePosition();
-            sleep(2000);
-//            driveToPositionInches(-20, 1);
-        }
-        claw.goToReleasePosition();
-//        driveToPositionInches(5, 1);
-    }
-
-    public void correctBoxLeftApproach(int boxNumber) {
-        int inchesPerBox = 15;
-        telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
-        telemetry.update();
-//        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
-    }
-
-    public void correctBoxRightApproach(int boxNumber) {
-        int inchesPerBox = 11;
-//        driveToPositionInches((33 - (boxNumber * -inchesPerBox)), 1);
+    public void vuDrive(int x, int y) {
+        eye.find();
     }
 
     public void fancyDrive(int x, int y, double power) {
