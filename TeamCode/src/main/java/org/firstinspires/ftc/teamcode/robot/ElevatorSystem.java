@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.sun.tools.javac.code.Attribute;
-
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.ArrayList;
 import java.sql.Array;
 
 /**
@@ -40,6 +39,8 @@ public class ElevatorSystem {
     private int unloadBlock2Ticks;
     private int unloadBlock3Ticks;
 
+    private int bottomLifterDown;
+
     //works the same for up and down
     private int incrementTicks = 30;
     private int competitionTicks = 100;
@@ -64,6 +65,7 @@ public class ElevatorSystem {
         loadPosTicks = config.getInt("load_position");
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
+        bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
     }
 
     public void elevatorLoop() {
@@ -178,6 +180,22 @@ public class ElevatorSystem {
         position = unloadBlock3Ticks;
     }
 
+    public void goToBottomLifterDown() {
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        elevator.setTargetPosition(encoderVal + bottomLifterDown);
+        telemetry.addData("position: " , position);
+        telemetry.addData("to: ", bottomLifterDown);
+        double power;
+        if(position > bottomLifterDown) {
+            elevator.setPower(negativePower);
+        } else {
+            elevator.setPower(positivePower);
+        }
+
+        position = bottomLifterDown;
+    }
+
     public void incrementUp() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setTargetPosition(encoderVal + position + incrementTicks);
@@ -270,15 +288,13 @@ public class ElevatorSystem {
         }
     }
 
-
-    public enum MotorPositions {
+    public enum ElevatorPosition {
         LOAD_POSITION1,
         LOAD_POSITION2,
         UNLOAD_POSITION1,
         STACK_POSITION_UNLOAD,
         UNLOAD_POSITION2,
         UNLOAD_POSITION3,
-
     }
 
 }

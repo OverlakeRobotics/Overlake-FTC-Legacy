@@ -21,12 +21,14 @@ public abstract class AutonomousOpMode extends LinearOpMode
     IMUSystem imuSystem;
     Eye eye;
     ElevatorSystem elevator;
-    ClawSystem claw;
-    Claw2png claw2png;
+    Claw2png neoClaw;
+    ParallelLiftSystem parrallelLiftSystem;
 
 
     void initializeAllDevices()
     {
+        this.neoClaw = new Claw2png(this, telemetry);
+        this.parrallelLiftSystem = new ParallelLiftSystem(hardwareMap, telemetry);
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
         /*
@@ -55,14 +57,13 @@ public abstract class AutonomousOpMode extends LinearOpMode
         telemetry.update();
         sleep(1000);
         */
-        this.claw = new ClawSystem(hardwareMap);
+
         /*
         telemetry.addLine("claw system done");
         telemetry.update();
         sleep(1000);
-        */
 
-//        this.lineFollowingSystem.init(this.hardwareMap);
+//       this.lineFollowingSystem.init(this.hardwareMap);*/
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor

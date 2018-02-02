@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
+import org.firstinspires.ftc.teamcode.robot.Claw2png;
 import org.firstinspires.ftc.teamcode.robot.ConfigParser;
+import org.firstinspires.ftc.teamcode.robot.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.robot.PixySystem;
 
 /**
@@ -26,6 +29,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private int b;
     PixySystem pixySystem;
 
+
     public CompetitionOpMode() {}
 
     private void init2() {
@@ -40,7 +44,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isBlue = config.getBoolean("isBlue");
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
-        this.pixySystem = new PixySystem(this, this.isBlue);
+        this.pixySystem = new PixySystem(this, zone);
     }
 
 
@@ -48,15 +52,15 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void runOpMode() {
         init2();
         initializeAllDevices();
-        elevator.goToZero(telemetry);
+        parrallelLiftSystem.goToInitPosition();
+        elevator.goToBottomLifterDown();
         double startHeading = imuSystem.getHeading();
 
         ////
         waitForStart();
         ////
 
-        pixySystem.initPixyStuff();
-        pixySystem.doServoStuff();
+        pixySystem.runPixySystem();
 
         grabBlock();
         vuforiaCryptoBox(zone);
@@ -118,15 +122,15 @@ public class CompetitionOpMode extends AutonomousOpMode {
     }
 
     public void placeBlock() {
-        elevator.goToZero(telemetry);
-        claw.goToReleasePosition();
+        elevator.goToBottomLifterDown();
+        neoClaw.goToTop();
         sleep(1000);
     }
 
     public void grabBlock() {
-        claw.goToLoadPosition();
+        neoClaw.goToBottom();
         sleep(500);
-        elevator.goToUnloadBlock3();
+        elevator.goToPosition(800);
         sleep(1000);
     }
 
@@ -145,13 +149,13 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide) {
         if (zone > 4) {
             if (isBlue && isAudienceSide) {
-                this.zone = 1;
-            } else if (isBlue && !isAudienceSide) {
                 this.zone = 0;
-            } else if (!isBlue && isAudienceSide) {
-                this.zone = 3;
-            } else if (!isBlue && !isAudienceSide){
+            } else if (isBlue && !isAudienceSide) {
                 this.zone = 1;
+            } else if (!isBlue && isAudienceSide) {
+                this.zone = 2;
+            } else if (!isBlue && !isAudienceSide){
+                this.zone = 3;
             }
         } else {
             if (zone == 0) {
@@ -170,8 +174,8 @@ public class CompetitionOpMode extends AutonomousOpMode {
         }
     }
 
-    public void cryptoBox(int zone) {
-        claw.setLoadPosition();
+    /*public void cryptoBox(int zone) {
+        neoClaw.goToBottom();
         sleep(2000);
         elevator.goToUnloadBlock2();
         // pic 0 is left     pic 1 is right      pic 2 is center
@@ -182,7 +186,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             driveToPositionInches(-18, 1);
             turn(90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            neoClaw.goToTop();
             sleep(1000);
             driveToPositionInches(-20, 1);
 
@@ -191,7 +195,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
             driveToPositionInches(-50, 1);
             turn(90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            neoClaw.goToTop();
             sleep(2000);
             driveToPositionInches(-13, 1);
         } else if (zone == 2) {
@@ -200,19 +204,19 @@ public class CompetitionOpMode extends AutonomousOpMode {
             driveToPositionInches(-18, 1);
             turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            neoClaw.goToTop();
             sleep(1000);
             driveToPositionInches(-18, 1);
         } else {
             driveToPositionInches(-50, 1);
             turn(-90, 1);
             elevator.goToZero(telemetry);
-            claw.setReleasePosition();
+            neoClaw.goToTop();
             sleep(2000);
             driveToPositionInches(-18, 1);
         }
-        claw.setReleasePosition();
-    }
+        neoClaw.goToTop();
+    }*/
 
     /*public void initPixy() {
         pixyCam = hardwareMap.get(PixyCam.class, "pixycam");
