@@ -43,12 +43,16 @@ public class ParallelLiftSystem {
         private int top;
         private int encoderVal;
         private int position;
+        private int incrementTicks = 20;
+        private int loadPosition = bottom + 250;
+        int[] positions = new int[3];
         private boolean touched = false;
         private boolean isAtBottom = false;
         private boolean debouncing = false;
         private double negativePower = 0.4;
         private double positivePower = -0.4;
-
+        Integer i;
+        int positionIndex = 0;
         private ElapsedTime debounceTime = new ElapsedTime();
 
         Telemetry telemetry;
@@ -56,12 +60,71 @@ public class ParallelLiftSystem {
         public ParallelLiftSystem(HardwareMap map, Telemetry telemetry) {
             this.telemetry = telemetry;
             this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("lifter.omc");
+
+            for(i = 0; i < positions.length; i++) {
+                positions[i] = config.getInt("ParallelLift" + i.toString());
+            }
             this.parallelMotor = map.dcMotor.get("parallelMotor");
             this.parallelTouch = map.get(DigitalChannel.class, "parallelTouch");
 
             middle = config.getInt("middle");
             top = config.getInt("top");
         }
+
+        public void parallelLiftLoop() {
+            if(Math.abs(position-parallelMotor.getCurrentPosition()) < 20){
+                parallelMotor.setPower(0.0);
+            }
+
+        }
+        public void positionUp() {
+            telemetry.addData("PosititionUp called: position is at " , Double.toString(position));
+
+            if(positionIndex < positions.length-1) {
+                positionIndex++;
+                position = positions[positionIndex];
+                telemetry.addData("Set to Position: " , position);
+                parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                parallelMotor.setTargetPosition(encoderVal + position);
+                parallelMotor.setPower(negativePower);
+            }
+        }
+
+         public void positionDown() {
+             telemetry.addData("PosititionUp called: position is at " , Double.toString(position));
+             telemetry.addLine();
+             if(positionIndex >= 1) {
+                positionIndex--;
+                position = positions[positionIndex];
+                telemetry.addData("Set to Position: " , position);
+                parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                parallelMotor.setTargetPosition(encoderVal + position);
+                parallelMotor.setPower(positivePower);
+            }
+        }
+
+        public void incrementUp() {
+            parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            parallelMotor.setTargetPosition(encoderVal + position + incrementTicks);
+            telemetry.addData("Current encoder value: ", position + incrementTicks);
+            parallelMotor.setPower(0.4);
+            position = position + incrementTicks;
+        }
+        public void incrementDown() {
+            parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            parallelMotor.setTargetPosition(encoderVal + position - incrementTicks);
+            telemetry.addData("Current encoder value: ", position - incrementTicks);
+            parallelMotor.setPower(-0.4);
+            position = position - incrementTicks;
+        }
+
+        public void setPosition() {
+            String stringVal = Double.toString(position);
+            config.updateKey("ParallelLift" + i.toString(), stringVal);
+        }
+
+
+
 
 
         public void checkForBottom(){
@@ -99,12 +162,10 @@ public class ParallelLiftSystem {
                 parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 parallelMotor.setTargetPosition(encoderVal + 250);
                 parallelMotor.setPower(positivePower);
-                position = bottom + 250;
+                position = loadPosition;
             }
 
         }
-
-
 
         public void goToMiddle() {
             telemetry.addData("Is pressed: ", parallelTouch.getState());

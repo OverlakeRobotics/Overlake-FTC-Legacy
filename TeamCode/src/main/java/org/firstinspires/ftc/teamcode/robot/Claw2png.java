@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,17 +22,15 @@ public class Claw2png {
     private DcMotorServo motor;
 
     double bottom;
-
     double middle;
-
     double top;
-
     double position;
+
     ConfigParser config;
 
     Telemetry telemetry;
 
-    public Claw2png(ControllerOpMode opMode, Telemetry telemetry){
+    public Claw2png(OpMode opMode, Telemetry telemetry){
         this.telemetry = opMode.telemetry;
         this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("meMotor.omc");
         this.motor = new DcMotorServo();
@@ -40,12 +39,15 @@ public class Claw2png {
         middle = config.getDouble("middle");
         top  = config.getDouble("top");
         position = 0.2;
-        }
+    }
 
     public void loop(){
-        //telemetry.addData("current position: ", motor.getCurrentPosition());
-        //telemetry.addData("target position: ", position);
+        telemetry.addData("current position: ", motor.getCurrentPosition());
+        telemetry.addData("target position: ", position);
         motor.loop(position);
+    }
+    public void managePosition() {
+
     }
 
     public void goToBottom() {

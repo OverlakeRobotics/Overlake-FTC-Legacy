@@ -22,6 +22,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
     Eye eye;
     ElevatorSystem elevator;
     ClawSystem claw;
+    Claw2png claw2png;
 
 
     void initializeAllDevices()

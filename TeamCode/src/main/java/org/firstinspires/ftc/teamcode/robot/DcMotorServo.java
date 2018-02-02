@@ -72,7 +72,7 @@ public class DcMotorServo
         this.miniPID = new MiniPID(P, I, D);
 
         this.targetPosition = 0.2;
-        this.power = 0.6;
+        this.power = 1.0;
     }
 
     public double getCurrentPosition()
@@ -116,7 +116,7 @@ public class DcMotorServo
 
     public double pidPower(double targetPosition) {
         miniPID.setSetpoint(targetPosition);
-        miniPID.setOutputLimits(0.6);
+        miniPID.setOutputLimits(1.0);
         return miniPID.getOutput(getCurrentPosition(), targetPosition);
     }
 
