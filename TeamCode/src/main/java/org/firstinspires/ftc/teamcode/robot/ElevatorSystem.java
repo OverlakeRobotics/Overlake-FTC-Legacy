@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
+import java.sql.Array;
 
 /**
  * Created by jacks on 10/20/2017.
@@ -33,6 +34,7 @@ public class ElevatorSystem {
     private boolean isAtTop = false;
     private boolean isAtBottom = false;
 
+
     private int loadPosTicks;
     private int unloadBlock2Ticks;
     private int unloadBlock3Ticks;
@@ -43,8 +45,11 @@ public class ElevatorSystem {
     private int incrementTicks = 30;
     private int competitionTicks = 100;
 
-    private double negativePower = -0.95;
-    private double positivePower = 0.95;
+    private double negativePower = -0.50;
+    private double positivePower = 0.50;
+    Integer i = 0;
+    int[] positions = new int[3];
+    int positionIndex = 0;
 
     public ElevatorSystem(HardwareMap map, Telemetry telemetry) {
         this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("Elevator.omc");
@@ -53,6 +58,9 @@ public class ElevatorSystem {
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
         elevator.setDirection(DcMotor.Direction.REVERSE);
+        for(i = 0; i < positions.length; i++) {
+            positions[i]= config.getInt("Elevator" + i.toString());
+        }
         loadPosTicks = config.getInt("load_position");
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
@@ -74,8 +82,9 @@ public class ElevatorSystem {
     }
 
     public void elevatorLoop() {
-            
-
+        if(Math.abs(position - elevator.getCurrentPosition()) < 20) {
+            elevator.setPower(0.0);
+        }
     }
 
     //for autonomous
@@ -97,13 +106,42 @@ public class ElevatorSystem {
 
     }
 
+    public void loop() {
+        String msg = String.format("index: %d ticks:%d", positionIndex, position);
+    }
+
+    public void positionUp() {
+        if(positionIndex < positions.length-1){
+            positionIndex++;
+            position = positions[positionIndex];
+            String msg = String.format("index: %d ticks:%d", positionIndex, position);
+            telemetry.addData("positionUp", msg);
+            elevator.setTargetPosition(encoderVal + position);
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevator.setPower(positivePower);
+        }
+    }
+
+    public void positionDown() {
+        if(positionIndex >= 1) {
+            positionIndex--;
+            position = positions[positionIndex];
+            String msg = String.format("index: %d ticks:%d", positionIndex, position );
+            telemetry.addData("positionDown", msg);
+
+            elevator.setTargetPosition(encoderVal + position);
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevator.setPower(positivePower);
+        }
+    }
+
     public void goToPosition(int ticks) {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int thisPos = encoderVal + position;
         elevator.setTargetPosition(thisPos + ticks);
         if(position > ticks){
             elevator.setPower(negativePower);
-        } else{
+        } else {
             elevator.setPower(positivePower);
         }
     }
@@ -135,6 +173,7 @@ public class ElevatorSystem {
         }
 
         position = unloadBlock2Ticks;
+
     }
 
     //X button
@@ -182,6 +221,11 @@ public class ElevatorSystem {
         elevator.setTargetPosition(encoderVal + position - incrementTicks);
         elevator.setPower(-0.4);
         position = position - incrementTicks;
+    }
+
+    public void setPosition() {
+        String stringVal = Double.toString(position);
+        config.updateKey("Elevator Position: " + i.toString(), stringVal);
     }
 
     public void setPositionLoad() {

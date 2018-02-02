@@ -22,12 +22,10 @@ public class Claw2png {
     private DcMotorServo motor;
 
     double bottom;
-
     double middle;
-
     double top;
-
     double position;
+
     ConfigParser config;
 
     Telemetry telemetry;
@@ -44,9 +42,12 @@ public class Claw2png {
     }
 
     public void loop(){
-        //telemetry.addData("current position: ", motor.getCurrentPosition());
-        //telemetry.addData("target position: ", position);
+        telemetry.addData("current position: ", motor.getCurrentPosition());
+        telemetry.addData("target position: ", position);
         motor.loop(position);
+    }
+    public void managePosition() {
+
     }
 
     public void goToBottom() {
