@@ -59,11 +59,11 @@ public class VuforiaOpMode extends BaseOpMode {
         VectorF translation = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0) - 90), new VectorF(500, 0, 0));
         telemetry.addData("Translation 1 ", translation.get(0));
         if (translation.get(0) > 0) {
-            driveSystem.setLeftPower(0.2);
-            driveSystem.setRightPower(-0.2);
+//            driveSystem.setLeftPower(0.2);
+//            driveSystem.setRightPower(-0.2);
         } else {
-            driveSystem.setLeftPower(-0.2);
-            driveSystem.setRightPower(0.2);
+//            driveSystem.setLeftPower(-0.2);
+//            driveSystem.setRightPower(0.2);
         }
 
         do {
@@ -99,8 +99,8 @@ public class VuforiaOpMode extends BaseOpMode {
 //                    driveSystem.motors.get("FrontRight").setPower(-0.2);
                 }
             } else {
-                driveSystem.setLeftPower(-0.2);
-                driveSystem.setRightPower(0.2);
+//                driveSystem.setLeftPower(-0.2);
+//                driveSystem.setRightPower(0.2);
             }
             idle();
             telemetry.update();

@@ -71,4 +71,9 @@ public class TeleOpMecanum extends BaseOpMode {
 	{
 
 	}
+
+	@Override
+	public void initButtons() {
+
+	}
 }

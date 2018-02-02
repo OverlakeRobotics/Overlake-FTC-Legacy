@@ -25,13 +25,16 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     public BaseOpMode(String opModeName) {
         config = new ConfigParser(opModeName + ".omc");
+
+        telemetry.setMsTransmissionInterval(200);
+    }
+
+    protected void initSystems() {
         this.driveSystem = new MecanumDriveSystem(this);
         this.imuSystem = new IMUSystem(this);
         this.eye = new Eye(this);
         this.elevator = new ElevatorSystem(this);
         this.claw = new ClawSystem(this);
-
-        telemetry.setMsTransmissionInterval(200);
     }
 
     //colorSide tells if the color of the line we are following is on the left or right of the sensor

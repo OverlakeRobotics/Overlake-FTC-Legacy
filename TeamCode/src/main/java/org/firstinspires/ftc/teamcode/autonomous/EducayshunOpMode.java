@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.robot.ConfigParser;
-//import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 
 /**
  * Created by Steven Abbott on 9/15/2017.
  */
 
 @Autonomous(name="EducayshunOpMode", group="Bot")
-public class EducayshunOpMode extends AutonomousOpMode {
+public class EducayshunOpMode extends BaseOpMode {
     private int zone;
     private int inchesToReferenceBoxNonAudience;
     private int inchesToReferenceBoxAudience;
@@ -21,6 +20,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
     private int b;
 
     public EducayshunOpMode() {
+        super("Autonomous");
         this.config = new ConfigParser("Autonomous.omc");
         this.inchesToReferenceBoxNonAudience = config.getInt("InchesToReferenceBoxNonAudience"); // the length of the first drive forward, ending at the refernce box
         this.inchesToReferenceBoxAudience = config.getInt("InchesToReferenceBoxAudience"); // the length of the first drive forward, ending at the refernce box
@@ -32,9 +32,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
     }
 
     public void runOpMode() {
-
-
-        initializeAllDevices();
+        initSystems();
         elevator.goToZero(telemetry);
         double startHeading = imuSystem.getHeading();
 
@@ -61,37 +59,37 @@ public class EducayshunOpMode extends AutonomousOpMode {
 
         // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) { // blue non-audience
-            driveToPositionInches(-42, powerSetting1);
+            driveSystem.driveToPositionInches(-42, powerSetting1);
             returnToHeading(-90, powerSetting2);
-            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
-            turn(60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            driveSystem.driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            driveSystem.turn(60, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
             placeBlock();
-            driveToPositionInches(5, powerSetting2);
+            driveSystem.driveToPositionInches(5, powerSetting2);
         } else if (zone == 1) { // blue audience
-            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
+            driveSystem.driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
             returnToHeading(60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
             placeBlock();
-            driveToPositionInches(5, powerSetting2);
+            driveSystem.driveToPositionInches(5, powerSetting2);
         } else if (zone == 2) { // red non-audience
-            driveToPositionInches(-40, powerSetting1);
+            driveSystem.driveToPositionInches(-40, powerSetting1);
             returnToHeading(90, powerSetting2);
-            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
-            turn(-60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            driveSystem.driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            driveSystem.turn(-60, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
             placeBlock();
-            driveToPositionInches(5, powerSetting2);
+            driveSystem.driveToPositionInches(5, powerSetting2);
         } else if (zone == 3) { // red audience
-            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
+            driveSystem.driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
             returnToHeading(-60, 1);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
             placeBlock();
-            driveToPositionInches(5, powerSetting2);
+            driveSystem.driveToPositionInches(5, powerSetting2);
         } else if (zone == 4) { //this is a test zone to test inches per box
-            driveToPositionInches(-inchesPerBox, powerSetting2);
+            driveSystem.driveToPositionInches(-inchesPerBox, powerSetting2);
             sleep(2000);
-            driveToPositionInches(-inchesPerBox, powerSetting2);
+            driveSystem.driveToPositionInches(-inchesPerBox, powerSetting2);
         }
     }
 
@@ -107,7 +105,7 @@ public class EducayshunOpMode extends AutonomousOpMode {
         double correctionNeeded = heading - imuSystem.getHeading();
         telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
         telemetry.update();
-        turn(correctionNeeded, power);
+        driveSystem.turn(correctionNeeded, power);
     }
 
     public void placeBlock() {
@@ -184,40 +182,40 @@ public class EducayshunOpMode extends AutonomousOpMode {
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-            driveToPositionInches(-40, 1);
-            turn(-90, 1);
-            driveToPositionInches(-18, 1);
-            turn(90, 1);
+            driveSystem.driveToPositionInches(-40, 1);
+            driveSystem.turn(-90, 1);
+            driveSystem.driveToPositionInches(-18, 1);
+            driveSystem.turn(90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(-20, 1);
+            driveSystem.driveToPositionInches(-20, 1);
         } else if (zone == 1) {
-            driveToPositionInches(-50, 1);
-            turn(90, 1);
+            driveSystem.driveToPositionInches(-50, 1);
+            driveSystem.turn(90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(2000);
-            driveToPositionInches(-20, 1);
+            driveSystem.driveToPositionInches(-20, 1);
         } else if (zone == 2) {
-            driveToPositionInches(40, 1);
-            turn(-90, 1);
-            driveToPositionInches(-18, 1);
-            turn(-90, 1);
+            driveSystem.driveToPositionInches(40, 1);
+            driveSystem.turn(-90, 1);
+            driveSystem.driveToPositionInches(-18, 1);
+            driveSystem.turn(-90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(1000);
-            driveToPositionInches(-20, 1);
+            driveSystem.driveToPositionInches(-20, 1);
         } else {
-            driveToPositionInches(-50, 1);
-            turn(-90, 1);
+            driveSystem.driveToPositionInches(-50, 1);
+            driveSystem.turn(-90, 1);
             elevator.goToZero(telemetry);
             claw.goToReleasePosition();
             sleep(2000);
-            driveToPositionInches(-20, 1);
+            driveSystem.driveToPositionInches(-20, 1);
         }
         claw.goToReleasePosition();
-        driveToPositionInches(5, 1);
+        driveSystem.driveToPositionInches(5, 1);
     }
 
     public void vuDrive(int x, int y) {

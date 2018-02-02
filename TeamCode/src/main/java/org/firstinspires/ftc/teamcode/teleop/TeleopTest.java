@@ -25,7 +25,8 @@ public class TeleopTest extends BaseOpMode {
     }
 
     public void loop() {
-        logger.log(this.imu.)
+        logger.log(this.imu.getAcceleration().toString());
+        logger.log(this.imu.getVelocity().toString());
     }
 
     @Override

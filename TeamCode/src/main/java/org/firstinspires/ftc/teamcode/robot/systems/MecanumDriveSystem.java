@@ -213,6 +213,57 @@ public class MecanumDriveSystem extends System
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
+    public void driveToPositionInches(double inches, double power) {
+        driveToPositionInches(inches, power, inches / 10);
+    }
+
+    public int getMinimumDistanceFromTarget()
+    {
+        int d = this.motorFrontLeft.getTargetPosition() - this.motorFrontLeft.getCurrentPosition();
+        d = closestToZero(d, this.motorFrontRight.getTargetPosition() - this.motorFrontRight.getCurrentPosition());
+        d = closestToZero(d, this.motorBackLeft.getTargetPosition() - this.motorBackLeft.getCurrentPosition());
+        d = closestToZero(d, this.motorBackRight.getTargetPosition() - this.motorBackRight.getCurrentPosition());
+
+        return d;
+    }
+
+    private int closestToZero(int v1, int v2)
+    {
+        if (Math.abs(v1) < Math.abs(v2))
+            return v1;
+
+        return v2;
+    }
+
+    public void driveToPositionInches(double inches, double power, double rampLength) {
+        Ramp ramp = new ExponentialRamp(0, 0.1, motorBackLeft.inchesToTicks(rampLength), power);
+
+        while(anyMotorsBusy()) {
+            int minDistance = getMinimumDistanceFromTarget();
+
+            // ramp assumes the distance away from the target is positive,
+            // so we make it positive here and account for the direction when
+            // the motor power is set.
+            double direction = 1.0;
+            if (minDistance < 0) {
+                minDistance = -minDistance;
+                direction = -1.0;
+            }
+
+            double scaledPower = ramp.value(minDistance);
+
+            setPower(direction * scaledPower);
+        }
+        setPower(0);
+    }
+
+    public void driveToPositionRevolutions(double revs, double power) {
+        motorBackLeft.runOutputGearRevolutions(revs, power);
+        motorBackRight.runOutputGearRevolutions(revs, power);
+        motorFrontRight.runOutputGearRevolutions(revs, power);
+        motorFrontLeft.runOutputGearRevolutions(revs, power);
+    }
+
     public void turn(double angle, double maxPower) {
         double heading = imuSystem.getHeading();
         double targetHeading = heading + angle;
