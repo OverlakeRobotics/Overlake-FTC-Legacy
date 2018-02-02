@@ -28,6 +28,8 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private ConfigParser config;
     private int b;
     PixySystem pixySystem;
+    ElevatorSystem elevator;
+    private int bottomLifterDown;
 
 
     public CompetitionOpMode() {}
@@ -45,6 +47,8 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
         this.pixySystem = new PixySystem(this, zone);
+        bottomLifterDown = config.getInt("bottomLifterDown_position");
+        this.elevator = new ElevatorSystem(hardwareMap, telemetry, bottomLifterDown);
     }
 
 

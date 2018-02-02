@@ -46,8 +46,21 @@ public class ElevatorSystem {
     private double negativePower = -0.95;
     private double positivePower = 0.95;
 
-
     public ElevatorSystem(HardwareMap map, Telemetry telemetry) {
+        this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("Elevator.omc");
+        this.telemetry = telemetry;
+        this.elevator = map.dcMotor.get("elevator");
+        this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
+        this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
+        elevator.setDirection(DcMotor.Direction.REVERSE);
+        loadPosTicks = config.getInt("load_position");
+        unloadBlock2Ticks = config.getInt("block2_position");
+        unloadBlock3Ticks = config.getInt("block3_position");
+        bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
+    }
+
+    public ElevatorSystem(HardwareMap map, Telemetry telemetry, int position) {
+        //this.position = position;
         this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("Elevator.omc");
         this.telemetry = telemetry;
         this.elevator = map.dcMotor.get("elevator");

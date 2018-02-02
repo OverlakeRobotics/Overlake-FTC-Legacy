@@ -20,7 +20,6 @@ public abstract class AutonomousOpMode extends LinearOpMode
     //LineFollowingSystem lineFollowingSystem;
     IMUSystem imuSystem;
     Eye eye;
-    ElevatorSystem elevator;
     Claw2png neoClaw;
     ParallelLiftSystem parrallelLiftSystem;
 
@@ -51,7 +50,6 @@ public abstract class AutonomousOpMode extends LinearOpMode
         telemetry.update();
         sleep(1000);
         */
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
         /*
         telemetry.addLine("elevator system done");
         telemetry.update();
