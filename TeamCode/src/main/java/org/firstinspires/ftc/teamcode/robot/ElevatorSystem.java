@@ -260,6 +260,7 @@ public class ElevatorSystem {
             elevator.setPower(0.0);
             encoderVal = elevator.getCurrentPosition();
             position = loadPosTicks;
+            positionIndex = 0;
             isAtBottom = true;
 
         } else if (isAtBottom) {

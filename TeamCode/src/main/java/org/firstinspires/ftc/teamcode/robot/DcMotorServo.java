@@ -91,8 +91,8 @@ public class DcMotorServo
         double finalPow = pidPower(targetPosition);
         RobotLog.ee("Claw PID ", targetPosition + ", " + getCurrentPosition() + ", " + finalPow + ", " + miniPID.errorSum + ", " +
                     (getCurrentPosition()-miniPID.lastActual) + ", " + i);
+        telemetry.addData("claw power", finalPow);
         this.motor.setPower(finalPow);
-
         }
             //telemetry.addData("Time: ", i);
 
