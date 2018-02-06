@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.util.config;
 import android.os.Environment;
 import android.util.Log;
 
+<<<<<<< HEAD
 import com.qualcomm.robotcore.util.RobotLog;
 
+=======
+>>>>>>> 5766d7fbc9ba0ce91302287e1f08c26aaafb470f
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
@@ -25,14 +28,20 @@ import java.util.logging.Logger;
 
 public class ConfigParser {
     private File file;
+<<<<<<< HEAD
     private String fileName;
+=======
+>>>>>>> 5766d7fbc9ba0ce91302287e1f08c26aaafb470f
     private File externalRoot;
     private File root;
 
     private Map<String, String[]> configData;
 
     public ConfigParser(String filename) {
+<<<<<<< HEAD
         this.fileName = filename;
+=======
+>>>>>>> 5766d7fbc9ba0ce91302287e1f08c26aaafb470f
         configData = new HashMap<String, String[]>();
         externalRoot = Environment.getExternalStorageDirectory();
         root = new File(externalRoot.getAbsolutePath() + "/Android/data/com.overlake.ftc.configapp/files", "configurations");
