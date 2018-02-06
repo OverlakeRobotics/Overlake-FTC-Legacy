@@ -21,7 +21,7 @@ import java.io.IOException;
  */
 @TeleOp(name="ContollerOpMode", group="TeleOp")
 public class ControllerOpMode extends OpMode {
-    private ClawSystem claw;
+    //private ClawSystem claw;
     private ElevatorSystem elevator;
     private ParallelLiftSystem lifter;
     private ConfigParser config;
@@ -60,13 +60,15 @@ public class ControllerOpMode extends OpMode {
 
 
     public ControllerOpMode(){
-
+        this.config = new ConfigParser("TeleOpMecanum.omc");
+        this.msStuckDetectInit = 20000;
     }
 
     @Override
     public void init() {
-        this.config = new ConfigParser("TeleOpMecanum.omc");
-        claw = new ClawSystem(this.hardwareMap);
+
+        //
+        // claw = new ClawSystem(this.hardwareMap);
         elevator = new ElevatorSystem(this.hardwareMap, telemetry);
         meMotor = new Claw2png(this, telemetry);
         lifter = new ParallelLiftSystem(this.hardwareMap, telemetry);

@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import org.firstinspires.ftc.teamcode.robot.ElevatorSystem;
 
 /**
  * Created by Steven Abbott on 1/29/2018.
  */
 
+@Autonomous(name="PitCrewOpMode", group="Bot")
 public class PitCrewOpMode extends AutonomousOpMode {
 
     ElevatorSystem elevator;
-    public static final int TIME = 500;
+    public static final int TIME = 1000;
 
     PitCrewOpMode() {
         this.elevator = new ElevatorSystem(hardwareMap, telemetry);

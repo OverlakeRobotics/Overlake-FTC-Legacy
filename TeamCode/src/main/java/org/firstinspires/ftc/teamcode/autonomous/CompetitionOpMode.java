@@ -29,7 +29,6 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private int b;
     PixySystem pixySystem;
     ElevatorSystem elevator;
-    private int bottomLifterDown;
 
 
     public CompetitionOpMode() {}
@@ -47,8 +46,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
         this.pixySystem = new PixySystem(this, zone);
-        bottomLifterDown = config.getInt("bottomLifterDown_position");
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry, bottomLifterDown);
+        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
     }
 
 
@@ -56,7 +54,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
     public void runOpMode() {
         init2();
         initializeAllDevices();
-        parrallelLiftSystem.goToInitPosition();
+        //parrallelLiftSystem.goToInitPosition();
         elevator.goToBottomLifterDown();
         double startHeading = imuSystem.getHeading();
 

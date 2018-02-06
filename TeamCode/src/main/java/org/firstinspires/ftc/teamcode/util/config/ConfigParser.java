@@ -20,10 +20,12 @@ public class ConfigParser {
     private File file;
     private File externalRoot;
     private File root;
+    private String fileName;
 
     private Map<String, String[]> configData;
 
     public ConfigParser(String filename) {
+        this.fileName = filename;
         configData = new HashMap<String, String[]>();
         externalRoot = Environment.getExternalStorageDirectory();
         root = new File(externalRoot.getAbsolutePath() + "/Android/data/com.overlake.ftc.configapp/files", "configurations");
@@ -99,10 +101,10 @@ public class ConfigParser {
             if (configData.get(key)[0].equals(type)) {
                 return configData.get(key)[2];
             } else {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Trying to get key with wrong tpe of: " + type + ", should be: " + configData.get(key)[0]);
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Can not find key: " + key + " in config: " + this.fileName);
         }
     }
 
