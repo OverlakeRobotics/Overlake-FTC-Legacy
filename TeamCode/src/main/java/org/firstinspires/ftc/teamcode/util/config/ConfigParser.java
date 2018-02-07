@@ -3,14 +3,15 @@ package org.firstinspires.ftc.teamcode.util.config;
 import android.os.Environment;
 import android.util.Log;
 
+import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 /**
  * Created by evancoulson on 9/23/17.
@@ -43,7 +44,7 @@ public class ConfigParser {
                 configData.put(args[1], args);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("CONFIG FILE " + filename);
         }
     }
 

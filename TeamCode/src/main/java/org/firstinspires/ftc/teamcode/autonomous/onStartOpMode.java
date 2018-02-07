@@ -7,7 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  */
 
 @Autonomous(name="onStartOpMode", group="Bot")
-public class onStartOpMode extends AutonomousOpMode {
+public class onStartOpMode extends BaseOpMode {
+    public onStartOpMode() {
+        super("onStart");
+    }
+
     boolean elevatorBottom;
 
 

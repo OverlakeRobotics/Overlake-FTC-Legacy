@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
 
 @Autonomous(name="PixySystem", group="Bot")
-public class PixySystem {
-    private LinearOpMode linearOpMode;
+public class PixySystem extends System {
+    private LinearOpMode opMode;
     private PixyCam pixyCam;
     private PixyCam.Block redBlock;
     private PixyCam.Block blueBlock;
@@ -26,13 +26,14 @@ public class PixySystem {
 
     // object constructor -- takes in the op mode ("this") and the zone variable found in the dead reckoning code
     public PixySystem (LinearOpMode linearOpMode, int zone) {
-        this.linearOpMode = linearOpMode;
+        super(linearOpMode, "PixySystem");
+        this.opMode = linearOpMode;
         if (zone == 0 || zone == 1) { this.teamColorIsBlue = true; } else { this.teamColorIsBlue = false; }
     }
 
     // runs the series of events that the pixy does
     public void runPixySystem() {
-        linearOpMode.waitForStart();
+        this.opMode.waitForStart();
         turnOnLight();
         initServos();
         getPixyValues();
@@ -42,7 +43,7 @@ public class PixySystem {
 
     // turns on the light
     public void turnOnLight() {
-        this.light = linearOpMode.hardwareMap.dcMotor.get("light");
+        this.light = this.opMode.hardwareMap.dcMotor.get("light");
         this.light.setPower(0.5 );
     }
 
@@ -54,38 +55,38 @@ public class PixySystem {
     // centers the horizontal servo and drops the vertical one
     public void initServos() {
         if (this.teamColorIsBlue) {
-            this.horizServo = linearOpMode.hardwareMap.servo.get("lefthorizservo");
-            this.vertServo = linearOpMode.hardwareMap.servo.get("leftvertservo");
+            this.horizServo = this.opMode.hardwareMap.servo.get("lefthorizservo");
+            this.vertServo = this.opMode.hardwareMap.servo.get("leftvertservo");
             this.HORIZ_CENTER = 0.55;
             this.VERT_BOTTOM = 0.85;
             this.VERT_TOP = 0;
         } else {
-            this.horizServo = linearOpMode.hardwareMap.servo.get("righthorizservo");
-            this.vertServo = linearOpMode.hardwareMap.servo.get("rightvertservo");
+            this.horizServo = this.opMode.hardwareMap.servo.get("righthorizservo");
+            this.vertServo = this.opMode.hardwareMap.servo.get("rightvertservo");
             this.HORIZ_CENTER = 0.415;
             this.VERT_BOTTOM = 0.125;
             this.VERT_TOP = 1;
         }
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
         this.vertServo.setPosition(VERT_BOTTOM);
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
         this.horizServo.setPosition(HORIZ_CENTER);
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
     }
 
     // gets all the values from the pixy
     public void getPixyValues() {
-        if (teamColorIsBlue) { this.pixyCam = linearOpMode.hardwareMap.get(PixyCam.class, "PixyCam1"); }
-        else { this.pixyCam = linearOpMode.hardwareMap.get(PixyCam.class, "PixyCam2"); }
+        if (teamColorIsBlue) { this.pixyCam = this.opMode.hardwareMap.get(PixyCam.class, "PixyCam1"); }
+        else { this.pixyCam = this.opMode.hardwareMap.get(PixyCam.class, "PixyCam2"); }
         this.redBlock = this.pixyCam.GetBiggestBlock(1);
         this.blueBlock = this.pixyCam.GetBiggestBlock(2);
         this.otherThing = this.pixyCam.GetBiggestBlock(3);
 
 
-        linearOpMode.telemetry.addData("Red", this.redBlock.toString());
-        linearOpMode.telemetry.addData("Blue", this.blueBlock.toString());
-        linearOpMode.telemetry.addData("Other", this.otherThing.toString());
-        linearOpMode.telemetry.update();
+        this.opMode.telemetry.addData("Red", this.redBlock.toString());
+        this.opMode.telemetry.addData("Blue", this.blueBlock.toString());
+        this.opMode.telemetry.addData("Other", this.otherThing.toString());
+        this.opMode.telemetry.update();
 
         // determines if each color is actually seen by the camera or not
         if (this.blueBlock.x != 0) { this.blueExists = true; } else { this.blueExists = false; }
@@ -123,10 +124,10 @@ public class PixySystem {
         }
 
         // brings the servos back to the starting position
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
         this.horizServo.setPosition(HORIZ_CENTER);
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
         this.vertServo.setPosition(VERT_TOP);
-        linearOpMode.sleep(1000);
+        this.opMode.sleep(1000);
     }
 }

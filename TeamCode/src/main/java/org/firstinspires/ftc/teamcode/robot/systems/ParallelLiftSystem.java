@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.systems.System;
 import org.firstinspires.ftc.teamcode.teleop.ControllerOpMode;
 import org.firstinspires.ftc.teamcode.util.config.*;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
@@ -32,13 +34,10 @@ import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
  * Created by jacks on 11/28/2017.
  */
 
-public class ParallelLiftSystem {
-
-        private ConfigParser config;
+public class ParallelLiftSystem extends System {
         private DigitalChannel parallelTouch;
         private DcMotor parallelMotor;
         private int bottom = 0;
-        private int gameBottom;
         private int middle;
         private int park;
         private int top;
@@ -59,9 +58,8 @@ public class ParallelLiftSystem {
 
         Telemetry telemetry;
 
-        public ParallelLiftSystem(HardwareMap map, Telemetry telemetry) {
-            this.telemetry = telemetry;
-            this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("lifter.omc");
+        public ParallelLiftSystem(OpMode mode) {
+            super(mode, "lifter");
 
             for(i = 0; i < positions.length; i++) {
                 positions[i] = config.getInt("ParallelLift" + i.toString());

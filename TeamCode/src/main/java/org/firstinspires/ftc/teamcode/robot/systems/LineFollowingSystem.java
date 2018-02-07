@@ -1,7 +1,10 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.robot.data.ColorSensorData;
+import org.firstinspires.ftc.teamcode.robot.data.HueData;
 
 /**
  * This is NOT an opmode.

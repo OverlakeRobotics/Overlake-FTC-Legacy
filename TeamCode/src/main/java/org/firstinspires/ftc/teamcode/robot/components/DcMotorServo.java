@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
-
-import android.graphics.Path;
-import android.provider.MediaStore;
+package org.firstinspires.ftc.teamcode.robot.components;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,12 +11,11 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tools.MiniPID;
+import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 import org.firstinspires.ftc.teamcode.util.ramp.ExponentialRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.LogarithmicRamp;
 import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
@@ -65,7 +61,7 @@ public class DcMotorServo
             telemetry.addData("File Not Found: " , e.getLocalizedMessage());
         }
 
-        this.config = new org.firstinspires.ftc.teamcode.robot.ConfigParser("PID.omc");
+        this.config = new ConfigParser("PID.omc");
         P = config.getDouble("P");
         I = config.getDouble("I");
         D  = config.getDouble("D");

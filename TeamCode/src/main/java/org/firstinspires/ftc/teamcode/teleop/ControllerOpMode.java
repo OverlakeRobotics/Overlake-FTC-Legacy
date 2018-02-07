@@ -3,569 +3,224 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robot.*;
+import org.firstinspires.ftc.teamcode.hardware.controller.TriggerType;
+import org.firstinspires.ftc.teamcode.robot.systems.ClawSystemNoMergeConflictPlease;
+import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.util.Handler;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Created by jacks on 10/5/2017.
  */
 @TeleOp(name="ContollerOpMode", group="TeleOp")
-public class ControllerOpMode extends OpMode {
-    //private ClawSystem claw;
+public class ControllerOpMode extends BaseOpMode {
+    private ClawSystemNoMergeConflictPlease claw;
     private ElevatorSystem elevator;
     private ParallelLiftSystem lifter;
-    private ConfigParser config;
-    private Claw2png meMotor;
-
-
-    private Button parallelBottom;
-    private Button parallelTop;
-
-    private Button clawBottom;
-    private Button clawMiddle;
-    private Button clawTop;
-    private Button runMotor;
-    private Button runMotorBack;
-
-
-    private Button elevatorLoadPosition1;
-    private Button elevatorUnloadPosition3;
-    private Button elevatorIncrementUp;
-    private Button elevatorIncrementDown;
-    private Button elevatorSetBlock2Pos;
-    private Button elevatorSetBlock3Pos;
-
-    private Button checkSlow;
-
-    private Button resetHedingButton;
-
-    MecanumDriveSystem driveSystem;
-    boolean slowDrive = false;
-    private Button lifterIncrementUp;
-
-    private Button lifterIncrementDown;
-    private Button setLifter;
-    private Button elevatorGoToZed;
-    private Button lifterDown;
-
 
     public ControllerOpMode(){
-        this.config = new ConfigParser("TeleOpMecanum.omc");
-        this.msStuckDetectInit = 20000;
+        super("ControllerOpMode");
     }
+
+    private static boolean slowDrive = false;
 
     @Override
     public void init() {
+        this.initBaseSystems();
+        claw = new ClawSystemNoMergeConflictPlease(this);
+        elevator = new ElevatorSystem(this);
 
-        //
-        // claw = new ClawSystem(this.hardwareMap);
-        elevator = new ElevatorSystem(this.hardwareMap, telemetry);
-        meMotor = new Claw2png(this, telemetry);
-        lifter = new ParallelLiftSystem(this.hardwareMap, telemetry);
-        this.driveSystem = new MecanumDriveSystem();
-        this.driveSystem.init(this.hardwareMap);
-
-        ///////////////////////////////////////////////////////////////////////////
-
-        this.clawBottom = new Button();
-        this.clawBottom.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.left_trigger > 0.3;
-                    }
-                };
-        this.clawBottom.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        meMotor.goToBottom();
-                    }
-                };
-
-        this.clawMiddle = new Button();
-        this.clawMiddle.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.left_bumper;
-
-                    }
-                };
-        this.clawMiddle.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        meMotor.goToMiddle();
-                    }
-                };
-
-        this.clawTop = new Button();
-        this.clawTop.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.right_trigger > 0.3;
-                    }
-                };
-        this.clawTop.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        meMotor.goToTop();
-                    }
-                };
-
-        this.runMotor = new Button();
-        this.runMotor.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad1.left_bumper;
-                    }
-                };
-        this.runMotor.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        meMotor.runMotor();
-                    }
-                };
-        this.runMotor.releasedHandler = new Handler() {
-            @Override
-            public void invoke() {
-                //nothing here right
-            }
-        };
-
-        this.runMotorBack = new Button();
-        this.runMotorBack.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad1.right_bumper;
-                    }
-                };
-        this.runMotorBack.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        meMotor.runMotorBack();
-                    }
-                };
-        this.runMotorBack.releasedHandler = new Handler() {
-            @Override
-            public void invoke() {
-                //nothing here right now
-            }
-        };
-
-        //////////////////PARALLEL LIFTER////////////////////////////////////
-
-        this.parallelBottom = new Button();
-        this.parallelBottom.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.dpad_down;
-                    }
-                };
-        this.parallelBottom.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.positionDown();
-                    }
-                };
-
-        this.parallelTop = new Button();
-        this.parallelTop.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.dpad_up;
-                    }
-                };
-        this.parallelTop.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.positionUp();
-                    }
-                };
-
-        this.lifterIncrementUp = new Button();
-        this.lifterIncrementUp.isPressed = new Func<Boolean>()
-        {
-            @Override
-            public Boolean value()
-            {
-                return gamepad1.dpad_up ;
-            }
-        };
-        this.lifterIncrementUp.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.incrementUp();
-                    }
-                };
-
-        this.lifterIncrementDown = new Button();
-        this.lifterIncrementDown.isPressed = new Func<Boolean>()
-        {
-            @Override
-            public Boolean value()
-            {
-                return gamepad1.dpad_down;
-            }
-        };
-        this.lifterIncrementDown.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.incrementDown();
-                    }
-                };
-
-        this.setLifter = new Button();
-        this.setLifter.isPressed = new Func<Boolean>()
-        {
-            @Override
-            public Boolean value()
-            {
-                return gamepad2.dpad_down && gamepad2.left_bumper;
-            }
-        };
-        this.setLifter.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.setPosition();
-                    }
-                };
-
-        this.lifterDown = new Button();
-        this.lifterDown.isPressed = new Func<Boolean>()
-        {
-            @Override
-            public Boolean value()
-            {
-                return gamepad2.b;
-            }
-        };
-        this.lifterDown.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        lifter.runMotorDown();
-                    }
-                };
-
-        /////////////////ELEVATOR///////////////////////////////////////////
-
-        this.elevatorLoadPosition1 = new Button();
-        this.elevatorLoadPosition1.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.a && !gamepad2.left_bumper;
-                    }
-                };
-        this.elevatorLoadPosition1.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.positionDown();
-                    }
-                };
-
-        this.elevatorUnloadPosition3 = new Button();
-        this.elevatorUnloadPosition3.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.y && !gamepad2.left_bumper;
-                    }
-                };
-        this.elevatorUnloadPosition3.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.positionUp();
-                    }
-                };
-
-        this.elevatorIncrementUp = new Button();
-        this.elevatorIncrementUp.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad1.y;
-                    }
-                };
-        this.elevatorIncrementUp.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.incrementUp();
-                    }
-                };
-
-        this.elevatorIncrementDown = new Button();
-        this.elevatorIncrementDown.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad1.a;
-                    }
-                };
-        this.elevatorIncrementDown.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.incrementDown();
-                    }
-                };
-
-        this.elevatorSetBlock2Pos = new Button();
-        this.elevatorSetBlock2Pos.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.left_bumper && gamepad2.a;
-                    }
-                };
-        this.elevatorSetBlock2Pos.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.setPosition();
-                    }
-                };
-
-        this.elevatorSetBlock3Pos = new Button();
-        this.elevatorSetBlock3Pos.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.left_bumper && gamepad2.y;
-                    }
-                };
-        this.elevatorSetBlock3Pos.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.setPosition();
-                    }
-                };
-
-        this.elevatorGoToZed = new Button();
-        this.elevatorGoToZed.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad2.x;
-                    }
-                };
-        this.elevatorGoToZed.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        elevator.runMotorDown();
-                    }
-                };
-
-        //////////AUXILIARY COMMANDS/////////////////////////////
-
-        this.checkSlow = new Button();
-        this.checkSlow.isPressed =
-                new Func<Boolean>()
-                {
-                    @Override
-                    public Boolean value()
-                    {
-                        return gamepad1.left_trigger > 0.50;
-                    }
-                };
-        this.checkSlow.pressedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        slowDrive = true;
-                    }
-                };
-
-        this.checkSlow.releasedHandler =
-                new Handler()
-                {
-                    @Override
-                    public void invoke()
-                    {
-                        slowDrive = false;
-                    }
-                };
-
-        this.resetHedingButton = new Button();
-        this.resetHedingButton.isPressed = new Func<Boolean>() {
-            @Override
-            public Boolean value() {
-                return gamepad1.b;
-            }
-        };
-        this.resetHedingButton.pressedHandler = new Handler() {
-            @Override
-            public void invoke() {
-//                driveSystem.resetInitialHeading();
-            }
-        };
-        this.resetHedingButton.releasedHandler = new Handler() {
-            @Override
-            public void invoke() {
-                driveSystem.resetInitialHeading();
-            }
-        };
-
-    }
-    ElapsedTime i = new ElapsedTime();
-
-    public void logTime(String str) {
-        Long time = i.nanoseconds();
-        RobotLog.ee("Time " + str, time.toString());
+        controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
     }
 
     @Override
     public void loop() {
-        logTime("Loop Start");
+        controller1.handle();
+        controller2.handle();
 
-        setLifter.testAndHandle();
-        lifterIncrementUp.testAndHandle();
-        lifterIncrementDown.testAndHandle();
-        clawBottom.testAndHandle();
-        clawMiddle.testAndHandle();
-        clawTop.testAndHandle();
-        runMotor.testAndHandle();
-        runMotorBack.testAndHandle();
-        logTime("meMotor Start");
-        meMotor.loop();
-        logTime("meMotor End");
+        float rx = controller1.gamepad.right_stick_x;
+        float ry = controller1.gamepad.right_stick_y;
+        float lx = controller1.gamepad.left_stick_x;
+        float ly = controller1.gamepad.left_stick_y;
 
-        //checkPotentiometerPos.testAndHandle();
-        lifter.parallelLiftLoop();
+        if (config.getBoolean("superDrive")) {
+            float coefficient = slowDrive == true ? 0.5f : 1f;
+            this.driveSystem.driveGodMode(rx, ry, lx, ly, coefficient);
+        } else  {
+            this.driveSystem.mecanumDrive(rx, ry, lx, ly, slowDrive);
+        }
 
-        parallelBottom.testAndHandle();
-        parallelTop.testAndHandle();
-        lifter.checkForBottom();
-        lifter.isPressed();
-        elevator.checkForBottom(telemetry);
-        elevator.checkForTop();
-        elevator.elevatorLoop();
-        elevator.loop();
-        lifterDown.testAndHandle();
-        elevatorGoToZed.testAndHandle();
-        elevatorLoadPosition1.testAndHandle();
-        elevatorUnloadPosition3.testAndHandle();
-        elevatorIncrementDown.testAndHandle();
-        elevatorIncrementUp.testAndHandle();
-        elevatorSetBlock2Pos.testAndHandle();
-        elevatorSetBlock3Pos.testAndHandle();
-        checkSlow.testAndHandle();
-        resetHedingButton.testAndHandle();
-        logTime("before mec");
-        //lifter.loop();
-        //checkPotentiometerPos.testAndHandle();
-        /*if (true) {
-            float coeff = slowDrive == true ? 0.5f : 1f;
-            this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, coeff);
-        } else  {*/
-
-        this.driveSystem.mecanumDrive(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y, slowDrive);
-
-        logTime("End");
-
+        telemetry.update();
     }
 
 
     @Override
+
     public void stop() {
 
     }
 
+    @Override
+    public void initButtons() {
+        //Claw
 
+        // load position claw
+        controller2.rightTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.goToLoadPosition();
+                telemetry.addData("c2 press", "r trig");
+            }
+        };
+
+        // release claw
+        controller2.leftTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.goToReleasePosition();
+                telemetry.addData("c2 press", "l trig");
+            }
+        };
+
+        // save load position
+        controller2.rightTriggerShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.setLoadPosition();
+                telemetry.addData("c2 press", "S r trig");
+            }
+
+        };
+
+        // save release position
+        controller2.leftTriggerShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.setReleasePosition();
+                telemetry.addData("c2 press", "S l trig");
+            }
+        };
+
+        // increment servo
+        controller2.dPadRight.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.incrementServo();
+                telemetry.addData("c2 press", "dpad r");
+            }
+        };
+
+        // decrement servo
+        controller2.dPadLeft.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                claw.decrementServo();
+                telemetry.addData("c2 press", "dpad l");
+            }
+        };
+
+        //ELEVATOR
+
+        //goes to 0
+        controller2.a.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.runMotorDown();
+                telemetry.addData("c2 press", "a");
+            }
+        };
+
+        // goes to Block 2
+        controller2.b.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.goToUnloadBlock2();
+                telemetry.addData("c2 press", "b");
+            }
+        };
+
+        // goes to Block 3
+        controller2.x.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.goToUnloadBlock3();
+                telemetry.addData("c2 press", "x");
+            }
+        };
+
+        // run motor up
+        controller2.y.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.runMotorUp();
+                telemetry.addData("c2 press", "y");
+            }
+        };
+
+        // increment elevator up
+        controller2.dPadUp.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.incrementUp();
+                telemetry.addData("c2 press", "dpad up");
+            }
+        };
+
+        // decrements elevator down
+        controller2.dPadDown.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.incrementDown();
+                telemetry.addData("c2 press", "dpad down");
+            }
+        };
+
+        // save block 2 position
+        controller2.bShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.setPositionBlock2();
+                telemetry.addData("c2 press", "b");
+            }
+        };
+
+        // save block 3 position
+        controller2.xShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+//                elevator.setPositionBlock3();
+                telemetry.addData("c2 press", "S x");
+            }
+        };
+
+        controller1.leftTrigger.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                slowDrive = !slowDrive;
+                telemetry.addData("c1 press", "l trig");
+            }
+        };
+
+        controller1.x.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                driveSystem.resetInitialHeading();
+                telemetry.addData("c1 press", "x");
+            }
+        };
+
+        controller1.a.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+//                lifter.goToBottom();
+                telemetry.addData("c1 press", "a");
+//                throw new IllegalStateException("Lifter Not Implemented Yet");
+            }
+        };
+    }
 }

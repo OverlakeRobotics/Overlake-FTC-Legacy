@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.robot.components.DcMotorServo;
 import org.firstinspires.ftc.teamcode.teleop.ControllerOpMode;
 import org.firstinspires.ftc.teamcode.util.config.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by jacks on 1/8/2018.
  */
-public class Claw2png {
+public class ClawSystemNoMergeConflictPlease extends System {
 
     private DcMotorServo motor;
 
@@ -26,13 +27,9 @@ public class Claw2png {
     double top;
     double position;
 
-    ConfigParser config;
-
-    Telemetry telemetry;
-
-    public Claw2png(OpMode opMode, Telemetry telemetry){
+    public ClawSystemNoMergeConflictPlease(OpMode opMode){
+        super(opMode, "meMotor");
         this.telemetry = opMode.telemetry;
-        this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("meMotor.omc");
         this.motor = new DcMotorServo();
         this.motor.init(opMode.hardwareMap, "meMotor", "potentiometer", telemetry);
         bottom = config.getDouble("bottom");

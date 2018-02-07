@@ -1,22 +1,15 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.hardware.pixycam.PixyCam;
-import org.firstinspires.ftc.teamcode.robot.Claw2png;
-import org.firstinspires.ftc.teamcode.robot.ConfigParser;
-import org.firstinspires.ftc.teamcode.robot.ElevatorSystem;
-import org.firstinspires.ftc.teamcode.robot.ParallelLiftSystem;
-import org.firstinspires.ftc.teamcode.robot.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
 
 /**
  * Created by lexis on 23-Oct-17.
  */
 
 @Autonomous(name="CompetitionOpMode", group="Bot")
-public class CompetitionOpMode extends AutonomousOpMode {
+public class CompetitionOpMode extends BaseOpMode {
     private int zone;
     private int inchesToReferenceBoxNonAudience;
     private int inchesToReferenceBoxAudience;
@@ -25,16 +18,14 @@ public class CompetitionOpMode extends AutonomousOpMode {
     private int cryptoApproachInches;
     private boolean isBlue;
     private boolean isAudienceSide;
-    private ConfigParser config;
     private int b;
     PixySystem pixySystem;
-    ElevatorSystem elevator;
 
-
-    public CompetitionOpMode() {}
+    public CompetitionOpMode() {
+        super("Autonomous");
+    }
 
     private void init2() {
-        this.config = new ConfigParser("Autonomous.omc");
         this.inchesToReferenceBoxNonAudience = config.getInt("InchesToReferenceBoxNonAudience"); // the length of the first drive forward, ending at the refernce box
         this.inchesToReferenceBoxAudience = config.getInt("InchesToReferenceBoxAudience"); // the length of the first drive forward, ending at the refernce box
         this.zone = config.getInt("zone"); // sets which starting zone you are in
@@ -46,14 +37,11 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
         this.pixySystem = new PixySystem(this, zone);
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
     }
 
-
-
+    @Override
     public void runOpMode() {
         init2();
-        initializeAllDevices();
         //parrallelLiftSystem.goToInitPosition();
         elevator.goToBottomLifterDown();
         double startHeading = imuSystem.getHeading();
@@ -64,73 +52,17 @@ public class CompetitionOpMode extends AutonomousOpMode {
 
         pixySystem.runPixySystem();
 
-        grabBlock();
-        vuforiaCryptoBox(zone);
-
-
-        ////
         stop();
-        ////
-    }
-
-    public void vuforiaCryptoBox(int zone) {
-        double inchesPerBox = b;
-        int boxNumber = eye.look(); // 0 = left   1 = center   2 = right
-        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + boxNumber);
-        telemetry.update();
-        sleep(50);
-
-        // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (zone == 0) { // blue non-audience
-            driveToPositionInches(-42, powerSetting1);
-            returnToHeading(-90, powerSetting2);
-            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
-            turn(60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
-            placeBlock();
-            driveToPositionInches(5, powerSetting2);
-        } else if (zone == 1) { // blue audience
-            driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
-            returnToHeading(60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
-            placeBlock();
-            driveToPositionInches(5, powerSetting2);
-        } else if (zone == 2) { // red non-audience
-            driveToPositionInches(-40, powerSetting1);
-            returnToHeading(90, powerSetting2);
-            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
-            turn(-60, powerSetting2);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
-            placeBlock();
-            driveToPositionInches(5, powerSetting2);
-        } else if (zone == 3) { // red audience
-            driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
-            returnToHeading(-60, 1);
-            driveToPositionInches(-cryptoApproachInches, powerSetting2);
-            placeBlock();
-            driveToPositionInches(5, powerSetting2);
-        } else if (zone == 4) { //this is a test zone to test inches per box
-            driveToPositionInches(-inchesPerBox, powerSetting2);
-            sleep(2000);
-            driveToPositionInches(-inchesPerBox, powerSetting2);
-        }
-    }
-
-    public void returnToHeading(double heading, double power) {
-        double correctionNeeded = heading - imuSystem.getHeading();
-        telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
-        telemetry.update();
-        turn(correctionNeeded, power);
     }
 
     public void placeBlock() {
         elevator.goToBottomLifterDown();
-        neoClaw.goToTop();
+        this.claw.goToTop();
         sleep(1000);
     }
 
     public void grabBlock() {
-        neoClaw.goToBottom();
+        this.claw.goToBottom();
         sleep(500);
         elevator.goToPosition(800);
         sleep(1000);
@@ -140,12 +72,12 @@ public class CompetitionOpMode extends AutonomousOpMode {
         int inchesPerBox = 15;
         telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
         telemetry.update();
-        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
+//        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
     }
 
     public void correctBoxRightApproach(int boxNumber) {
         int inchesPerBox = 11;
-        driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
+        this.driveSystem.driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
     }
     // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
     public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide) {
@@ -183,39 +115,39 @@ public class CompetitionOpMode extends AutonomousOpMode {
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-            driveToPositionInches(-40, 1);
-            turn(-90, 1);
-            driveToPositionInches(-18, 1);
-            turn(90, 1);
+//            driveToPositionInches(-40, 1);
+//            turn(-90, 1);
+//            driveToPositionInches(-18, 1);
+//            turn(90, 1);
             elevator.goToZero(telemetry);
             neoClaw.goToTop();
             sleep(1000);
-            driveToPositionInches(-20, 1);
+//            driveToPositionInches(-20, 1);
 
 
         } else if (zone == 1) {
-            driveToPositionInches(-50, 1);
-            turn(90, 1);
+//            driveToPositionInches(-50, 1);
+//            turn(90, 1);
             elevator.goToZero(telemetry);
             neoClaw.goToTop();
             sleep(2000);
-            driveToPositionInches(-13, 1);
+//            driveToPositionInches(-13, 1);
         } else if (zone == 2) {
-            driveToPositionInches(40, 1);
-            turn(-90, 1);
-            driveToPositionInches(-18, 1);
-            turn(-90, 1);
+//            driveToPositionInches(40, 1);
+//            turn(-90, 1);
+//            driveToPositionInches(-18, 1);
+//            turn(-90, 1);
             elevator.goToZero(telemetry);
             neoClaw.goToTop();
             sleep(1000);
-            driveToPositionInches(-18, 1);
+//            driveToPositionInches(-18, 1);
         } else {
-            driveToPositionInches(-50, 1);
-            turn(-90, 1);
+//            driveToPositionInches(-50, 1);
+//            turn(-90, 1);
             elevator.goToZero(telemetry);
             neoClaw.goToTop();
             sleep(2000);
-            driveToPositionInches(-18, 1);
+//            driveToPositionInches(-18, 1);
         }
         neoClaw.goToTop();
     }*/
