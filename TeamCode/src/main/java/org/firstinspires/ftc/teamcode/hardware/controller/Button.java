@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.hardware.controller;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.util.Handler;
@@ -44,9 +44,17 @@ public class Button
         this.wasPressed = pressed;
 
         if (this.justPressed && this.pressedHandler != null)
-            this.pressedHandler.invoke();
+            try {
+                this.pressedHandler.invoke();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         if (this.justReleased && this.releasedHandler != null)
-            this.releasedHandler.invoke();
+            try {
+                this.releasedHandler.invoke();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }

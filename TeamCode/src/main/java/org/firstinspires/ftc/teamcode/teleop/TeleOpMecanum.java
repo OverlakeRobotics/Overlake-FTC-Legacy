@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
+/* Copyright (c) 2014 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -29,47 +29,51 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.autonomous.AutonomousOpMode;
+import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
- * TeleOp Mode
+ * TeleOpMecanum Mode
  * <p>
- *Enables control of the robot via the gamepad
+ * Enables control of the robot via the gamepad
  */
 
-@Autonomous(name="TestTurnOpMode", group="Bot")
-@Disabled
-public class TestTurnOpMode extends AutonomousOpMode {
+@TeleOp(name="TeleOpMecanum", group="TeleOp")
+public class TeleOpMecanum extends BaseOpMode {
 
-    private GyroSensor gyroSensor;
+	private MecanumDriveSystem driveSystem;
 
+	public TeleOpMecanum() {
+		super("TeleOpMecanum");
+	}
 
-    private final double DRIVE_POWER = 0.4;
+	@Override
+	public void init() {
+		telemetry.update();
+        this.driveSystem = new MecanumDriveSystem(this);
+		telemetry.update();
+	}
 
-    @Override
-    public void runOpMode() {
-        initializeAllDevices();
-        waitForStart();
-        turn(30, 0.3);
-        sleep(1000);
-        turn(30, 0.3);
-        sleep(1000);
-        turn(30, 0.3);
+	@Override
+	public void loop()
+	{
+        this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
+		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
+		telemetry.update();
+	}
 
-    }
+	@Override
+	public void stop()
+	{
+
+	}
+
+	@Override
+	public void initButtons() {
+
+	}
 }
