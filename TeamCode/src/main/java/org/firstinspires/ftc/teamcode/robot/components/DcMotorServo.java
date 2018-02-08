@@ -104,7 +104,7 @@ public class DcMotorServo
         this.motor.setPower(0.5);
     }
     public void runMotorBack(){
-        this.motor.setPower(-0.5);
+        this.motor.setPower(-0.2);
     }
     public void stop(){
         this.motor.setPower(0);

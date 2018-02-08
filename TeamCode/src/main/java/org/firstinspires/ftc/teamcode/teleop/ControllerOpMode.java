@@ -31,9 +31,9 @@ public class ControllerOpMode extends BaseOpMode {
     @Override
     public void init() {
         this.initBaseSystems();
-        claw = new ClawSystemNoMergeConflictPlease(this);
+        this.claw = new ClawSystemNoMergeConflictPlease(this);
         elevator = new ElevatorSystem(this);
-
+        lifter = new ParallelLiftSystem(this);
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
     }
 
@@ -41,6 +41,12 @@ public class ControllerOpMode extends BaseOpMode {
     public void loop() {
         controller1.handle();
         controller2.handle();
+
+        elevator.checkForBottom(telemetry);
+        elevator.checkForTop();
+
+        lifter.checkForBottom();
+         
 
         float rx = controller1.gamepad.right_stick_x;
         float ry = controller1.gamepad.right_stick_y;
@@ -67,12 +73,12 @@ public class ControllerOpMode extends BaseOpMode {
     @Override
     public void initButtons() {
         //Claw
-
+        /////////////////////////////////////////////////////////////
         // load position claw
         controller2.rightTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                claw.goToLoadPosition();
+                claw.goToBottom();
                 telemetry.addData("c2 press", "r trig");
             }
         };
@@ -81,7 +87,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.leftTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                claw.goToReleasePosition();
+                claw.goToTop();
                 telemetry.addData("c2 press", "l trig");
             }
         };
@@ -90,7 +96,6 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.rightTriggerShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                claw.setLoadPosition();
                 telemetry.addData("c2 press", "S r trig");
             }
 
@@ -109,7 +114,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadRight.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                claw.incrementServo();
+
                 telemetry.addData("c2 press", "dpad r");
             }
         };
@@ -123,40 +128,34 @@ public class ControllerOpMode extends BaseOpMode {
             }
         };
 
+
+
         //ELEVATOR
-
+        //////////////////////////////////////////////////////////////////////
         //goes to 0
-        controller2.a.pressedHandler = new Handler() {
-            @Override
-            public void invoke() throws Exception {
-//                elevator.runMotorDown();
-                telemetry.addData("c2 press", "a");
-            }
-        };
-
-        // goes to Block 2
         controller2.b.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.goToUnloadBlock2();
+                elevator.runMotorDown();
                 telemetry.addData("c2 press", "b");
             }
         };
 
-        // goes to Block 3
-        controller2.x.pressedHandler = new Handler() {
+        // goes to Block 2
+        controller2.a.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.goToUnloadBlock3();
-                telemetry.addData("c2 press", "x");
+                elevator.positionDown();
+                telemetry.addData("c2 press", "a");
             }
         };
+
 
         // run motor up
         controller2.y.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.runMotorUp();
+                elevator.positionUp();
                 telemetry.addData("c2 press", "y");
             }
         };
@@ -165,7 +164,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadUp.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.incrementUp();
+                elevator.incrementUp();
                 telemetry.addData("c2 press", "dpad up");
             }
         };
@@ -174,7 +173,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.dPadDown.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.incrementDown();
+                elevator.incrementDown();
                 telemetry.addData("c2 press", "dpad down");
             }
         };
@@ -183,17 +182,8 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.bShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-//                elevator.setPositionBlock2();
-                telemetry.addData("c2 press", "b");
-            }
-        };
-
-        // save block 3 position
-        controller2.xShifted.pressedHandler = new Handler() {
-            @Override
-            public void invoke() throws Exception {
-//                elevator.setPositionBlock3();
-                telemetry.addData("c2 press", "S x");
+                elevator.setPosition();
+                telemetry.addData("c2 press", "a");
             }
         };
 
@@ -205,11 +195,11 @@ public class ControllerOpMode extends BaseOpMode {
             }
         };
 
-        controller1.x.pressedHandler = new Handler() {
+        controller1.b.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
                 driveSystem.resetInitialHeading();
-                telemetry.addData("c1 press", "x");
+                telemetry.addData("c1 press", "b");
             }
         };
 
@@ -217,9 +207,87 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke()
             {
-//                lifter.goToBottom();
+                elevator.incrementDown();
                 telemetry.addData("c1 press", "a");
 //                throw new IllegalStateException("Lifter Not Implemented Yet");
+            }
+        };
+        controller1.y.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                elevator.incrementUp();
+                telemetry.addData("c1 press", "y");
+//                throw new IllegalStateException("Lifter Not Implemented Yet");
+            }
+        };
+
+
+        //Lifter
+        ///////////////////////////////////////
+        //
+        controller2.dPadDown.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.positionDown();
+                telemetry.addData("c1 press", "dpadDown");
+
+            }
+        };
+
+        controller2.dPadUp.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.positionUp();
+                telemetry.addData("c1 press", "dpadUp");
+            }
+        };
+
+        controller1.dPadDown.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.incrementDown();
+                telemetry.addData("c1 press", "dpadDown");
+            }
+        };
+
+        controller1.dPadUp.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.incrementUp();
+                telemetry.addData("c1 press", "dpadUp");
+
+            }
+        };
+
+        controller1.dPadDownShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.setPosition();
+                telemetry.addData("c1 press", "dpadDownShift");
+            }
+        };
+
+        controller1.dPadUpShifted.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.setPosition();
+                telemetry.addData("c1 press", "dpadDownShift");
+            }
+        };
+
+        controller2.b.pressedHandler = new Handler() {
+            @Override
+            public void invoke()
+            {
+                lifter.runMotorDown();
+                telemetry.addData("c1 press", "b");
             }
         };
     }

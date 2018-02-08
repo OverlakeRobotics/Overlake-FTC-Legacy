@@ -42,10 +42,20 @@ public class ElevatorSystem extends System {
     Integer i = 0;
     int[] positions = new int[3];
     int positionIndex = 0;
+    Telemetry.Line liftTelemetryLine;
+    Telemetry.Item indexTelemetryItem;
+    Telemetry.Item positionTelemetryItem;
+
 
     public ElevatorSystem(OpMode mode) {
         super(mode, "Elevator");
         this.elevator = map.dcMotor.get("elevator");
+        this.telemetry.setAutoClear(false);
+
+        this.liftTelemetryLine = this.telemetry.addLine("elevator");
+        this.indexTelemetryItem = liftTelemetryLine.addData("index", 0);
+        this.positionTelemetryItem = liftTelemetryLine.addData("position", 0);
+
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
         elevator.setDirection(DcMotor.Direction.REVERSE);
@@ -56,6 +66,7 @@ public class ElevatorSystem extends System {
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
         bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
+
     }
 
     public void elevatorLoop() {
@@ -66,8 +77,11 @@ public class ElevatorSystem extends System {
 
     //for autonomous
     public void goToZero(Telemetry telemetry){
+
         //On Rev, when configuring use the second input in digital
-        while(touchSensorBottom.getState()) {
+        touchSensorBottom.setMode(DigitalChannel.Mode.INPUT);
+
+        while(touchSensorBottom.getState()==true) {
             telemetry.addData("touch Sensor" , touchSensorBottom.getState());
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setPower(negativePower);
@@ -78,15 +92,14 @@ public class ElevatorSystem extends System {
     }
 
     public void loop() {
-        String msg = String.format("index: %d ticks:%d", positionIndex, position);
     }
 
     public void positionUp() {
         if(positionIndex < positions.length-1){
             positionIndex++;
             position = positions[positionIndex];
-            String msg = String.format("index: %d ticks:%d", positionIndex, position);
-            telemetry.addData("positionUp", msg);
+            this.indexTelemetryItem.setValue(positionIndex);
+
             elevator.setTargetPosition(encoderVal + position);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elevator.setPower(positivePower);
@@ -97,8 +110,7 @@ public class ElevatorSystem extends System {
         if(positionIndex >= 1) {
             positionIndex--;
             position = positions[positionIndex];
-            String msg = String.format("index: %d ticks:%d", positionIndex, position );
-            telemetry.addData("positionDown", msg);
+            this.indexTelemetryItem.setValue(positionIndex);
 
             elevator.setTargetPosition(encoderVal + position);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -194,6 +206,7 @@ public class ElevatorSystem extends System {
     public void setPosition() {
         String stringVal = Double.toString(position);
         config.updateKey("Elevator Position: " + i.toString(), stringVal);
+        positions[positionIndex] = position;
     }
 
     public void setPositionLoad() {

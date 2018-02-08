@@ -58,13 +58,16 @@ public class ParallelLiftSystem extends System {
         int positionIndex = 0;
         private ElapsedTime debounceTime = new ElapsedTime();
 
-        Telemetry telemetry;
         Telemetry.Line liftTelemetryLine;
         Telemetry.Item indexTelemetryItem;
         Telemetry.Item positionTelemetryItem;
+        //public ParallelLiftSystem(HardwareMap map, Telemetry telemetry) {
 
         public ParallelLiftSystem(OpMode mode) {
             super(mode, "lifter");
+            this.telemetry.setAutoClear(false);
+            this.liftTelemetryLine = this.telemetry.addLine("liftlift");
+
             this.liftTelemetryLine = this.telemetry.addLine("lift");
             this.indexTelemetryItem = liftTelemetryLine.addData("index", 0);
             this.positionTelemetryItem = liftTelemetryLine.addData("position", 0);
@@ -116,14 +119,18 @@ public class ParallelLiftSystem extends System {
 
         public void incrementUp() {
             setTargetPosition(position + incrementTicks);
+            position = position + incrementTicks;
         }
         public void incrementDown() {
             setTargetPosition(position - incrementTicks);
+            position = position - incrementTicks;
+
         }
 
         public void setPosition() {
             String stringVal = Double.toString(position);
             config.updateKey("ParallelLift" + Integer.toString(positionIndex), stringVal);
+            positions[positionIndex] = position;
         }
 
         public void checkForBottom(){
@@ -170,7 +177,7 @@ public class ParallelLiftSystem extends System {
                 position = bottom + 250;
             }
 
-            
+
 
         }
 
