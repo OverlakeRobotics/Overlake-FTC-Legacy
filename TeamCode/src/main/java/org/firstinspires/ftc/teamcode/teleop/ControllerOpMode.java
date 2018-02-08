@@ -69,9 +69,9 @@ public class ControllerOpMode extends OpMode {
 
         //
         // claw = new ClawSystem(this.hardwareMap);
-        elevator = new ElevatorSystem(this);
+        elevator = new ElevatorSystem(this.hardwareMap, telemetry);
         meMotor = new Claw2png(this, telemetry);
-        lifter = new ParallelLiftSystem(this);
+        lifter = new ParallelLiftSystem(this.hardwareMap, telemetry);
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
 

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -58,14 +56,11 @@ public class ParallelLiftSystem {
         Integer i;
         int positionIndex = 0;
         private ElapsedTime debounceTime = new ElapsedTime();
-        private OpMode opMode;
 
         Telemetry telemetry;
 
-        public ParallelLiftSystem(OpMode opMode) {
-            HardwareMap map = opMode.hardwareMap;
-            this.opMode = opMode;
-            this.telemetry = opMode.telemetry;
+        public ParallelLiftSystem(HardwareMap map, Telemetry telemetry) {
+            this.telemetry = telemetry;
             this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("lifter.omc");
 
             for(i = 0; i < positions.length; i++) {
@@ -131,21 +126,7 @@ public class ParallelLiftSystem {
             config.updateKey("ParallelLift" + i.toString(), stringVal);
         }
 
-        public void goToBottomSync() {
-            runMotorDown();
-            while (!isAtBottom) {
-                checkForBottom();
-            }
-        }
 
-        public void goToPostitionSync(int position) {
-            LinearOpMode lOpMode = (LinearOpMode) this.opMode;
-            parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            parallelMotor.setTargetPosition(position);
-            while (parallelMotor.isBusy()) {
-                lOpMode.sleep(10);
-            }
-        }
 
 
 
