@@ -27,7 +27,7 @@ public abstract class AutonomousOpMode extends LinearOpMode
     void initializeAllDevices()
     {
         this.neoClaw = new Claw2png(this, telemetry);
-        this.parrallelLiftSystem = new ParallelLiftSystem(hardwareMap, telemetry);
+        this.parrallelLiftSystem = new ParallelLiftSystem(this);
         this.driveSystem = new MecanumDriveSystem();
         this.driveSystem.init(this.hardwareMap);
         /*
