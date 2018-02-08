@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -51,9 +52,13 @@ public class ElevatorSystem {
     int[] positions = new int[3];
     int positionIndex = 0;
 
-    public ElevatorSystem(HardwareMap map, Telemetry telemetry) {
+    private OpMode opMode;
+
+    public ElevatorSystem(OpMode opMode) {
+        HardwareMap map = opMode.hardwareMap;
+        this.opMode = opMode;
         this.config = new org.firstinspires.ftc.teamcode.util.config.ConfigParser("Elevator.omc");
-        this.telemetry = telemetry;
+        this.telemetry = this.opMode.telemetry;
         this.elevator = map.dcMotor.get("elevator");
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
@@ -104,6 +109,29 @@ public class ElevatorSystem {
         encoderVal = elevator.getCurrentPosition();
         position = 0;
 
+    }
+
+    public void goToPostionSynch(int position) {
+        LinearOpMode lOpMode = (LinearOpMode) this.opMode;
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setTargetPosition(position); // you may have to add this to an offset
+        while (elevator.isBusy()) {
+            lOpMode.sleep(10);
+        }
+    }
+
+    public void goToTopSynch() {
+        runMotorUp();
+        while(!isAtTop) {
+            checkForTop();
+        }
+    }
+
+    public void goToBottomSynch() {
+        runMotorDown();
+        while(!isAtBottom) {
+            checkForBottom(telemetry);
+        }
     }
 
     public void loop() {

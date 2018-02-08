@@ -15,20 +15,19 @@ public class PitCrewOpMode extends AutonomousOpMode {
     public static final int TIME = 1000;
 
     PitCrewOpMode() {
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
+        this.elevator = new ElevatorSystem(this);
     }
 
     @Override
     public void runOpMode() {
         initializeAllDevices();
-
-        elevator.runMotorUp();                  // calibrate motor on top limit switch
-        sleep(TIME);
+        //parrallelLiftSystem.
+        elevator.goToTopSynch();                  // calibrate motor on top limit switch
         parrallelLiftSystem.runMotorDown(-0.1);                     // put lifter arm down slowly (hence the -0.1) to calibrate it
         sleep(TIME);
         parrallelLiftSystem.goToMiddle();                           // Move the lifter to the middle so we don't hit the bottom plate moving into park position
         sleep(TIME);
-        elevator.runMotorDown();                                    // double check/ calibrate the elevator on the bottom limit switch
+        //elevator.goToPostionSynch();                              // double check/ calibrate the elevator on the bottom limit switch
         sleep(TIME);
         elevator.goToBottomLifterDown();                            // Move the elevator to its bottom with the lifter arms down
         sleep(TIME);

@@ -46,7 +46,7 @@ public class CompetitionOpMode extends AutonomousOpMode {
         this.isAudienceSide = config.getBoolean("isAudienceSide");
         syncConfigZoneBooleansAndInts(this.zone, this.isBlue, this.isAudienceSide);
         this.pixySystem = new PixySystem(this, zone);
-        this.elevator = new ElevatorSystem(hardwareMap, telemetry);
+        this.elevator = new ElevatorSystem(this);
     }
 
 
