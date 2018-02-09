@@ -24,8 +24,8 @@ public class ElevatorSystem extends System {
     private int position;
 
     private boolean debouncing = false;
-    private boolean isAtTop = false;
-    private boolean isAtBottom = false;
+    public boolean isAtTop = false;
+    public boolean isAtBottom = false;
 
 
     private int loadPosTicks;
@@ -136,8 +136,24 @@ public class ElevatorSystem extends System {
         }
     }
 
+    public void runMotorDownSynch() {
+        while(!isAtBottom) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(negativePower);
+        }
+    }
+
+
+
     public void runMotorUp() {
         if(!isAtTop) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(positivePower);
+        }
+    }
+
+    public void runMotorUpSynch() {
+        while(!isAtTop) {
             elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             elevator.setPower(positivePower);
         }

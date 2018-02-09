@@ -44,7 +44,7 @@ public class ControllerOpMode extends BaseOpMode {
 
         elevator.checkForBottom(telemetry);
         elevator.checkForTop();
-
+        claw.loop();
         lifter.checkForBottom();
          
 
@@ -183,11 +183,11 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.setPosition();
-                telemetry.addData("c2 press", "a");
+                telemetry.addData("c2 press", "bShift");
             }
         };
 
-        controller1.leftTrigger.pressedHandler = new Handler() {
+        controller1.rightTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
                 slowDrive = !slowDrive;
@@ -282,7 +282,7 @@ public class ControllerOpMode extends BaseOpMode {
             }
         };
 
-        controller2.b.pressedHandler = new Handler() {
+        controller2.x.pressedHandler = new Handler() {
             @Override
             public void invoke()
             {

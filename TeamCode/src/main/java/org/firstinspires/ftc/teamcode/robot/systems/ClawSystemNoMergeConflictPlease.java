@@ -41,7 +41,7 @@ public class ClawSystemNoMergeConflictPlease extends System {
         this.motor.init(opMode.hardwareMap, "meMotor", "potentiometer", telemetry);
         this.liftTelemetryLine = this.telemetry.addLine("Claw");
         this.indexTelemetryItem = liftTelemetryLine.addData("position", 0);
-        this.positionTelemetryItem = liftTelemetryLine.addData("tick", 0);
+        this.positionTelemetryItem = liftTelemetryLine.addData("power", 0);
         bottom = config.getDouble("bottom");
         middle = config.getDouble("middle");
         top  = config.getDouble("top");
@@ -49,7 +49,7 @@ public class ClawSystemNoMergeConflictPlease extends System {
     }
 
     public void loop(){
-        this.indexTelemetryItem.setValue(position);
+        this.positionTelemetryItem.setValue(motor.getPower());
         this.indexTelemetryItem.setValue(motor.getCurrentPosition());
 
         motor.loop(position);
@@ -58,6 +58,7 @@ public class ClawSystemNoMergeConflictPlease extends System {
     public void managePosition() {
 
     }
+
 
     public void goToBottom() {
 
