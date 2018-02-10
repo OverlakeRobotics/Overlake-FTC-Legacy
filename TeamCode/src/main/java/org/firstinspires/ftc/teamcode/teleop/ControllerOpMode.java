@@ -27,6 +27,7 @@ public class ControllerOpMode extends BaseOpMode {
     }
 
     private static boolean slowDrive = false;
+    private boolean superDrive;
 
     @Override
     public void init() {
@@ -35,6 +36,7 @@ public class ControllerOpMode extends BaseOpMode {
         elevator = new ElevatorSystem(this);
         lifter = new ParallelLiftSystem(this);
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
+        this.superDrive = config.getBoolean("superDrive");
     }
 
     @Override
@@ -46,21 +48,16 @@ public class ControllerOpMode extends BaseOpMode {
         elevator.checkForTop();
         claw.loop();
         lifter.checkForBottom();
-         
 
         float rx = controller1.gamepad.right_stick_x;
         float ry = controller1.gamepad.right_stick_y;
         float lx = controller1.gamepad.left_stick_x;
         float ly = controller1.gamepad.left_stick_y;
 
-        if (config.getBoolean("superDrive")) {
             float coefficient = slowDrive == true ? 0.5f : 1f;
-            this.driveSystem.driveGodMode(rx, ry, lx, ly, coefficient);
-        } else  {
-            this.driveSystem.mecanumDrive(rx, ry, lx, ly, slowDrive);
-        }
+            //this.driveSystem.driveGodMode(rx, ry, lx, ly, coefficient);
+        this.driveSystem.mecanumDrive(rx, ry, lx, ly, false);
 
-        telemetry.update();
     }
 
 
@@ -75,7 +72,7 @@ public class ControllerOpMode extends BaseOpMode {
         //Claw
         /////////////////////////////////////////////////////////////
         // load position claw
-        controller2.rightTrigger.pressedHandler = new Handler() {
+        controller2.leftTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
                 claw.goToBottom();
@@ -84,7 +81,7 @@ public class ControllerOpMode extends BaseOpMode {
         };
 
         // release claw
-        controller2.leftTrigger.pressedHandler = new Handler() {
+        controller2.rightTrigger.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
                 claw.goToTop();
@@ -200,6 +197,13 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke() throws Exception {
                 driveSystem.resetInitialHeading();
                 telemetry.addData("c1 press", "b");
+            }
+        };
+
+        controller1.rightBumper.pressedHandler = new Handler() {
+            @Override
+            public void invoke() throws Exception {
+                superDrive = !superDrive;
             }
         };
 

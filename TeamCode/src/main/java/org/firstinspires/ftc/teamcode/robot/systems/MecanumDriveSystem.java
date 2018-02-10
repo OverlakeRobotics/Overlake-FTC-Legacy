@@ -140,14 +140,17 @@ public class MecanumDriveSystem extends System
         }
     }
 
-    public void driveGodMode(double rightX, float rightY, float leftX, float leftY) {
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY) {
         driveGodMode(rightX, rightY, leftX, leftY, 1);
     }
 
-    public void driveGodMode(double rightX, float rightY, float leftX, float leftY, float coeff) {
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff) {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
         double headingDiff = initialHeading - currentHeading;
 
+        rightX = scaleJoystickValue(rightX);
+        leftX = scaleJoystickValue(leftX);
+        leftY = scaleJoystickValue(leftY);
 
         double speed = Math.sqrt(leftX * leftX + leftY * leftY);
         double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;

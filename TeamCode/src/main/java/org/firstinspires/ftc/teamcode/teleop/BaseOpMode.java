@@ -31,8 +31,6 @@ public abstract class BaseOpMode extends OpMode {
         this.logger = new Logger(this, opModeName);
         logger.setLoggingServices(LoggingService.FILE);
         this.config = new ConfigParser(opModeName + ".omc");
-
-        telemetry.setMsTransmissionInterval(200);
     }
 
     public void initBaseSystems() {
