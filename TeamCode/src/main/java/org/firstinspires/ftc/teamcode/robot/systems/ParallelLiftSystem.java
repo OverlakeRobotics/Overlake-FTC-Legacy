@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
+import android.graphics.Path;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -39,14 +42,14 @@ public class ParallelLiftSystem extends System {
         private DcMotor parallelMotor;
         private int bottom = 0;
         private int middle;
-        private int park;
+        public int park;
         private int top;
         private int encoderVal;
         private int position;
         private int initPosition;
         private int incrementTicks = 20;
         private int loadPosition = bottom + 250;
-        int[] positions = new int[3];
+        public int[] positions = new int[3];
         public static final int bottomIndex = 0;
         public static final int middleIndex = 1;
         public static final int topIndex = 2;
@@ -57,14 +60,16 @@ public class ParallelLiftSystem extends System {
         private double positivePower = -0.4;
         int positionIndex = 0;
         private ElapsedTime debounceTime = new ElapsedTime();
+        private OpMode opMode;
 
-        Telemetry telemetry;
+
         Telemetry.Line liftTelemetryLine;
         Telemetry.Item indexTelemetryItem;
         Telemetry.Item positionTelemetryItem;
 
         public ParallelLiftSystem(OpMode mode) {
             super(mode, "lifter");
+            this.opMode = mode;
             this.liftTelemetryLine = this.telemetry.addLine("lift");
             this.indexTelemetryItem = liftTelemetryLine.addData("index", 0);
             this.positionTelemetryItem = liftTelemetryLine.addData("position", 0);
@@ -150,6 +155,23 @@ public class ParallelLiftSystem extends System {
                 }
             }
         }
+
+    public void goToBottomSync() {
+        runMotorDown();
+        while (!isAtBottom) {
+            checkForBottom();
+        }
+    }
+
+    public void goToPostitionSync(int position) {
+        LinearOpMode lOpMode = (LinearOpMode) this.opMode;
+        parallelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        parallelMotor.setTargetPosition(position);
+        while (parallelMotor.isBusy()) {
+            parallelMotor.setPower(positivePower);
+        }
+
+    }
 
         public void runMotorDown() {
             runMotorDown(positivePower);

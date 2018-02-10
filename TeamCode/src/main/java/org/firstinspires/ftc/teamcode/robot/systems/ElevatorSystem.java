@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -32,7 +33,7 @@ public class ElevatorSystem extends System {
     private int unloadBlock2Ticks;
     private int unloadBlock3Ticks;
 
-    private int bottomLifterDown;
+    public int bottomLifterDown;
 
     //works the same for up and down
     private int incrementTicks = 30;
@@ -42,9 +43,11 @@ public class ElevatorSystem extends System {
     Integer i = 0;
     int[] positions = new int[3];
     int positionIndex = 0;
+    private OpMode opMode;
 
     public ElevatorSystem(OpMode mode) {
         super(mode, "Elevator");
+        this.opMode = mode;
         this.elevator = map.dcMotor.get("elevator");
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
@@ -114,6 +117,29 @@ public class ElevatorSystem extends System {
             elevator.setPower(negativePower);
         } else {
             elevator.setPower(positivePower);
+        }
+    }
+
+    public void goToPostionSynch(int position) {
+        LinearOpMode lOpMode = (LinearOpMode) this.opMode;
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setTargetPosition(position); // you may have to add this to an offset
+        while (elevator.isBusy()) {
+            lOpMode.sleep(10);
+        }
+    }
+
+    public void goToTopSynch() {
+        runMotorUp();
+        while(!isAtTop) {
+            checkForTop();
+        }
+    }
+
+    public void goToBottomSynch() {
+        runMotorDown();
+        while(!isAtBottom) {
+            checkForBottom(telemetry);
         }
     }
 

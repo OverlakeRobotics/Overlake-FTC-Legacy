@@ -42,7 +42,7 @@ public class CompetitionOpMode extends BaseOpMode {
     @Override
     public void runOpMode() {
         init2();
-        //parrallelLiftSystem.goToInitPosition();
+        parallelLiftSystem.goToPostitionSync(parallelLiftSystem.positions[0]);
         elevator.goToBottomLifterDown();
         double startHeading = imuSystem.getHeading();
 
@@ -51,6 +51,7 @@ public class CompetitionOpMode extends BaseOpMode {
         ////
 
         pixySystem.runPixySystem();
+        cryptoBox(zone);
 
         stop();
     }
@@ -108,49 +109,47 @@ public class CompetitionOpMode extends BaseOpMode {
         }
     }
 
-    /*public void cryptoBox(int zone) {
-        neoClaw.goToBottom();
+    public void cryptoBox(int zone) {
+        claw.goToBottom();
         sleep(2000);
         elevator.goToUnloadBlock2();
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-//            driveToPositionInches(-40, 1);
-//            turn(-90, 1);
-//            driveToPositionInches(-18, 1);
-//            turn(90, 1);
+            driveSystem.driveToPositionInches(-40, 1);
+            driveSystem.turn(-90, 1);
+            driveSystem.driveToPositionInches(-18, 1);
+            driveSystem.turn(90, 1);
             elevator.goToZero(telemetry);
-            neoClaw.goToTop();
+            claw.goToTop();
             sleep(1000);
-//            driveToPositionInches(-20, 1);
-
-
+            driveSystem.driveToPositionInches(-20, 1);
         } else if (zone == 1) {
-//            driveToPositionInches(-50, 1);
-//            turn(90, 1);
+            driveSystem.driveToPositionInches(-50, 1);
+            driveSystem.turn(90, 1);
             elevator.goToZero(telemetry);
-            neoClaw.goToTop();
+            claw.goToTop();
             sleep(2000);
-//            driveToPositionInches(-13, 1);
+            driveSystem.driveToPositionInches(-13, 1);
         } else if (zone == 2) {
-//            driveToPositionInches(40, 1);
-//            turn(-90, 1);
-//            driveToPositionInches(-18, 1);
-//            turn(-90, 1);
+            driveSystem.driveToPositionInches(40, 1);
+            driveSystem.turn(-90, 1);
+            driveSystem.driveToPositionInches(-18, 1);
+            driveSystem.turn(-90, 1);
             elevator.goToZero(telemetry);
-            neoClaw.goToTop();
+            claw.goToTop();
             sleep(1000);
-//            driveToPositionInches(-18, 1);
+            driveSystem.driveToPositionInches(-18, 1);
         } else {
-//            driveToPositionInches(-50, 1);
-//            turn(-90, 1);
+            driveSystem.driveToPositionInches(-50, 1);
+            driveSystem.turn(-90, 1);
             elevator.goToZero(telemetry);
-            neoClaw.goToTop();
+            claw.goToTop();
             sleep(2000);
-//            driveToPositionInches(-18, 1);
+            driveSystem.driveToPositionInches(-18, 1);
         }
-        neoClaw.goToTop();
-    }*/
+        claw.goToTop();
+    }
 
     /*public void initPixy() {
         pixyCam = hardwareMap.get(PixyCam.class, "pixycam");

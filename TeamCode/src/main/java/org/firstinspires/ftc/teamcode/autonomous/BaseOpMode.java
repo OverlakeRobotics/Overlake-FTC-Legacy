@@ -37,6 +37,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         this.elevator = new ElevatorSystem(this);
         this.claw = new ClawSystemNoMergeConflictPlease(this);
         this.parallelLiftSystem = new ParallelLiftSystem(this);
-        this.pixySystem = null;
+        this.pixySystem = new PixySystem(this, 1);
     }
 }
