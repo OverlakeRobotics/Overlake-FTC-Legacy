@@ -46,6 +46,8 @@ public class DcMotorServo
     double I;
     double D;
 
+    double finalPow;
+
     public void init(HardwareMap hardwareMap, String motorName, String potentiometerName, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.motor = hardwareMap.dcMotor.get(motorName);
@@ -84,14 +86,14 @@ public class DcMotorServo
         if(i > lastTime + 10000 ) {
             lastTime = i;
 
-        double finalPow = pidPower(targetPosition);
-        RobotLog.ee("Claw PID ", targetPosition + ", " + getCurrentPosition() + ", " + finalPow + ", " + miniPID.errorSum + ", " +
-                    (getCurrentPosition()-miniPID.lastActual) + ", " + i);
-        telemetry.addData("claw power", finalPow);
+            finalPow = pidPower(targetPosition);
         this.motor.setPower(finalPow);
         }
             //telemetry.addData("Time: ", i);
 
+    }
+    public double getPower() {
+        return finalPow;
     }
 
         /*if(printStream != null) {
@@ -104,7 +106,7 @@ public class DcMotorServo
         this.motor.setPower(0.5);
     }
     public void runMotorBack(){
-        this.motor.setPower(-0.5);
+        this.motor.setPower(-0.2);
     }
     public void stop(){
         this.motor.setPower(0);

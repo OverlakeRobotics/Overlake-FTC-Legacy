@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.controller.Controller;
+import org.firstinspires.ftc.teamcode.robot.systems.ClawSystemNoMergeConflictPlease;
+import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
 import org.firstinspires.ftc.teamcode.util.logger.Logger;
 import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
@@ -18,20 +21,26 @@ public abstract class BaseOpMode extends OpMode {
     protected Controller controller1;
     protected Controller controller2;
     protected MecanumDriveSystem driveSystem;
+    protected ParallelLiftSystem liftSystem;
+    protected ClawSystemNoMergeConflictPlease claw;
+    protected ElevatorSystem elevator;
     protected Logger logger;
+
 
     public BaseOpMode(String opModeName) {
         this.logger = new Logger(this, opModeName);
         logger.setLoggingServices(LoggingService.FILE);
         this.config = new ConfigParser(opModeName + ".omc");
-
-        telemetry.setMsTransmissionInterval(200);
     }
 
     public void initBaseSystems() {
         this.controller1 = new Controller(gamepad1);
         this.controller2 = new Controller(gamepad2);
         this.driveSystem = new MecanumDriveSystem(this);
+
+        this.liftSystem = new ParallelLiftSystem(this);
+        this.claw = new ClawSystemNoMergeConflictPlease(this);
+        this.elevator = new ElevatorSystem(this);
         initButtons();
     }
 

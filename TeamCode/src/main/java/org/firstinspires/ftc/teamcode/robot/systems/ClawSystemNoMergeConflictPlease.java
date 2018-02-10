@@ -27,28 +27,47 @@ public class ClawSystemNoMergeConflictPlease extends System {
     double top;
     double position;
 
+    Telemetry telemetry;
+
+    Telemetry.Line liftTelemetryLine;
+    Telemetry.Item indexTelemetryItem;
+    Telemetry.Item positionTelemetryItem;
+
+    //public Claw2png(OpMode opMode, Telemetry telemetry){
     public ClawSystemNoMergeConflictPlease(OpMode opMode){
         super(opMode, "meMotor");
         this.telemetry = opMode.telemetry;
         this.motor = new DcMotorServo();
         this.motor.init(opMode.hardwareMap, "meMotor", "potentiometer", telemetry);
+        this.liftTelemetryLine = this.telemetry.addLine("Claw");
+        this.indexTelemetryItem = liftTelemetryLine.addData("position", 0);
+        this.positionTelemetryItem = liftTelemetryLine.addData("power", 0);
         bottom = config.getDouble("bottom");
         middle = config.getDouble("middle");
         top  = config.getDouble("top");
-        position = 0.2;
+        position = 0.45;
     }
 
     public void loop(){
-        telemetry.addData("current position: ", motor.getCurrentPosition());
-        telemetry.addData("target position: ", position);
+        this.positionTelemetryItem.setValue(motor.getPower());
+        this.indexTelemetryItem.setValue(motor.getCurrentPosition());
+
         motor.loop(position);
+
     }
     public void managePosition() {
 
     }
 
+
     public void goToBottom() {
+
         position = bottom;
+    }
+    public void closeSynch() {
+        while(Math.abs(position -  motor.getCurrentPosition()) > 0.05){
+            runMotorBack();
+        }
     }
 
     public void goToMiddle() {

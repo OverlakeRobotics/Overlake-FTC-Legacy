@@ -20,6 +20,7 @@ public class CompetitionOpMode extends BaseOpMode {
     private boolean isAudienceSide;
     private int b;
     PixySystem pixySystem;
+    private double startHeading;
 
     public CompetitionOpMode() {
         super("Autonomous");
@@ -42,22 +43,72 @@ public class CompetitionOpMode extends BaseOpMode {
     @Override
     public void runOpMode() {
         init2();
-        parallelLiftSystem.goToPostitionSync(parallelLiftSystem.positions[0]);
-        elevator.goToBottomLifterDown();
-        double startHeading = imuSystem.getHeading();
+        parallelLiftSystem.goToIndexSync(0);
+        elevator.goToIndexSynch(0);
+        this.startHeading = imuSystem.getHeading();
 
         ////
         waitForStart();
         ////
 
         pixySystem.runPixySystem();
-        cryptoBox(zone);
+        vuforiaCryptoBox(zone);
 
         stop();
     }
 
+    public void vuforiaCryptoBox(int zone) {
+        double inchesPerBox = b;
+        int boxNumber = eye.look(); // 0 = left   1 = center   2 = right
+        telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + boxNumber);
+        telemetry.update();
+        sleep(50);
+
+        // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
+        if (zone == 0) { // blue non-audience
+            driveSystem.driveToPositionInches(-42, powerSetting1);
+            returnToHeading(-90, powerSetting2);
+            driveSystem.driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            driveSystem.turn(60, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveSystem.driveToPositionInches(5, powerSetting2);
+        } else if (zone == 1) { // blue audience
+            driveSystem.driveToPositionInches(-(inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(60, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveSystem.driveToPositionInches(5, powerSetting2);
+        } else if (zone == 2) { // red non-audience
+            driveSystem.driveToPositionInches(-40, powerSetting1);
+            returnToHeading(90, powerSetting2);
+            driveSystem.driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2); // 25
+            driveSystem.turn(-60, powerSetting2);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveSystem.driveToPositionInches(5, powerSetting2);
+        } else if (zone == 3) { // red audience
+            driveSystem.driveToPositionInches(-((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting1);
+            returnToHeading(-60, 1);
+            driveSystem.driveToPositionInches(-cryptoApproachInches, powerSetting2);
+            placeBlock();
+            driveSystem.driveToPositionInches(5, powerSetting2);
+        } else if (zone == 4) { //this is a test zone to test inches per box
+            driveSystem.driveToPositionInches(-inchesPerBox, powerSetting2);
+            sleep(2000);
+            driveSystem.driveToPositionInches(-inchesPerBox, powerSetting2);
+        }
+    }
+
+    public void returnToHeading(double heading, double power) {
+        double correctionNeeded = heading - imuSystem.getHeading();
+        telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
+        telemetry.update();
+        driveSystem.turn(correctionNeeded, power);
+    }
+
     public void placeBlock() {
-        elevator.goToBottomLifterDown();
+        elevator.goToIndexSynch(0);
         this.claw.goToTop();
         sleep(1000);
     }
@@ -65,7 +116,7 @@ public class CompetitionOpMode extends BaseOpMode {
     public void grabBlock() {
         this.claw.goToBottom();
         sleep(500);
-        elevator.goToPosition(800);
+        elevator.goToIndexSynch(2);
         sleep(1000);
     }
 
@@ -116,17 +167,17 @@ public class CompetitionOpMode extends BaseOpMode {
         // pic 0 is left     pic 1 is right      pic 2 is center
         // zone 0 is blue non-audience     zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
         if (zone == 0) {
-            driveSystem.driveToPositionInches(-40, 1);
+            driveSystem.driveToPositionInches(inchesToReferenceBoxAudience, powerSetting1);
             driveSystem.turn(-90, 1);
-            driveSystem.driveToPositionInches(-18, 1);
+            driveSystem.driveToPositionInches(-18, powerSetting2);
             driveSystem.turn(90, 1);
             elevator.goToZero(telemetry);
             claw.goToTop();
             sleep(1000);
-            driveSystem.driveToPositionInches(-20, 1);
+            driveSystem.driveToPositionInches(-20, powerSetting2);
         } else if (zone == 1) {
-            driveSystem.driveToPositionInches(-50, 1);
-            driveSystem.turn(90, 1);
+            driveSystem.driveToPositionInches(-50, powerSetting1);
+            driveSystem.turn(90, powerSetting2);
             elevator.goToZero(telemetry);
             claw.goToTop();
             sleep(2000);

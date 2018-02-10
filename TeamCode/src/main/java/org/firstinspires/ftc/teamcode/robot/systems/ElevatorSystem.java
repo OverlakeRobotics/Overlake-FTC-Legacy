@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.util.ArrayList;
-import java.sql.Array;
-
 /**
  * Created by jacks on 10/20/2017.
  */
@@ -21,12 +18,14 @@ public class ElevatorSystem extends System {
     private DigitalChannel touchSensorTop;
     private ElapsedTime debounceTime = new ElapsedTime();
 
-    private int encoderVal;
+    private int ticksTopToBottom;
+    private int topTicks;
+    private int bottomTicks;
     private int position;
 
     private boolean debouncing = false;
-    private boolean isAtTop = false;
-    private boolean isAtBottom = false;
+    public boolean isAtTop = false;
+    public boolean isAtBottom = false;
 
 
     private int loadPosTicks;
@@ -38,17 +37,33 @@ public class ElevatorSystem extends System {
     //works the same for up and down
     private int incrementTicks = 30;
 
-    private double negativePower = -0.50;
-    private double positivePower = 0.50;
+    private double negativePower = -0.95;
+    private double positivePower = 0.95;
     Integer i = 0;
-    int[] positions = new int[3];
+    private int[] positions = new int[3];
     int positionIndex = 0;
+    public static final int BOTTOM_INDEX = 0;
+    public static final int MIDDLE_INDEX = 1;
+    Telemetry.Line liftTelemetryLine;
+    Telemetry.Item indexTelemetryItem;
+    Telemetry.Item positionTelemetryItem;
+    Telemetry.Item ticksTopTelemetryItem;
+    Telemetry.Item ticksBotTelemetryItem;
+
     private OpMode opMode;
 
     public ElevatorSystem(OpMode mode) {
         super(mode, "Elevator");
         this.opMode = mode;
         this.elevator = map.dcMotor.get("elevator");
+        this.telemetry.setAutoClear(false);
+
+        this.liftTelemetryLine = this.telemetry.addLine("elevator");
+        this.indexTelemetryItem = liftTelemetryLine.addData("index", 0);
+        this.positionTelemetryItem = liftTelemetryLine.addData("position", 0);
+        this.ticksTopTelemetryItem = liftTelemetryLine.addData("top", 0);
+        this.ticksBotTelemetryItem = liftTelemetryLine.addData("bot", 0);
+
         this.touchSensorBottom = map.get(DigitalChannel.class, "touchBottom");
         this.touchSensorTop = map.get(DigitalChannel.class, "touchTop");
         elevator.setDirection(DcMotor.Direction.REVERSE);
@@ -59,78 +74,87 @@ public class ElevatorSystem extends System {
         unloadBlock2Ticks = config.getInt("block2_position");
         unloadBlock3Ticks = config.getInt("block3_position");
         bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
+        this.ticksTopToBottom = config.getInt("ticksTopToBottom");
+
     }
 
     public void elevatorLoop() {
         if(Math.abs(position - elevator.getCurrentPosition()) < 20) {
             elevator.setPower(0.0);
         }
+        checkForBottom(telemetry);
+        checkForTop();
     }
 
     //for autonomous
     public void goToZero(Telemetry telemetry){
+
         //On Rev, when configuring use the second input in digital
-        while(touchSensorBottom.getState()) {
+        touchSensorBottom.setMode(DigitalChannel.Mode.INPUT);
+
+        while(touchSensorBottom.getState()==true) {
             telemetry.addData("touch Sensor" , touchSensorBottom.getState());
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setPower(negativePower);
         }
         elevator.setPower(0.0);
-        encoderVal = elevator.getCurrentPosition();
+        bottomTicks = elevator.getCurrentPosition();
         position = 0;
     }
 
     public void loop() {
-        String msg = String.format("index: %d ticks:%d", positionIndex, position);
+    }
+
+    private void setTargetPosition(int ticks) {
+        setTargetPosition(ticks, positivePower);
+    }
+
+    private void setTargetPosition(int ticks, double power) {
+        this.positionTelemetryItem.setValue(ticks);
+        this.position = ticks;
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setTargetPosition(bottomTicks + position);
+        elevator.setPower(power);
+    }
+
+    private void setTargetIndex(int index) {
+        this.indexTelemetryItem.setValue(index);
+        this.positionIndex = index;
+        setTargetPosition(this.positions[index]);
     }
 
     public void positionUp() {
         if(positionIndex < positions.length-1){
             positionIndex++;
-            position = positions[positionIndex];
-            String msg = String.format("index: %d ticks:%d", positionIndex, position);
-            telemetry.addData("positionUp", msg);
-            elevator.setTargetPosition(encoderVal + position);
-            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevator.setPower(positivePower);
+            setTargetIndex(positionIndex);
         }
     }
 
     public void positionDown() {
         if(positionIndex >= 1) {
             positionIndex--;
-            position = positions[positionIndex];
-            String msg = String.format("index: %d ticks:%d", positionIndex, position );
-            telemetry.addData("positionDown", msg);
-
-            elevator.setTargetPosition(encoderVal + position);
-            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevator.setPower(positivePower);
+            setTargetIndex(positionIndex);
         }
     }
 
-    public void goToPosition(int ticks) {
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int thisPos = encoderVal + position;
-        elevator.setTargetPosition(thisPos + ticks);
-        if(position > ticks){
-            elevator.setPower(negativePower);
-        } else {
-            elevator.setPower(positivePower);
-        }
-    }
-
-    public void goToPostionSynch(int position) {
+    public void goToPostionSynch(int ticks) {
         LinearOpMode lOpMode = (LinearOpMode) this.opMode;
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(position); // you may have to add this to an offset
+        setTargetPosition(ticks);
         while (elevator.isBusy()) {
             lOpMode.sleep(10);
         }
     }
 
+    public void goToIndexSynch(int index) {
+        goToPostionSynch(positions[index]);
+    }
+
     public void goToTopSynch() {
-        runMotorUp();
+        goToTopSynch(positivePower);
+    }
+
+    public void goToTopSynch(double power) {
+        runMotorUp(power);
         while(!isAtTop) {
             checkForTop();
         }
@@ -143,15 +167,37 @@ public class ElevatorSystem extends System {
         }
     }
 
-    public void runMotorDown() {
+    public void runMotorDown(double power) {
         if(!isAtBottom) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(-power);
+        }
+    }
+
+    public void runMotorDown() {
+        runMotorDown(positivePower);
+    }
+
+    public void runMotorDownSynch() {
+        while(!isAtBottom) {
             elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             elevator.setPower(negativePower);
         }
     }
 
     public void runMotorUp() {
+        runMotorUp(positivePower);
+    }
+
+    public void runMotorUp(double power) {
         if(!isAtTop) {
+            elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator.setPower(power);
+        }
+    }
+
+    public void runMotorUpSynch() {
+        while(!isAtTop) {
             elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             elevator.setPower(positivePower);
         }
@@ -160,7 +206,7 @@ public class ElevatorSystem extends System {
     //B button
     public void goToUnloadBlock2() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(encoderVal + unloadBlock2Ticks);
+        elevator.setTargetPosition(bottomTicks + unloadBlock2Ticks);
         if(position > unloadBlock2Ticks) {
             elevator.setPower(negativePower);
         } else {
@@ -173,7 +219,7 @@ public class ElevatorSystem extends System {
     //X button
     public void goToUnloadBlock3() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(encoderVal + unloadBlock3Ticks);
+        elevator.setTargetPosition(bottomTicks + unloadBlock3Ticks);
 
         telemetry.addData("position: " , position);
         telemetry.addData("to: ", unloadBlock3Ticks);
@@ -190,7 +236,7 @@ public class ElevatorSystem extends System {
     public void goToBottomLifterDown() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        elevator.setTargetPosition(encoderVal + bottomLifterDown);
+        elevator.setTargetPosition(bottomTicks + bottomLifterDown);
         telemetry.addData("position: " , position);
         telemetry.addData("to: ", bottomLifterDown);
         double power;
@@ -204,22 +250,17 @@ public class ElevatorSystem extends System {
     }
 
     public void incrementUp() {
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(encoderVal + position + incrementTicks);
-        elevator.setPower(0.4);
-        position = position + incrementTicks;
+        setTargetPosition(position + incrementTicks, 0.4);
     }
 
     public void incrementDown() {
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(encoderVal + position - incrementTicks);
-        elevator.setPower(-0.4);
-        position = position - incrementTicks;
+        setTargetPosition(position - incrementTicks, 0.4);
     }
 
     public void setPosition() {
         String stringVal = Double.toString(position);
         config.updateKey("Elevator Position: " + i.toString(), stringVal);
+        positions[positionIndex] = position;
     }
 
     public void setPositionLoad() {
@@ -250,7 +291,8 @@ public class ElevatorSystem extends System {
         boolean bottomSwitchPushed = !touchSensorBottom.getState();
         if( bottomSwitchPushed && !isAtBottom) {
             elevator.setPower(0.0);
-            encoderVal = elevator.getCurrentPosition();
+            bottomTicks = elevator.getCurrentPosition();
+            ticksBotTelemetryItem.setValue(bottomTicks);
             position = loadPosTicks;
             positionIndex = 0;
             isAtBottom = true;
@@ -273,16 +315,19 @@ public class ElevatorSystem extends System {
         if (topSwitchPushed && !isAtTop) {
             elevator.setPower(0.0);
             isAtTop = true;
+            positionIndex = positions.length;
+            topTicks = elevator.getCurrentPosition();
+            bottomTicks = topTicks - ticksTopToBottom;
+            ticksTopTelemetryItem.setValue(topTicks);
+            ticksBotTelemetryItem.setValue(bottomTicks);
         } else if (isAtTop) {
-            if (!debouncing) {
+            if (!topSwitchPushed && !debouncing) {
                 debounceTime.reset();
                 debouncing = true;
             }
-            else {
-                if (debounceTime.milliseconds() > 50) {
-                    isAtTop = false; //(touchSensorBottom.getState() == false);
-                    debouncing = false;
-                }
+            if (debouncing && debounceTime.milliseconds() > 50) {
+                isAtTop = false; //(touchSensorBottom.getState() == false);
+                debouncing = false;
             }
         }
     }
