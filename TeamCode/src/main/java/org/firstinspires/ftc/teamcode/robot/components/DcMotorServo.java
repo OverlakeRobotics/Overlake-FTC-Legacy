@@ -48,8 +48,11 @@ public class DcMotorServo
 
     double finalPow;
 
+    Telemetry.Item powerTelemetryItem;
+
     public void init(HardwareMap hardwareMap, String motorName, String potentiometerName, Telemetry telemetry) {
         this.telemetry = telemetry;
+        powerTelemetryItem = telemetry.addData("Claw Power", "");
         this.motor = hardwareMap.dcMotor.get(motorName);
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.armPotentiometer = hardwareMap.analogInput.get(potentiometerName);
@@ -142,7 +145,7 @@ public class DcMotorServo
             power = 0;
         }
 
-        telemetry.addData("Power: ", power);
+        powerTelemetryItem.setValue("%3.2f", power);
         return  power;
     }
     private double getPower(Ramp ramp, double delta, double maxPower) {
