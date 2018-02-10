@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
 
 
@@ -51,19 +52,21 @@ public class TeleOpMecanum extends BaseOpMode {
 		super("TeleOpMecanum");
 	}
 
+	Telemetry.Item statusTelemetryItem;
+
 	@Override
 	public void init() {
 		telemetry.update();
         this.driveSystem = new MecanumDriveSystem(this);
 		telemetry.update();
+		this.statusTelemetryItem = telemetry.addData("mecanum", "");
 	}
 
 	@Override
 	public void loop()
 	{
         this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
-		telemetry.addData("Text", gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
-		telemetry.update();
+		statusTelemetryItem.setValue(gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.controller.TriggerType;
 import org.firstinspires.ftc.teamcode.robot.systems.ClawSystemNoMergeConflictPlease;
 import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
@@ -29,6 +30,8 @@ public class ControllerOpMode extends BaseOpMode {
     private static boolean slowDrive = false;
     private boolean superDrive;
 
+    Telemetry.Item lastButtonTelemetryItem;
+
     @Override
     public void init() {
         this.initBaseSystems();
@@ -37,6 +40,7 @@ public class ControllerOpMode extends BaseOpMode {
         lifter = new ParallelLiftSystem(this);
         controller1.setTriggerValue(TriggerType.LEFT, 0.5f);
         this.superDrive = config.getBoolean("superDrive");
+        lastButtonTelemetryItem = telemetry.addData("LastButton", "none");
     }
 
     @Override
@@ -76,7 +80,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 claw.goToBottom();
-                telemetry.addData("c2 press", "r trig");
+                lastButtonTelemetryItem.setValue("c2 r trig");
             }
         };
 
@@ -85,7 +89,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 claw.goToTop();
-                telemetry.addData("c2 press", "l trig");
+                lastButtonTelemetryItem.setValue("c2 l trig");
             }
         };
 
@@ -93,7 +97,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.rightTriggerShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                telemetry.addData("c2 press", "S r trig");
+                lastButtonTelemetryItem.setValue("c2 S r trig");
             }
 
         };
@@ -103,7 +107,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
 //                claw.setReleasePosition();
-                telemetry.addData("c2 press", "S l trig");
+                lastButtonTelemetryItem.setValue("c2 S l trig");
             }
         };
 
@@ -112,7 +116,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
 
-                telemetry.addData("c2 press", "dpad r");
+                lastButtonTelemetryItem.setValue("c2 dpad r");
             }
         };
 
@@ -121,7 +125,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
 //                claw.decrementServo();
-                telemetry.addData("c2 press", "dpad l");
+                lastButtonTelemetryItem.setValue("c2 dpad l");
             }
         };
 
@@ -134,7 +138,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.runMotorDown();
-                telemetry.addData("c2 press", "b");
+                lastButtonTelemetryItem.setValue("c2 b");
             }
         };
 
@@ -143,7 +147,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.positionDown();
-                telemetry.addData("c2 press", "a");
+                lastButtonTelemetryItem.setValue("c2 a");
             }
         };
 
@@ -153,7 +157,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.positionUp();
-                telemetry.addData("c2 press", "y");
+                lastButtonTelemetryItem.setValue("c2 y");
             }
         };
 
@@ -162,7 +166,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.incrementUp();
-                telemetry.addData("c2 press", "dpad up");
+                lastButtonTelemetryItem.setValue("c2 dpad up");
             }
         };
 
@@ -171,7 +175,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.incrementDown();
-                telemetry.addData("c2 press", "dpad down");
+                lastButtonTelemetryItem.setValue("c2 dpad down");
             }
         };
 
@@ -180,7 +184,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 elevator.setPosition();
-                telemetry.addData("c2 press", "bShift");
+                lastButtonTelemetryItem.setValue("c2 bShift");
             }
         };
 
@@ -188,7 +192,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 slowDrive = !slowDrive;
-                telemetry.addData("c1 press", "l trig");
+                lastButtonTelemetryItem.setValue("c1 l trig");
             }
         };
 
@@ -196,7 +200,7 @@ public class ControllerOpMode extends BaseOpMode {
             @Override
             public void invoke() throws Exception {
                 driveSystem.resetInitialHeading();
-                telemetry.addData("c1 press", "b");
+                lastButtonTelemetryItem.setValue("c1 b");
             }
         };
 
@@ -212,7 +216,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 elevator.incrementDown();
-                telemetry.addData("c1 press", "a");
+                lastButtonTelemetryItem.setValue("c1 a");
 //                throw new IllegalStateException("Lifter Not Implemented Yet");
             }
         };
@@ -221,7 +225,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 elevator.incrementUp();
-                telemetry.addData("c1 press", "y");
+                lastButtonTelemetryItem.setValue("c1 y");
 //                throw new IllegalStateException("Lifter Not Implemented Yet");
             }
         };
@@ -235,7 +239,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.positionDown();
-                telemetry.addData("c1 press", "dpadDown");
+                lastButtonTelemetryItem.setValue("c1 dpadDown");
 
             }
         };
@@ -245,7 +249,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.positionUp();
-                telemetry.addData("c1 press", "dpadUp");
+                lastButtonTelemetryItem.setValue("c1 dpadUp");
             }
         };
 
@@ -254,7 +258,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.incrementDown();
-                telemetry.addData("c1 press", "dpadDown");
+                lastButtonTelemetryItem.setValue("c1 dpadDown");
             }
         };
 
@@ -263,7 +267,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.incrementUp();
-                telemetry.addData("c1 press", "dpadUp");
+                lastButtonTelemetryItem.setValue("c1 dpadUp");
 
             }
         };
@@ -273,7 +277,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.setPosition();
-                telemetry.addData("c1 press", "dpadDownShift");
+                lastButtonTelemetryItem.setValue("c1 dpadDownShift");
             }
         };
 
@@ -282,7 +286,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.setPosition();
-                telemetry.addData("c1 press", "dpadDownShift");
+                lastButtonTelemetryItem.setValue("c1 dpadDownShift");
             }
         };
 
@@ -291,7 +295,7 @@ public class ControllerOpMode extends BaseOpMode {
             public void invoke()
             {
                 lifter.runMotorDown();
-                telemetry.addData("c1 press", "b");
+                lastButtonTelemetryItem.setValue("c1 b");
             }
         };
     }
