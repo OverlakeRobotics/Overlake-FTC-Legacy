@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.controller.TriggerType;
 import org.firstinspires.ftc.teamcode.robot.systems.ClawSystemNoMergeConflictPlease;
 import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
 import org.firstinspires.ftc.teamcode.util.Handler;
 
 /**
@@ -51,7 +52,9 @@ public class ControllerOpMode extends BaseOpMode {
         elevator.checkForBottom(telemetry);
         elevator.checkForTop();
         claw.loop();
+        elevator.elevatorLoop();
         lifter.checkForBottom();
+
 
         float rx = controller1.gamepad.right_stick_x;
         float ry = controller1.gamepad.right_stick_y;
@@ -137,7 +140,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.aShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.runMotorDown(0.3);
+                //elevator.runMotorDown(0.3);
                 telemetry.addData("c2 press", "aShifted");
             }
         };
@@ -145,7 +148,7 @@ public class ControllerOpMode extends BaseOpMode {
         controller2.yShifted.pressedHandler = new Handler() {
             @Override
             public void invoke() throws Exception {
-                elevator.runMotorUp(0.3);
+                elevator.runMotorUp(0.7);
                 lastButtonTelemetryItem.setValue("c2 b");
             }
         };

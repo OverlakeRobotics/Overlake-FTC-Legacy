@@ -31,6 +31,7 @@ public class ElevatorSystem extends System {
     private int loadPosTicks;
     private int unloadBlock2Ticks;
     private int unloadBlock3Ticks;
+    public int autoInit;
 
     public int bottomLifterDown;
 
@@ -75,6 +76,7 @@ public class ElevatorSystem extends System {
         unloadBlock3Ticks = config.getInt("block3_position");
         bottomLifterDown = config.getInt("bottomLifterDown_position"); // A D D  T O  S T U F F
         this.ticksTopToBottom = config.getInt("ticksTopToBottom");
+        this.autoInit = config.getInt("autoInit");
 
     }
 
@@ -82,7 +84,7 @@ public class ElevatorSystem extends System {
         if(Math.abs(position - elevator.getCurrentPosition()) < 20) {
             elevator.setPower(0.0);
         }
-        checkForBottom(telemetry);
+        //checkForBottom(telemetry);
         checkForTop();
     }
 
@@ -143,6 +145,7 @@ public class ElevatorSystem extends System {
         while (elevator.isBusy()) {
             lOpMode.sleep(10);
         }
+        elevator.setPower(0);
     }
 
     public void goToIndexSynch(int index) {
@@ -170,12 +173,17 @@ public class ElevatorSystem extends System {
     public void runMotorDown(double power) {
         if(!isAtBottom) {
             elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            elevator.setPower(-power);
+            //elevator.setPower(-power);
         }
     }
 
     public void runMotorDown() {
         runMotorDown(positivePower);
+    }
+
+    public void initFromAutoInit() {
+        bottomTicks = elevator.getCurrentPosition() - autoInit;
+        topTicks = bottomTicks + ticksTopToBottom;
     }
 
     public void runMotorDownSynch() {
@@ -204,7 +212,7 @@ public class ElevatorSystem extends System {
     }
 
     //B button
-    public void goToUnloadBlock2() {
+    /*public void goToUnloadBlock2() {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setTargetPosition(bottomTicks + unloadBlock2Ticks);
         if(position > unloadBlock2Ticks) {
@@ -247,7 +255,7 @@ public class ElevatorSystem extends System {
         }
 
         position = bottomLifterDown;
-    }
+    }*/
 
     public void incrementUp() {
         setTargetPosition(position + incrementTicks, 0.4);

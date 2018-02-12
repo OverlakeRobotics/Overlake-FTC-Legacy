@@ -14,7 +14,7 @@ public class PixySystem extends System {
     private PixyCam.Block blueBlock;
     private PixyCam.Block otherThing;
     private Servo horizServo;
-    private Servo vertServo;
+    public Servo vertServo;
     private DcMotor light;
     private double HORIZ_CENTER;
     private double VERT_BOTTOM;
@@ -23,11 +23,13 @@ public class PixySystem extends System {
     private boolean redExists;
     private boolean otherExists;
     private boolean teamColorIsBlue;
+    private int pause;
 
     // object constructor -- takes in the op mode ("this") and the zone variable found in the dead reckoning code
     public PixySystem (LinearOpMode linearOpMode, int zone) {
         super(linearOpMode, "PixySystem");
         this.opMode = linearOpMode;
+        this.pause = 600;
         if (zone == 0 || zone == 1) { this.teamColorIsBlue = true; } else { this.teamColorIsBlue = false; }
     }
 
@@ -67,11 +69,11 @@ public class PixySystem extends System {
             this.VERT_BOTTOM = 0.125;
             this.VERT_TOP = 1;
         }
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
         this.vertServo.setPosition(VERT_BOTTOM);
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
         this.horizServo.setPosition(HORIZ_CENTER);
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
     }
 
     // gets all the values from the pixy
@@ -105,10 +107,10 @@ public class PixySystem extends System {
                 if (this.redBlock.x < this.blueBlock.x) { this.horizServo.setPosition(this.HORIZ_CENTER - 0.2); }
                 else { this.horizServo.setPosition(HORIZ_CENTER + 0.2); }
             }
-        } else if (this.otherExists && this.blueExists) {
+        } else if (this.blueExists && this.otherExists) {
             if (this.teamColorIsBlue) {
-                if (this.blueBlock.x < this.otherThing.x) { this.horizServo.setPosition(this.HORIZ_CENTER - 0.2); }
-                else { this.horizServo.setPosition(HORIZ_CENTER + 0.2); }
+                if (this.otherThing.x < this.blueBlock.x) { this.horizServo.setPosition(this.HORIZ_CENTER + 0.2); }
+                else { this.horizServo.setPosition(HORIZ_CENTER - 0.2); }
             } else {
                 if (this.blueBlock.x < this.otherThing.x) { this.horizServo.setPosition(this.HORIZ_CENTER + 0.2); }
                 else { this.horizServo.setPosition(HORIZ_CENTER - 0.2); }
@@ -124,10 +126,10 @@ public class PixySystem extends System {
         }
 
         // brings the servos back to the starting position
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
         this.horizServo.setPosition(HORIZ_CENTER);
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
         this.vertServo.setPosition(VERT_TOP);
-        this.opMode.sleep(1000);
+        this.opMode.sleep(pause);
     }
 }

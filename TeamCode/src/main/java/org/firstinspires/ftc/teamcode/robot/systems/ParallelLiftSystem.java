@@ -61,6 +61,7 @@ public class ParallelLiftSystem extends System {
             this.ticksBotTelemetryItem = liftTelemetryLine.addData("bot", 0);
             this.tickTelemetryItem = liftTelemetryLine.addData("AbsTicks", 0);
             this.parallelMotor = map.dcMotor.get("parallelMotor");
+            this.parallelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             this.parallelTouch = map.get(DigitalChannel.class, "parallelTouch");
             park = config.getInt("park");
             middle = config.getInt("middle");
@@ -147,6 +148,10 @@ public class ParallelLiftSystem extends System {
             tickTelemetryItem.setValue(parallelMotor.getCurrentPosition());
             telemetry.update();
         }
+    }
+
+    public void initFromPark() {
+        botTicks = parallelMotor.getCurrentPosition() - park;
     }
 
     public void goToPostitionSync(int position) {

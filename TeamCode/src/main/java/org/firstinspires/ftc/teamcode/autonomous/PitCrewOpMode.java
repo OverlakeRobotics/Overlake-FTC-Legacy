@@ -26,18 +26,10 @@ public class PitCrewOpMode extends BaseOpMode {
         //claw.goToBottom();
         elevator.goToTopSynch(0.4);
         parallelLiftSystem.goToBottomSync();
-        telemetry.update();
-        sleep(5000);
         parallelLiftSystem.goToIndexSync(ParallelLiftSystem.middleIndex);
-        telemetry.update();
-        sleep(5000);
-        elevator.goToIndexSynch(elevator.MIDDLE_INDEX);
-        telemetry.update();
-        sleep(3000); // TODO: remove... just for debugging
+        elevator.goToPostionSynch(elevator.autoInit);
+        sleep(3000);
         parallelLiftSystem.goToPostitionSync(parallelLiftSystem.park);
         claw.goToTop();
-
-        telemetry.addLine("Physical system calibration complete.");
-        telemetry.update();
     }
 }

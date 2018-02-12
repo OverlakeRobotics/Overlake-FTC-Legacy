@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
@@ -59,15 +60,19 @@ public class ClawSystemNoMergeConflictPlease extends System {
 
     }
 
-
-    public void goToBottom() {
-
-        position = bottom;
+    public void runMotorBackUpALotProbablyDeleteLater() {
+        runMotor();
     }
-    public void closeSynch() {
-        while(Math.abs(position -  motor.getCurrentPosition()) > 0.05){
-            runMotorBack();
-        }
+    public void goToBottom() { position = bottom; }
+
+    public void closeSynch(LinearOpMode o) {
+        runMotorBack();
+        o.sleep(1000);
+    }
+
+    public void openSynch(LinearOpMode o) {
+        motor.runMotor();
+        o.sleep(1000);
     }
 
     public void goToMiddle() {
