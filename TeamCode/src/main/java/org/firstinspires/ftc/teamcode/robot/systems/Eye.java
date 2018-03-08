@@ -62,6 +62,22 @@ public class Eye extends System {
         //this.allTrackables.addAll(relicTrackables);
     }
 
+    public double getX() {
+        return trans.get(0);
+    }
+
+    public double getY() {
+        return trans.get(1);
+    }
+
+    public double getZ() {
+        return trans.get(2);
+    }
+
+    public double getRotX() {
+        return rot.secondAngle;
+    }
+
     public int look() {
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {

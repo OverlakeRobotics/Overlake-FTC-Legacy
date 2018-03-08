@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.sun.tools.javac.comp.Flow;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
 
@@ -48,7 +50,7 @@ public class CompetitionOpMode extends BaseOpMode {
 
         this.initSystems();
         init2();
-        parallelLiftSystem.initFromPark();
+        /*parallelLiftSystem.initFromPark();
         elevator.initFromAutoInit();
         this.startHeading = imuSystem.getHeading();
 
@@ -58,7 +60,11 @@ public class CompetitionOpMode extends BaseOpMode {
 
 
         pixySystem.runPixySystem();
-        vuforiaCryptoBox(zone);
+        vuforiaCryptoBox(zone);*/
+
+        waitForStart();
+
+        vuforiaDrive(800, 800, 1);
 
 
         stop();
@@ -138,6 +144,39 @@ public class CompetitionOpMode extends BaseOpMode {
         telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
         telemetry.update();
         driveSystem.turn(correctionNeeded, power, this);
+    }
+
+    public void vuforiaDrive(int x, int y, double power) {
+        int tollerance = 100;
+
+        double travelX = eye.getX() - x;
+        double travelY = eye.getY() - y;
+
+        driveSystem.turn(-(eye.getRotX()), 1, this);
+
+        double px = 0;
+        double py = 0;
+
+        while (x > tollerance || y > tollerance) {
+            if (eye.getRotX() > 10) {
+                driveSystem.turn(-(eye.getRotX()), 1, this);
+            }
+
+            travelX = eye.getX() - x;
+            travelY = eye.getY() - y;
+
+            if (travelX > travelY) {
+                px = power;
+                py = ((power/travelX) * travelY);
+            } else {
+                py = power;
+                py = ((power/travelX) *travelX);
+            }
+
+            driveSystem.mecanumDrive((float) px, (float) px, (float) py, (float) py, false);
+            sleep(50);
+            eye.telemetry(telemetry);
+        }
     }
 
     public void calibrate() {

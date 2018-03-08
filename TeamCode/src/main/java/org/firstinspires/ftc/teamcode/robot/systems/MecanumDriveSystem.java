@@ -252,6 +252,9 @@ public class MecanumDriveSystem extends System
     public void driveToPositionInches(double inches, double power, double rampLength) {
         Ramp ramp = new ExponentialRamp(0, 0.1, motorBackLeft.inchesToTicks(rampLength), power);
 
+        setTargetPositionInches(inches);
+        setPower(0.1);
+
         while(anyMotorsBusy()) {
             int minDistance = getMinimumDistanceFromTarget();
 
