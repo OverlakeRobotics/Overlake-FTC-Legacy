@@ -13,6 +13,10 @@ import static org.firstinspires.ftc.teamcode.test.constants.GearChainTestConstan
 public class GearChainTest extends TestBase {
     private GearChainTestConstants constants = new GearChainTestConstants();
 
+    public GearChainTest() {
+        super("GearChainTest");
+    }
+
     @Rule
     public TestName name = new TestName();
 

@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
+import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.firstinspires.ftc.teamcode.robot.components.GearedMotor;
+import org.firstinspires.ftc.teamcode.robot.components.GearedMotorWithWheel;
 import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
@@ -22,12 +24,11 @@ public class MecanumDriveSystem extends System
     private final double WHEEL_DIAMETER_INCHES = 4.0;
 
     public IMUSystem imuSystem;
-    public final MotorType MOTOR_TYPE = MotorType.NEVEREST40_PULSES;
 
-    public GearedMotor motorFrontLeft;
-    public GearedMotor motorFrontRight;
-    public GearedMotor motorBackLeft;
-    public GearedMotor motorBackRight;
+    public GearedMotorWithWheel motorFrontLeft;
+    public GearedMotorWithWheel motorFrontRight;
+    public GearedMotorWithWheel motorBackLeft;
+    public GearedMotorWithWheel motorBackRight;
 
     private double initialHeading;
 
@@ -43,10 +44,11 @@ public class MecanumDriveSystem extends System
 
         initialHeading = Math.toRadians(imuSystem.getHeading());
 
-        this.motorFrontLeft = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
-        this.motorFrontRight = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
-        this.motorBackRight = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
-        this.motorBackLeft = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
+        GearChain driveChain = new GearChain(MotorType.NEVEREST40_PULSES, 80, 64);
+        this.motorFrontLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFL")), WHEEL_DIAMETER_INCHES);
+        this.motorFrontRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBL")), WHEEL_DIAMETER_INCHES);
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -97,10 +99,10 @@ public class MecanumDriveSystem extends System
     }
 
     public void setTargetPosition(int ticks) {
-        motorBackLeft.motor.setTargetPosition(ticks);
-        motorBackRight.motor.setTargetPosition(ticks);
-        motorFrontLeft.motor.setTargetPosition(ticks);
-        motorFrontRight.motor.setTargetPosition(ticks);
+        motorBackLeft.setTargetPosition(ticks);
+        motorBackRight.setTargetPosition(ticks);
+        motorFrontLeft.setTargetPosition(ticks);
+        motorFrontRight.setTargetPosition(ticks);
     }
 
     public void setRunMode(DcMotor.RunMode runMode) {
