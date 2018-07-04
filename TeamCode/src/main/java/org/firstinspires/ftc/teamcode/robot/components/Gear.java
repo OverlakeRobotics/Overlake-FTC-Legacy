@@ -18,6 +18,9 @@ public class Gear {
     }
 
     public double getRatio() {
+        if (next == null) {
+            return 1;
+        }
         return next.teeth / this.teeth;
     }
 }
