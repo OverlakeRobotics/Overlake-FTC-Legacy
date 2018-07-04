@@ -5,22 +5,25 @@ package org.firstinspires.ftc.teamcode.robot.components;
  */
 
 public class GearChain {
+    //TODO: Extract To Constants File
     public final static int NEVEREST20_PULSES = 960;
     public final static int NEVEREST40_PULSES = 1120;
     public final static int NEVEREST60_PULSES = 1680;
 
-    private Gear input;
     private double chainRatio;
+    private double[] teeth;
 
-    public GearChain(double... allTeeth) {
-        input = new Gear(allTeeth[0]);
-        Gear current = input;
-        for (int i = 1; i < allTeeth.length; i++) {
-            Gear next = new Gear(allTeeth[i]);
-            current.next = next;
-            current = next;
-        }
+    public GearChain(double... teeth) {
+        this.teeth = teeth;
         chainRatio = calculateChainRatio();
+    }
+
+    private double calculateChainRatio() {
+        double chainRatio = 1d;
+        for (int i = 1; i < teeth.length; i++) {
+            chainRatio *= teeth[i] / teeth[i - 1];
+        }
+        return chainRatio;
     }
 
     public int calculateInputRevolutions(int pulses, double revolutions) {
@@ -33,15 +36,5 @@ public class GearChain {
 
     public int calculateOuputTicks(int ticks) {
         return (int) Math.round(ticks * chainRatio);
-    }
-
-    private double calculateChainRatio() {
-        double ratio = 1d;
-        Gear current = input;
-        while (current.next != null) {
-            ratio *= current.getRatio();
-            current = current.next;
-        }
-        return ratio;
     }
 }
