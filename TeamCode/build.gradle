@@ -17,3 +17,14 @@ apply from: '../build.common.gradle'
 android {
     buildToolsVersion '25.0.0'
 }
+
+repositories {
+    maven {
+        url 'http://repo1.maven.org/maven2'
+
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
