@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode.robot.components;
 
+import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
+
 /**
  * Created by EvanCoulson on 9/26/17.
  */
 
 public class GearChain {
-    //TODO: Extract To Constants File
-    public final static int NEVEREST20_PULSES = 960;
-    public final static int NEVEREST40_PULSES = 1120;
-    public final static int NEVEREST60_PULSES = 1680;
-
     private double chainRatio;
     private double[] teeth;
+    private MotorType motorType;
 
-    public GearChain(double... teeth) {
+    public GearChain(MotorType motorType, double... teeth) {
         this.teeth = teeth;
+        this.motorType = motorType;
         chainRatio = calculateChainRatio();
     }
 
@@ -26,15 +25,19 @@ public class GearChain {
         return chainRatio;
     }
 
-    public int calculateInputRevolutions(int pulses, double revolutions) {
-        return (int) Math.round(pulses * revolutions);
+    public int calculateInputRevolutionTicks(double revolutions) {
+        return (int) Math.round(motorType.getPulses() * revolutions);
     }
 
-    public int calculateOutputRevolutions(int pulses, double revolutions) {
-        return (int) Math.round(pulses * revolutions * chainRatio);
+    public int calculateOutputRevolutionTicks(double revolutions) {
+        return (int) Math.round(motorType.getPulses() * revolutions * chainRatio);
     }
 
     public int calculateOuputTicks(int ticks) {
         return (int) Math.round(ticks * chainRatio);
+    }
+
+    public double getChainRatio() {
+        return chainRatio;
     }
 }

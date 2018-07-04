@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.components;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.util.ramp.LogarithmicRamp;
-import org.firstinspires.ftc.teamcode.util.ramp.Ramp;
+import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 
 /**
  * Created by EvanCoulson on 10/9/17.
@@ -17,23 +16,21 @@ public class GearedMotor {
 
     public GearChain chain;
     public DcMotor motor;
-    public int pulses;
     private double wheelDiameter;
     public double ticksPerInch;
 
-    public GearedMotor(int pulses, DcMotor motor) {
-        this(pulses, 0, motor, 1, 1);
+    public GearedMotor(MotorType type, DcMotor motor) {
+        this(type, 0, motor, 1, 1);
     }
 
-    public GearedMotor(int pulses, DcMotor motor, double... teeth) {
-        this(pulses, 0, motor, teeth);
+    public GearedMotor(MotorType type, DcMotor motor, double... teeth) {
+        this(type, 0, motor, teeth);
     }
 
-    public GearedMotor(int pulses, double wheelDiameter, DcMotor motor, double... teeth) {
-        this.chain = new GearChain(teeth);
-        this.pulses = pulses;
+    public GearedMotor(MotorType type, double wheelDiameter, DcMotor motor, double... teeth) {
+        this.chain = new GearChain(type, teeth);
         this.wheelDiameter = wheelDiameter;
-        this.ticksPerInch = (chain.calculateOutputRevolutions(pulses, 1)) / (wheelDiameter * Math.PI);
+        this.ticksPerInch = (chain.calculateOutputRevolutionTicks(1)) / (wheelDiameter * Math.PI);
         this.motor = motor;
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motor.setPower(0);
@@ -53,7 +50,7 @@ public class GearedMotor {
     }
 
     public void runOutputGearRevolutions(double revolutions, double power) {
-        int ticks = chain.calculateOutputRevolutions(pulses, revolutions);
+        int ticks = chain.calculateOutputRevolutionTicks(revolutions);
         runMotor(ticks, power);
     }
 
@@ -62,7 +59,7 @@ public class GearedMotor {
     }
 
     public void runInputGearRevolutions(double revolutions, double power) {
-        int ticks = chain.calculateInputRevolutions(pulses, revolutions);
+        int ticks = chain.calculateOutputRevolutionTicks(revolutions);
         runMotor(ticks, power);
     }
 

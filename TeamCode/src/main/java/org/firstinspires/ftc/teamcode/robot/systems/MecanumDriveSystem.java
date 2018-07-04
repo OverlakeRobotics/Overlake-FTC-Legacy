@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robot.components.GearChain;
+import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearedMotor;
 import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
@@ -22,7 +22,7 @@ public class MecanumDriveSystem extends System
     private final double WHEEL_DIAMETER_INCHES = 4.0;
 
     public IMUSystem imuSystem;
-    public final int MOTOR_PULSES = GearChain.NEVEREST40_PULSES;
+    public final MotorType MOTOR_TYPE = MotorType.NEVEREST40_PULSES;
 
     public GearedMotor motorFrontLeft;
     public GearedMotor motorFrontRight;
@@ -43,10 +43,10 @@ public class MecanumDriveSystem extends System
 
         initialHeading = Math.toRadians(imuSystem.getHeading());
 
-        this.motorFrontLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
-        this.motorFrontRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
-        this.motorBackRight = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
-        this.motorBackLeft = new GearedMotor(MOTOR_PULSES, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
+        this.motorFrontLeft = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFL")), 80, 64);
+        this.motorFrontRight = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorFR")), 80, 64);
+        this.motorBackRight = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBR")), 80, 64);
+        this.motorBackLeft = new GearedMotor(MOTOR_TYPE, WHEEL_DIAMETER_INCHES, map.dcMotor.get(config.getString("motorBL")), 80, 64);
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
