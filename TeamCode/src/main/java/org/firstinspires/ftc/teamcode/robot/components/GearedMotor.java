@@ -35,7 +35,7 @@ public class GearedMotor {
 
     public void runOutputGearTicks(int ticks, double power) {
         int outputTicks = chain.calculateOuputTicks(ticks);
-        setTargetPosition(ticks);
+        setTargetPosition(outputTicks);
     }
 
     public void runOutputGearRevolutions(double revolutions, double power) {
@@ -52,17 +52,28 @@ public class GearedMotor {
         setTargetPosition(ticks);
     }
 
-    protected void runMotor(int ticks, double power) {
+    public void runMotor(int ticks, double power) {
         setTargetPosition(ticks);
         motor.setPower(power);
     }
 
     public void setPower(double power) {
+        EnsurePowerIsInRange(power);
         motor.setPower(power);
+    }
+
+    private void EnsurePowerIsInRange(double power) {
+        if (power > 1) {
+            throw new IllegalArgumentException("Power must be less than 1.0");
+        }
     }
 
     public void setRunMode(DcMotor.RunMode mode) {
         motor.setMode(mode);
+    }
+
+    public DcMotor.RunMode getRunMode() {
+        return motor.getMode();
     }
 
     public void setTargetPosition(int ticks) {
