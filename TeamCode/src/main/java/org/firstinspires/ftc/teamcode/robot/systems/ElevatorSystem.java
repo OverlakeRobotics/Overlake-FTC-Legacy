@@ -173,7 +173,7 @@ public class ElevatorSystem extends System {
     public void runMotorDown(double power) {
         if(!isAtBottom) {
             elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            //elevator.setPower(-power);
+            //elevator.run(-power);
         }
     }
 
@@ -216,9 +216,9 @@ public class ElevatorSystem extends System {
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setTargetPosition(bottomTicks + unloadBlock2Ticks);
         if(position > unloadBlock2Ticks) {
-            elevator.setPower(negativePower);
+            elevator.run(negativePower);
         } else {
-            elevator.setPower(positivePower);
+            elevator.run(positivePower);
         }
         position = unloadBlock2Ticks;
 
@@ -233,9 +233,9 @@ public class ElevatorSystem extends System {
         telemetry.addData("to: ", unloadBlock3Ticks);
 
         if(position > unloadBlock3Ticks) {
-            elevator.setPower(negativePower);
+            elevator.run(negativePower);
         } else {
-            elevator.setPower(positivePower);
+            elevator.run(positivePower);
         }
 
         position = unloadBlock3Ticks;
@@ -249,9 +249,9 @@ public class ElevatorSystem extends System {
         telemetry.addData("to: ", bottomLifterDown);
         double power;
         if(position > bottomLifterDown) {
-            elevator.setPower(negativePower);
+            elevator.run(negativePower);
         } else {
-            elevator.setPower(positivePower);
+            elevator.run(positivePower);
         }
 
         position = bottomLifterDown;

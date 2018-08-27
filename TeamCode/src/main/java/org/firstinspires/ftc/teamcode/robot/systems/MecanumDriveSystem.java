@@ -9,8 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
-import org.firstinspires.ftc.teamcode.robot.components.GearedMotor;
-import org.firstinspires.ftc.teamcode.robot.components.GearedMotorWithWheel;
+import org.firstinspires.ftc.teamcode.robot.components.motors.GearedWheelMotor;
 import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
 import org.firstinspires.ftc.teamcode.util.ramp.*;
 
@@ -25,10 +24,10 @@ public class MecanumDriveSystem extends System
 
     public IMUSystem imuSystem;
 
-    public GearedMotorWithWheel motorFrontLeft;
-    public GearedMotorWithWheel motorFrontRight;
-    public GearedMotorWithWheel motorBackLeft;
-    public GearedMotorWithWheel motorBackRight;
+    public GearedWheelMotor motorFrontLeft;
+    public GearedWheelMotor motorFrontRight;
+    public GearedWheelMotor motorBackLeft;
+    public GearedWheelMotor motorBackRight;
 
     private double initialHeading;
 
@@ -45,10 +44,10 @@ public class MecanumDriveSystem extends System
         initialHeading = Math.toRadians(imuSystem.getHeading());
 
         GearChain driveChain = new GearChain(MotorType.NEVEREST40_PULSES, 80, 64);
-        this.motorFrontLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFL")), WHEEL_DIAMETER_INCHES);
-        this.motorFrontRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFR")), WHEEL_DIAMETER_INCHES);
-        this.motorBackRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBR")), WHEEL_DIAMETER_INCHES);
-        this.motorBackLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBL")), WHEEL_DIAMETER_INCHES);
+        this.motorFrontLeft = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorFL")), WHEEL_DIAMETER_INCHES);
+        this.motorFrontRight = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorFR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackRight = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorBR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackLeft = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorBL")), WHEEL_DIAMETER_INCHES);
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -128,10 +127,10 @@ public class MecanumDriveSystem extends System
         double backRightPower = leftY + rightX - leftX;
         double frontLeftPower = leftY - rightX - leftX;
         double backLeftPower = leftY - rightX + leftX;
-        this.motorFrontRight.setPower(Range.clip(frontRightPower, -1, 1));
-        this.motorBackRight.setPower(Range.clip(backRightPower, -1, 1));
-        this.motorFrontLeft.setPower(Range.clip(frontLeftPower - leftX, -1, 1));
-        this.motorBackLeft.setPower(Range.clip(backLeftPower + leftX, -1, 1));
+        this.motorFrontRight.run(Range.clip(frontRightPower, -1, 1));
+        this.motorBackRight.run(Range.clip(backRightPower, -1, 1));
+        this.motorFrontLeft.run(Range.clip(frontLeftPower - leftX, -1, 1));
+        this.motorBackLeft.run(Range.clip(backLeftPower + leftX, -1, 1));
     }
 
     public void driveCircle(float power) {
@@ -179,10 +178,10 @@ public class MecanumDriveSystem extends System
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);
 
-        motorFrontLeft.setPower(powers.get(0));
-        motorFrontRight.setPower(powers.get(1));
-        motorBackLeft.setPower(powers.get(2));
-        motorBackRight.setPower(powers.get(3));
+        motorFrontLeft.run(powers.get(0));
+        motorFrontRight.run(powers.get(1));
+        motorBackLeft.run(powers.get(2));
+        motorBackRight.run(powers.get(3));
     }
 
     public void resetInitialHeading() {
@@ -191,10 +190,10 @@ public class MecanumDriveSystem extends System
 
     public void mecanumDriveXY(double x, double y)
     {
-        this.motorFrontRight.setPower(Range.clip(y + x, -1, 1));
-        this.motorBackRight.setPower(Range.clip(y - x, -1, 1));
-        this.motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
-        this.motorBackLeft.setPower(Range.clip(y + x, -1, 1));
+        this.motorFrontRight.run(Range.clip(y + x, -1, 1));
+        this.motorBackRight.run(Range.clip(y - x, -1, 1));
+        this.motorFrontLeft.run(Range.clip(y - x, -1, 1));
+        this.motorBackLeft.run(Range.clip(y + x, -1, 1));
     }
 
     public void mecanumDrivePolar(double radians, double power)
@@ -277,10 +276,10 @@ public class MecanumDriveSystem extends System
     }
 
     public void driveToPositionRevolutions(double revs, double power) {
-        motorBackLeft.runOutputGearRevolutions(revs, power);
-        motorBackRight.runOutputGearRevolutions(revs, power);
-        motorFrontRight.runOutputGearRevolutions(revs, power);
-        motorFrontLeft.runOutputGearRevolutions(revs, power);
+        motorBackLeft.setOutputGearTargetRevolutions(revs);
+        motorBackRight.setOutputGearTargetRevolutions(revs);
+        motorFrontRight.setOutputGearTargetRevolutions(revs);
+        motorFrontLeft.setOutputGearTargetRevolutions(revs);
     }
 
     public void turn(double degrees, double maxPower, LinearOpMode mode)
@@ -329,10 +328,10 @@ public class MecanumDriveSystem extends System
 
     public void tankDrive(double leftPower, double rightPower)
     {
-        this.motorFrontLeft.setPower(leftPower);
-        this.motorBackLeft.setPower(leftPower);
-        this.motorFrontRight.setPower(rightPower);
-        this.motorBackRight.setPower(rightPower);
+        this.motorFrontLeft.run(leftPower);
+        this.motorBackLeft.run(leftPower);
+        this.motorFrontRight.run(rightPower);
+        this.motorBackRight.run(rightPower);
     }
 
     private double getTurnPower(Ramp ramp, double targetHeading, double heading)
@@ -457,10 +456,10 @@ public class MecanumDriveSystem extends System
 
     public void setPower(double power)
     {
-        this.motorFrontLeft.setPower(power);
-        this.motorFrontRight.setPower(power);
-        this.motorBackLeft.setPower(power);
-        this.motorBackRight.setPower(power);
+        this.motorFrontLeft.run(power);
+        this.motorFrontRight.run(power);
+        this.motorBackLeft.run(power);
+        this.motorBackRight.run(power);
     }
 
     public void adjustPower(Ramp ramp)

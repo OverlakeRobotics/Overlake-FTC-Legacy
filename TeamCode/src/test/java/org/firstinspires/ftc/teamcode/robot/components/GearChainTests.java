@@ -9,7 +9,7 @@ import org.junit.rules.TestName;
 import static org.junit.Assert.*;
 import static org.firstinspires.ftc.teamcode.test.constants.GearChainTestConstants.*;
 
-public class GearChainTest {
+public class GearChainTests {
 
     @Rule
     public TestName name = new TestName();

@@ -93,10 +93,10 @@ public class VuforiaOpMode extends BaseOpMode {
                 if (wheels.getPose().getTranslation().get(0) > 0) {
                     driveSystem.setPower(-0.2);
                 } else {
-//                    driveSystem.motors.get("BackLeft").setPower(0.2);
-//                    driveSystem.motors.get("FrontLeft").setPower(0.2);
-//                    driveSystem.motors.get("BackRight").setPower(-0.2);
-//                    driveSystem.motors.get("FrontRight").setPower(-0.2);
+//                    driveSystem.motors.get("BackLeft").run(0.2);
+//                    driveSystem.motors.get("FrontLeft").run(0.2);
+//                    driveSystem.motors.get("BackRight").run(-0.2);
+//                    driveSystem.motors.get("FrontRight").run(-0.2);
                 }
             } else {
 //                driveSystem.setLeftPower(-0.2);
