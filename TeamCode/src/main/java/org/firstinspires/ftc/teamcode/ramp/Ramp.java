@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ramp;
-
-import android.content.res.Resources;
+package org.firstinspires.ftc.teamcode.ramp;
 
 abstract public class Ramp
 {
@@ -22,6 +20,7 @@ abstract public class Ramp
     }
 
     abstract public double value(double x);
+
     abstract public double inverse(double y);
 
     public Double CheckDomain(double x)

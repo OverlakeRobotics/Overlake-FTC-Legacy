@@ -11,8 +11,9 @@ import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
  * Created by lexis on 23-Oct-17.
  */
 
-@Autonomous(name="CompetitionOpMode", group="Bot")
-public class CompetitionOpMode extends BaseOpMode {
+@Autonomous(name = "CompetitionOpMode", group = "Bot")
+public class CompetitionOpMode extends BaseOpMode
+{
     private int zone;
     private int inchesToReferenceBoxNonAudience;
     private int inchesToReferenceBoxAudience;
@@ -26,11 +27,13 @@ public class CompetitionOpMode extends BaseOpMode {
     private double startHeading;
     private int doi;
 
-    public CompetitionOpMode() {
+    public CompetitionOpMode()
+    {
         super("Autonomous");
     }
 
-    private void init2() {
+    private void init2()
+    {
         this.doi = config.getInt("doi");
         this.inchesToReferenceBoxNonAudience = config.getInt("InchesToReferenceBoxNonAudience"); // the length of the first drive forward, ending at the refernce box
         this.inchesToReferenceBoxAudience = config.getInt("InchesToReferenceBoxAudience"); // the length of the first drive forward, ending at the refernce box
@@ -46,7 +49,8 @@ public class CompetitionOpMode extends BaseOpMode {
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
 
         this.initSystems();
         init2();
@@ -70,7 +74,8 @@ public class CompetitionOpMode extends BaseOpMode {
         stop();
     }
 
-    public void vuforiaCryptoBox(int zone) {
+    public void vuforiaCryptoBox(int zone)
+    {
         double inchesPerBox = b;
         int boxNumber = eye.look(); // 0 = left   1 = center   2 = right
         telemetry.addLine("DETERMINED THE PICTURE!!!! YAY. Its picture number " + boxNumber);
@@ -80,13 +85,17 @@ public class CompetitionOpMode extends BaseOpMode {
         grabBlock();
 
         // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-        if (zone == 0) { // blue non-audience
+        if (zone == 0)
+        { // blue non-audience
             driveSystem.driveToPositionInchez(1, 1, this);
             driveSystem.driveToPositionInchez(doi, powerSetting1, this);//42
             returnToHeading(-90, powerSetting2);
-            if ((inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience) >= 0) {
+            if ((inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience) >= 0)
+            {
                 driveSystem.driveToPositionInchez((inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2, this); // 25
-            } else {
+            }
+            else
+            {
                 driveSystem.driveToPositionInchezBackwordz((inchesPerBox * boxNumber + inchesToReferenceBoxNonAudience), powerSetting2, this); // 25
             }
             returnToHeading(-30, powerSetting2);//60
@@ -94,11 +103,16 @@ public class CompetitionOpMode extends BaseOpMode {
             placeBlock();
             driveSystem.driveToPositionInchezBackwordz(8, powerSetting2, this);
             claw.runMotorBackUpALotProbablyDeleteLater();
-        } else if (zone == 1) { // blue audience
+        }
+        else if (zone == 1)
+        { // blue audience
             driveSystem.driveToPositionInchez(1, 1, this);
-            if (((inchesPerBox * boxNumber) + inchesToReferenceBoxAudience) >= 0) {
+            if (((inchesPerBox * boxNumber) + inchesToReferenceBoxAudience) >= 0)
+            {
                 driveSystem.driveToPositionInchez((inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting2, this); // 25
-            } else {
+            }
+            else
+            {
                 driveSystem.driveToPositionInchezBackwordz((inchesPerBox * boxNumber + inchesToReferenceBoxAudience), powerSetting2, this); // 25
             }
             returnToHeading(60, powerSetting2);
@@ -106,13 +120,18 @@ public class CompetitionOpMode extends BaseOpMode {
             placeBlock();
             driveSystem.driveToPositionInchezBackwordz(8, powerSetting2, this);
             claw.runMotorBackUpALotProbablyDeleteLater();
-        } else if (zone == 2) { // red non-audience
+        }
+        else if (zone == 2)
+        { // red non-audience
             driveSystem.driveToPositionInchez(1, 1, this);
             driveSystem.driveToPositionInchez(doi, powerSetting1, this);
             returnToHeading(90, powerSetting2);
-            if (((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience) >= 0) {
+            if (((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience) >= 0)
+            {
                 driveSystem.driveToPositionInchez(((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2, this); // 25
-            } else {
+            }
+            else
+            {
                 driveSystem.driveToPositionInchezBackwordz(((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxNonAudience), powerSetting2, this); // 25
             }
             returnToHeading(30, powerSetting2);//-60
@@ -120,11 +139,16 @@ public class CompetitionOpMode extends BaseOpMode {
             placeBlock();
             driveSystem.driveToPositionInchezBackwordz(8, powerSetting2, this);
             claw.runMotorBackUpALotProbablyDeleteLater();
-        } else if (zone == 3) { // red audience
+        }
+        else if (zone == 3)
+        { // red audience
             driveSystem.driveToPositionInchez(1, 1, this);
-            if (((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience) >= 0) {
+            if (((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience) >= 0)
+            {
                 driveSystem.driveToPositionInchez(((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting2, this); // 25
-            } else {
+            }
+            else
+            {
                 driveSystem.driveToPositionInchezBackwordz(((inchesPerBox * 2) - (boxNumber * inchesPerBox) + inchesToReferenceBoxAudience), powerSetting2, this); // 25
             }
             returnToHeading(-60, 1);
@@ -132,21 +156,25 @@ public class CompetitionOpMode extends BaseOpMode {
             placeBlock();
             driveSystem.driveToPositionInchezBackwordz(8, powerSetting2, this);
             claw.runMotorBackUpALotProbablyDeleteLater();
-        } else if (zone == 4) { //this is a test zone to test inches per box
+        }
+        else if (zone == 4)
+        { //this is a test zone to test inches per box
             driveSystem.driveToPositionInchez(-inchesPerBox, powerSetting2, this);
             sleep(2000);
             driveSystem.driveToPositionInchez(-inchesPerBox, powerSetting2, this);
         }
     }
 
-    public void returnToHeading(double heading, double power) {
+    public void returnToHeading(double heading, double power)
+    {
         double correctionNeeded = heading - imuSystem.getHeading();
         telemetry.addLine("returning to " + heading + " by adjusting by " + correctionNeeded + "currently at " + imuSystem.getHeading());
         telemetry.update();
         driveSystem.turn(correctionNeeded, power, this);
     }
 
-    public void vuforiaDrive(int x, int y, double power) {
+    public void vuforiaDrive(int x, int y, double power)
+    {
         int tollerance = 100;
 
         double travelX = eye.getX() - x;
@@ -157,20 +185,25 @@ public class CompetitionOpMode extends BaseOpMode {
         double px = 0;
         double py = 0;
 
-        while (x > tollerance || y > tollerance) {
-            if (eye.getRotX() > 10) {
+        while (x > tollerance || y > tollerance)
+        {
+            if (eye.getRotX() > 10)
+            {
                 driveSystem.turn(-(eye.getRotX()), 1, this);
             }
 
             travelX = eye.getX() - x;
             travelY = eye.getY() - y;
 
-            if (travelX > travelY) {
+            if (travelX > travelY)
+            {
                 px = power;
-                py = ((power/travelX) * travelY);
-            } else {
+                py = ((power / travelX) * travelY);
+            }
+            else
+            {
                 py = power;
-                py = ((power/travelX) *travelX);
+                py = ((power / travelX) * travelX);
             }
 
             driveSystem.mecanumDrive((float) px, (float) px, (float) py, (float) py, false);
@@ -179,7 +212,8 @@ public class CompetitionOpMode extends BaseOpMode {
         }
     }
 
-    public void calibrate() {
+    public void calibrate()
+    {
         elevator.goToTopSynch(0.4);
         parallelLiftSystem.goToBottomSync();
         parallelLiftSystem.goToIndexSync(ParallelLiftSystem.middleIndex);
@@ -188,54 +222,77 @@ public class CompetitionOpMode extends BaseOpMode {
         claw.goToTop();
     }
 
-    public void placeBlock() {
+    public void placeBlock()
+    {
         elevator.goToIndexSynch(0);
         this.claw.runMotorBackUpALotProbablyDeleteLater();
         sleep(1000);
     }
 
-    public void grabBlock() {
+    public void grabBlock()
+    {
         this.claw.openSynch(this);
         sleep(500);
         elevator.goToIndexSynch(2);
     }
 
-    public void correctBoxLeftApproach(int boxNumber) {
+    public void correctBoxLeftApproach(int boxNumber)
+    {
         int inchesPerBox = 15;
         telemetry.addLine("driving to box: " + boxNumber + " or inches: " + (-inchesPerBox * boxNumber));
         telemetry.update();
 //        driveToPositionInches((-inchesPerBox * boxNumber), 0.75);
     }
 
-    public void correctBoxRightApproach(int boxNumber) {
+    public void correctBoxRightApproach(int boxNumber)
+    {
         int inchesPerBox = 11;
         this.driveSystem.driveToPositionInches(((inchesPerBox * 2) - (boxNumber * inchesPerBox)), 1);
     }
+
     // zone 0 is blue non-audience      zone 1 is blue audience    zone 2 is red non-audience    zone 3 is red audience
-    public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide) {
-        if (zone > 4) {
-            if (isBlue && isAudienceSide) {
+    public void syncConfigZoneBooleansAndInts(int zone, boolean isBlue, boolean isAudienceSide)
+    {
+        if (zone > 4)
+        {
+            if (isBlue && isAudienceSide)
+            {
                 this.zone = 0;
-            } else if (isBlue && !isAudienceSide) {
+            }
+            else if (isBlue && !isAudienceSide)
+            {
                 this.zone = 1;
-            } else if (!isBlue && isAudienceSide) {
+            }
+            else if (!isBlue && isAudienceSide)
+            {
                 this.zone = 2;
-            } else if (!isBlue && !isAudienceSide){
+            }
+            else if (!isBlue && !isAudienceSide)
+            {
                 this.zone = 3;
             }
-        } else {
-            if (zone == 0) {
+        }
+        else
+        {
+            if (zone == 0)
+            {
                 this.isBlue = true;
                 this.isAudienceSide = false;
-            } else if (zone == 1) {
+            }
+            else if (zone == 1)
+            {
                 this.isBlue = true;
                 this.isAudienceSide = true;
-            } else if (zone == 2) {
+            }
+            else if (zone == 2)
+            {
 
 
                 this.isBlue = false;
                 this.isAudienceSide = false;
-            } else if (zone == 3){
+            }
+            else if (zone == 3)
+            {
                 this.isBlue = false;
                 this.isAudienceSide = true;
             }

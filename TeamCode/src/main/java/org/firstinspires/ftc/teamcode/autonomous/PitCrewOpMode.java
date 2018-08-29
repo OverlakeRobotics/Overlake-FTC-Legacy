@@ -8,17 +8,20 @@ import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
  * Created by Steven Abbott on 1/29/2018.
  */
 
-@Autonomous(name="PitCrewOpMode", group="Bot")
-public class PitCrewOpMode extends BaseOpMode {
+@Autonomous(name = "PitCrewOpMode", group = "Bot")
+public class PitCrewOpMode extends BaseOpMode
+{
 
     public static final int TIME = 1000;
 
-    public PitCrewOpMode() {
+    public PitCrewOpMode()
+    {
         super("PitCrew");
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
         this.initSystems();
 
         waitForStart();

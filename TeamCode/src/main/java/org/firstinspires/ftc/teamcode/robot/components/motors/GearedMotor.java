@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.teamcode.robot.components;
+package org.firstinspires.ftc.teamcode.robot.components.motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
-import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
+import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 
 /**
  * Created by EvanCoulson on 10/9/17.
  */
 
-public class GearedMotor {
+public class GearedMotor implements IGearedMotor {
 
     private GearChain chain;
     private DcMotor motor;
@@ -17,8 +18,6 @@ public class GearedMotor {
     public GearedMotor(GearChain chain, DcMotor motor) {
         this.chain = chain;
         this.motor = motor;
-        this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.motor.setPower(0);
     }
 
     public boolean isBusy() {
@@ -29,35 +28,30 @@ public class GearedMotor {
         motor.setDirection(direction);
     }
 
-    public DcMotorSimple.Direction getDirection() {
+    public Direction getDirection() {
         return motor.getDirection();
     }
 
-    public void runOutputGearTicks(int ticks, double power) {
+    public void setOutputGearTargetTicks(int ticks) {
         int outputTicks = chain.calculateOuputTicks(ticks);
         setTargetPosition(outputTicks);
     }
 
-    public void runOutputGearRevolutions(double revolutions, double power) {
+    public void setOutputGearTargetRevolutions(double revolutions) {
         int ticks = chain.calculateOutputRevolutionTicks(revolutions);
         setTargetPosition(ticks);
     }
 
-    public void runInputGearTicks(int ticks, double power) {
+    public void setInputGearTargetTicks(int ticks) {
         setTargetPosition(ticks);
     }
 
-    public void runInputGearRevolutions(double revolutions, double power) {
+    public void setInputGearTargetRevolutions(double revolutions) {
         int ticks = chain.calculateOutputRevolutionTicks(revolutions);
         setTargetPosition(ticks);
     }
 
-    public void runMotor(int ticks, double power) {
-        setTargetPosition(ticks);
-        motor.setPower(power);
-    }
-
-    public void setPower(double power) {
+    public void run(double power) {
         EnsurePowerIsInRange(power);
         motor.setPower(power);
     }
@@ -81,19 +75,19 @@ public class GearedMotor {
         motor.setTargetPosition(current + ticks);
     }
 
-    public double getPower() {
-        return motor.getPower();
-    }
-
     public int getTargetPosition() {
         return motor.getTargetPosition();
+    }
+
+    public double getPower() {
+        return motor.getPower();
     }
 
     public int getCurrentPosition() {
         return motor.getCurrentPosition();
     }
 
-    public int getDistance() {
+    public int getDistanceToTargetPosition() {
         return getTargetPosition() - getCurrentPosition();
     }
 }

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.util.ramp.*;
+import org.firstinspires.ftc.teamcode.ramp.*;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 /**
@@ -17,24 +17,29 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  */
 
 
+public abstract class VuforiaBaseOpMode extends BaseOpMode
+{
 
-public abstract class VuforiaBaseOpMode extends BaseOpMode {
-
-    protected static class Target {
+    protected static class Target
+    {
         public static int Wheels = 0;
         public static int Tools = 1;
         public static int Lego = 2;
         public static int Gears = 3;
-    };
+    }
+
+    ;
 
     VuforiaTrackables beacons;
 
-    public VuforiaBaseOpMode() {
+    public VuforiaBaseOpMode()
+    {
         super("Vuforia Base OpMode");
     }
 
 
-    public void initialize() {
+    public void initialize()
+    {
 
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
@@ -72,7 +77,7 @@ public abstract class VuforiaBaseOpMode extends BaseOpMode {
 
         while (distanceToTarget > minDistance)
         {
-            OpenGLMatrix  pose = target.getPose();
+            OpenGLMatrix pose = target.getPose();
 
             if (pose != null)
             {

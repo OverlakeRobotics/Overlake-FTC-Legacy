@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.logger;
+package org.firstinspires.ftc.teamcode.logger;
 
 import android.util.Log;
 
@@ -10,31 +10,38 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by EvanCoulson on 1/5/18.
  */
 
-public class Logger {
+public class Logger
+{
     private LoggingService[] loggingServices;
     private FileLogger fileLogger;
     private Telemetry telemetry;
     private String system;
 
-    public Logger(OpMode mode, String system) {
-        this.loggingServices = new LoggingService[] { LoggingService.TELEMETRY };
+    public Logger(OpMode mode, String system)
+    {
+        this.loggingServices = new LoggingService[]{LoggingService.TELEMETRY};
         this.fileLogger = new FileLogger(system);
         this.telemetry = mode.telemetry;
         this.system = system;
     }
 
-    public void setLoggingServices(LoggingService... services) {
+    public void setLoggingServices(LoggingService... services)
+    {
         this.loggingServices = services;
     }
 
-    public void log(String data) {
+    public void log(String data)
+    {
         log(data, this.loggingServices);
     }
 
-    public void log(String data, LoggingService[] loggingServices) {
+    public void log(String data, LoggingService[] loggingServices)
+    {
         data += "\n";
-        for (LoggingService service : this.loggingServices) {
-            switch (service) {
+        for (LoggingService service : this.loggingServices)
+        {
+            switch (service)
+            {
                 case FILE:
                     this.fileLogger.log(system, data);
                     break;

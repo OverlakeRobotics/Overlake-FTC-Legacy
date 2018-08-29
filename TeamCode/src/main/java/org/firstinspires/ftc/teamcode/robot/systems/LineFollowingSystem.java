@@ -8,13 +8,12 @@ import org.firstinspires.ftc.teamcode.robot.data.HueData;
 
 /**
  * This is NOT an opmode.
- *
+ * <p>
  * This class can be used to define all the specific hardware for a single robot.
  * In this case that robot is a Pushbot.
- *
+ * <p>
  * This hardware class assumes the following device names have been configured on the robot:
  * Note:  All names are lower case and some have single spaces between words.
- *
  */
 public class LineFollowingSystem
 {
@@ -24,15 +23,17 @@ public class LineFollowingSystem
     public ColorSensor lineColorSensor;
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
+    HardwareMap hwMap = null;
 
     /* Constructor */
-    public LineFollowingSystem(){
+    public LineFollowingSystem()
+    {
 
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hwMap) {
+    public void init(HardwareMap hwMap)
+    {
         // Save reference to Hardware map
         this.hwMap = hwMap;
 

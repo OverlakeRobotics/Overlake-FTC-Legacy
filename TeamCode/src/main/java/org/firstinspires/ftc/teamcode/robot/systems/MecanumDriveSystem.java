@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
-import org.firstinspires.ftc.teamcode.robot.components.GearedMotor;
-import org.firstinspires.ftc.teamcode.robot.components.GearedMotorWithWheel;
-import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
-import org.firstinspires.ftc.teamcode.util.ramp.*;
+import org.firstinspires.ftc.teamcode.robot.components.motors.GearedWheelMotor;
+import org.firstinspires.ftc.teamcode.logger.LoggingService;
+import org.firstinspires.ftc.teamcode.ramp.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,10 +24,10 @@ public class MecanumDriveSystem extends System
 
     public IMUSystem imuSystem;
 
-    public GearedMotorWithWheel motorFrontLeft;
-    public GearedMotorWithWheel motorFrontRight;
-    public GearedMotorWithWheel motorBackLeft;
-    public GearedMotorWithWheel motorBackRight;
+    public GearedWheelMotor motorFrontLeft;
+    public GearedWheelMotor motorFrontRight;
+    public GearedWheelMotor motorBackLeft;
+    public GearedWheelMotor motorBackRight;
 
     private double initialHeading;
 
@@ -36,7 +35,8 @@ public class MecanumDriveSystem extends System
     Telemetry.Item powerItem;
 
     /* Constructor */
-    public MecanumDriveSystem(OpMode opMode) {
+    public MecanumDriveSystem(OpMode opMode)
+    {
         super(opMode, "MecanumDrive");
         logger.setLoggingServices(LoggingService.FILE);
 
@@ -45,10 +45,10 @@ public class MecanumDriveSystem extends System
         initialHeading = Math.toRadians(imuSystem.getHeading());
 
         GearChain driveChain = new GearChain(MotorType.NEVEREST40_PULSES, 80, 64);
-        this.motorFrontLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFL")), WHEEL_DIAMETER_INCHES);
-        this.motorFrontRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorFR")), WHEEL_DIAMETER_INCHES);
-        this.motorBackRight = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBR")), WHEEL_DIAMETER_INCHES);
-        this.motorBackLeft = new GearedMotorWithWheel(driveChain, map.dcMotor.get(config.getString("motorBL")), WHEEL_DIAMETER_INCHES);
+        this.motorFrontLeft = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorFL")), WHEEL_DIAMETER_INCHES);
+        this.motorFrontRight = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorFR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackRight = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorBR")), WHEEL_DIAMETER_INCHES);
+        this.motorBackLeft = new GearedWheelMotor(driveChain, map.dcMotor.get(config.getString("motorBL")), WHEEL_DIAMETER_INCHES);
 
         this.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -68,7 +68,8 @@ public class MecanumDriveSystem extends System
         setPower(0);
     }
 
-    public int inchesToTicks(double inches) {
+    public int inchesToTicks(double inches)
+    {
         return (int) Math.round(inches * this.ticksPerInch);
     }
 
@@ -79,14 +80,16 @@ public class MecanumDriveSystem extends System
     private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual value for this
     private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
-    public void setDirection(DcMotorSimple.Direction direction) {
+    public void setDirection(DcMotorSimple.Direction direction)
+    {
         motorFrontLeft.setDirection(direction);
         motorFrontRight.setDirection(direction);
         motorBackLeft.setDirection(direction);
         motorBackRight.setDirection(direction);
     }
 
-    public void setAllMotorsPID(double P, double I, double D) {
+    public void setAllMotorsPID(double P, double I, double D)
+    {
         //TODO
     }
 
@@ -98,14 +101,16 @@ public class MecanumDriveSystem extends System
                 motorBackRight.isBusy();
     }
 
-    public void setTargetPosition(int ticks) {
+    public void setTargetPosition(int ticks)
+    {
         motorBackLeft.setTargetPosition(ticks);
         motorBackRight.setTargetPosition(ticks);
         motorFrontLeft.setTargetPosition(ticks);
         motorFrontRight.setTargetPosition(ticks);
     }
 
-    public void setRunMode(DcMotor.RunMode runMode) {
+    public void setRunMode(DcMotor.RunMode runMode)
+    {
         logger.log(String.format("Run Mode: %s", runMode));
         motorFrontLeft.setRunMode(runMode);
         motorFrontRight.setRunMode(runMode);
@@ -128,36 +133,42 @@ public class MecanumDriveSystem extends System
         double backRightPower = leftY + rightX - leftX;
         double frontLeftPower = leftY - rightX - leftX;
         double backLeftPower = leftY - rightX + leftX;
-        this.motorFrontRight.setPower(Range.clip(frontRightPower, -1, 1));
-        this.motorBackRight.setPower(Range.clip(backRightPower, -1, 1));
-        this.motorFrontLeft.setPower(Range.clip(frontLeftPower - leftX, -1, 1));
-        this.motorBackLeft.setPower(Range.clip(backLeftPower + leftX, -1, 1));
+        this.motorFrontRight.run(Range.clip(frontRightPower, -1, 1));
+        this.motorBackRight.run(Range.clip(backRightPower, -1, 1));
+        this.motorFrontLeft.run(Range.clip(frontLeftPower - leftX, -1, 1));
+        this.motorBackLeft.run(Range.clip(backLeftPower + leftX, -1, 1));
     }
 
-    public void driveCircle(float power) {
+    public void driveCircle(float power)
+    {
         float lx = power;
         float rx = 0.33f * lx;
 
         mecanumDrive(rx, 0f, lx, 0f, false);
     }
 
-    private void clampPowers(List<Double> powers) {
+    private void clampPowers(List<Double> powers)
+    {
         double minPower = Collections.min(powers);
         double maxPower = Collections.max(powers);
         double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
 
-        if (maxMag > 1.0) {
-            for (int i = 0; i < powers.size(); i++) {
+        if (maxMag > 1.0)
+        {
+            for (int i = 0; i < powers.size(); i++)
+            {
                 powers.set(i, powers.get(i) / maxMag);
             }
         }
     }
 
-    public void driveGodMode(float rightX, float rightY, float leftX, float leftY) {
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY)
+    {
         driveGodMode(rightX, rightY, leftX, leftY, 1);
     }
 
-    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff) {
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff)
+    {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
         double headingDiff = initialHeading - currentHeading;
 
@@ -179,22 +190,23 @@ public class MecanumDriveSystem extends System
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);
 
-        motorFrontLeft.setPower(powers.get(0));
-        motorFrontRight.setPower(powers.get(1));
-        motorBackLeft.setPower(powers.get(2));
-        motorBackRight.setPower(powers.get(3));
+        motorFrontLeft.run(powers.get(0));
+        motorFrontRight.run(powers.get(1));
+        motorBackLeft.run(powers.get(2));
+        motorBackRight.run(powers.get(3));
     }
 
-    public void resetInitialHeading() {
+    public void resetInitialHeading()
+    {
         this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
     }
 
     public void mecanumDriveXY(double x, double y)
     {
-        this.motorFrontRight.setPower(Range.clip(y + x, -1, 1));
-        this.motorBackRight.setPower(Range.clip(y - x, -1, 1));
-        this.motorFrontLeft.setPower(Range.clip(y - x, -1, 1));
-        this.motorBackLeft.setPower(Range.clip(y + x, -1, 1));
+        this.motorFrontRight.run(Range.clip(y + x, -1, 1));
+        this.motorBackRight.run(Range.clip(y - x, -1, 1));
+        this.motorFrontLeft.run(Range.clip(y - x, -1, 1));
+        this.motorBackLeft.run(Range.clip(y + x, -1, 1));
     }
 
     public void mecanumDrivePolar(double radians, double power)
@@ -205,31 +217,37 @@ public class MecanumDriveSystem extends System
     }
 
     // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
-    public void driveTicksXY(int x, int y, double maxPower, int deltaTicks) {
+    public void driveTicksXY(int x, int y, double maxPower, int deltaTicks)
+    {
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
     // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
-    public void driveRevolutionsXY(double x, double y, double maxPower, double deltaRevs) {
+    public void driveRevolutionsXY(double x, double y, double maxPower, double deltaRevs)
+    {
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
     // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
-    public void driveRevolutionsXY(double x, double y, double power) {
+    public void driveRevolutionsXY(double x, double y, double power)
+    {
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
     // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
-    public void driveInchesXY(double x, double y, double maxPower, double deltaInches) {
+    public void driveInchesXY(double x, double y, double maxPower, double deltaInches)
+    {
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
     // this funciton wil strafe an X Y distance. Need a good way to find distance traveled
-    public void driveInchesXY(double x, double y, double power) {
+    public void driveInchesXY(double x, double y, double power)
+    {
         throw new IllegalArgumentException("Unimplemented Function");
     }
 
-    public void driveToPositionInches(double inches, double power) {
+    public void driveToPositionInches(double inches, double power)
+    {
         driveToPositionInches(inches, power, inches / 10);
     }
 
@@ -251,20 +269,23 @@ public class MecanumDriveSystem extends System
         return v2;
     }
 
-    public void driveToPositionInches(double inches, double power, double rampLength) {
+    public void driveToPositionInches(double inches, double power, double rampLength)
+    {
         Ramp ramp = new ExponentialRamp(0, 0.1, motorBackLeft.inchesToTicks(rampLength), power);
 
         setTargetPositionInches(inches);
         setPower(0.1);
 
-        while(anyMotorsBusy()) {
+        while (anyMotorsBusy())
+        {
             int minDistance = getMinimumDistanceFromTarget();
 
             // ramp assumes the distance away from the target is positive,
             // so we make it positive here and account for the direction when
             // the motor power is set.
             double direction = 1.0;
-            if (minDistance < 0) {
+            if (minDistance < 0)
+            {
                 minDistance = -minDistance;
                 direction = -1.0;
             }
@@ -276,11 +297,12 @@ public class MecanumDriveSystem extends System
         setPower(0);
     }
 
-    public void driveToPositionRevolutions(double revs, double power) {
-        motorBackLeft.runOutputGearRevolutions(revs, power);
-        motorBackRight.runOutputGearRevolutions(revs, power);
-        motorFrontRight.runOutputGearRevolutions(revs, power);
-        motorFrontLeft.runOutputGearRevolutions(revs, power);
+    public void driveToPositionRevolutions(double revs, double power)
+    {
+        motorBackLeft.setOutputGearTargetRevolutions(revs);
+        motorBackRight.setOutputGearTargetRevolutions(revs);
+        motorFrontRight.setOutputGearTargetRevolutions(revs);
+        motorFrontLeft.setOutputGearTargetRevolutions(revs);
     }
 
     public void turn(double degrees, double maxPower, LinearOpMode mode)
@@ -319,7 +341,8 @@ public class MecanumDriveSystem extends System
             {
                 mode.sleep(50);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
             }
 
             heading = this.imuSystem.getHeading();
@@ -329,10 +352,10 @@ public class MecanumDriveSystem extends System
 
     public void tankDrive(double leftPower, double rightPower)
     {
-        this.motorFrontLeft.setPower(leftPower);
-        this.motorBackLeft.setPower(leftPower);
-        this.motorFrontRight.setPower(rightPower);
-        this.motorBackRight.setPower(rightPower);
+        this.motorFrontLeft.run(leftPower);
+        this.motorBackLeft.run(leftPower);
+        this.motorFrontRight.run(rightPower);
+        this.motorBackRight.run(rightPower);
     }
 
     private double getTurnPower(Ramp ramp, double targetHeading, double heading)
@@ -345,10 +368,11 @@ public class MecanumDriveSystem extends System
             diff = -diff;
         }
 
-        return sign*ramp.value(diff);
+        return sign * ramp.value(diff);
     }
 
-    private double computeDegreesDiff(double targetHeading, double heading) {
+    private double computeDegreesDiff(double targetHeading, double heading)
+    {
         double diff = targetHeading - heading;
         //TODO: This needs to be commented. Also, might be able to compute using mod.
         if (Math.abs(diff) > 180)
@@ -375,7 +399,8 @@ public class MecanumDriveSystem extends System
         // so we make it positive here and account for the direction when
         // the motor power is set.
         double direction = 1.0;
-        if (minDistance < 0) {
+        if (minDistance < 0)
+        {
             minDistance = -minDistance;
             direction = -1.0;
         }
@@ -457,30 +482,31 @@ public class MecanumDriveSystem extends System
 
     public void setPower(double power)
     {
-        this.motorFrontLeft.setPower(power);
-        this.motorFrontRight.setPower(power);
-        this.motorBackLeft.setPower(power);
-        this.motorBackRight.setPower(power);
+        this.motorFrontLeft.run(power);
+        this.motorFrontRight.run(power);
+        this.motorBackLeft.run(power);
+        this.motorBackRight.run(power);
     }
 
     public void adjustPower(Ramp ramp)
-{
-    // Adjust the motor power as we get closer to the target
-    int minDistance = this.getMinimumDistanceFromTarget();
+    {
+        // Adjust the motor power as we get closer to the target
+        int minDistance = this.getMinimumDistanceFromTarget();
 
-    // ramp assumes the distance away from the target is positive,
-    // so we make it positive here and account for the direction when
-    // the motor power is set.
-    double direction = 1.0;
-    if (minDistance < 0) {
-        minDistance = -minDistance;
-        direction = -1.0;
+        // ramp assumes the distance away from the target is positive,
+        // so we make it positive here and account for the direction when
+        // the motor power is set.
+        double direction = 1.0;
+        if (minDistance < 0)
+        {
+            minDistance = -minDistance;
+            direction = -1.0;
+        }
+
+        double scaledPower = -ramp.value(minDistance);
+
+        setPower(direction * scaledPower);
     }
-
-    double scaledPower = -ramp.value(minDistance);
-
-    setPower(direction * scaledPower);
-}
 
     public int revolutionsToTicks(double revolutions)
     {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ramp;
+package org.firstinspires.ftc.teamcode.ramp;
 
 /*
 The linear ramp maps from the domain to the range at a constant rate.
@@ -21,7 +21,7 @@ public class LinearRamp extends Ramp
         // y = m*x + b
         // y1 = m * x1 + b
         // so, b = y1 - m*x1
-        b = y1 - m*x1;
+        b = y1 - m * x1;
     }
 
     @Override
@@ -44,6 +44,6 @@ public class LinearRamp extends Ramp
         x = (y - b)/m
         */
 
-        return (y - b)/m;
+        return (y - b) / m;
     }
 }

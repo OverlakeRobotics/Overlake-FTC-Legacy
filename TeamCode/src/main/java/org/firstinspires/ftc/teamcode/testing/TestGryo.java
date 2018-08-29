@@ -45,50 +45,55 @@ import java.util.Date;
 /**
  * TeleOp Mode
  * <p>
- *Enables control of the robot via the gamepad
+ * Enables control of the robot via the gamepad
  */
 
-@TeleOp(name="TestGyro")
+@TeleOp(name = "TestGyro")
 @Disabled
-public class TestGryo extends OpMode {
+public class TestGryo extends OpMode
+{
 
-  private String startDate;
-  private ElapsedTime runtime = new ElapsedTime();
-  private GyroSensor gyroSensor;
-  private double lastRotation;
-  private String lastStatus;
+    private String startDate;
+    private ElapsedTime runtime = new ElapsedTime();
+    private GyroSensor gyroSensor;
+    private double lastRotation;
+    private String lastStatus;
 
-  /*
-   * Code to run when the op mode is first enabled goes here
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-   */
-  @Override
-  public void init() {
-    startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-    runtime.reset();
-    gyroSensor= hardwareMap.gyroSensor.get("foo");
-    lastRotation = -1;
-    lastStatus = "";
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    double rotation = gyroSensor.getRotationFraction();
-    String status = gyroSensor.getConnectionInfo();
-    if (status != lastStatus) {
-      telemetry.addData("1 Status", status);
-      lastStatus = status;
+    /*
+     * Code to run when the op mode is first enabled goes here
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+     */
+    @Override
+    public void init()
+    {
+        startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+        runtime.reset();
+        gyroSensor = hardwareMap.gyroSensor.get("foo");
+        lastRotation = -1;
+        lastStatus = "";
     }
 
-    if (rotation != lastRotation) {
-        telemetry.addData("2 Rotation", Double.toString(rotation));
-        lastRotation=rotation;
+    /*
+     * This method will be called repeatedly in a loop
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+     */
+    @Override
+    public void loop()
+    {
+        double rotation = gyroSensor.getRotationFraction();
+        String status = gyroSensor.getConnectionInfo();
+        if (status != lastStatus)
+        {
+            telemetry.addData("1 Status", status);
+            lastStatus = status;
+        }
+
+        if (rotation != lastRotation)
+        {
+            telemetry.addData("2 Rotation", Double.toString(rotation));
+            lastRotation = rotation;
+        }
+
+
     }
-
-
-  }
 }
