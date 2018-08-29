@@ -49,8 +49,8 @@ public class ClawSystemNoMergeConflictPlease extends System
         this.positionTelemetryItem.setValue(motorServo.getPower());
         this.indexTelemetryItem.setValue(motorServo.getCurrentPosition());
 
-        motorServo.loop(position);
-
+        motorServo.setTargetPosition(position);
+        motorServo.loop();
     }
 
     public void managePosition()

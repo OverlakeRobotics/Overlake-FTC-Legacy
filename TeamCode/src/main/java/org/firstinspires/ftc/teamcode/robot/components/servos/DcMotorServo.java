@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.teamcode.timers.IntervalTimer;
 import org.firstinspires.ftc.teamcode.tools.MiniPID;
 import org.firstinspires.ftc.teamcode.config.IConfig;
 import org.firstinspires.ftc.teamcode.ramp.ExponentialRamp;
 import org.firstinspires.ftc.teamcode.ramp.Ramp;
+import org.firstinspires.ftc.teamcode.tools.MiniPIDFactory;
 
 public class DcMotorServo
 {
@@ -17,8 +19,8 @@ public class DcMotorServo
     private static final double ZERO_POWER = 0;
     private static final double MINIMUM_POSITION = 0.1;
     private static final double MOTOR_POWER = 0.5;
-    private static final double PID_OUTPUT_LIMITS = 1.0;
 
+    //TODO: Convert to a scale object that takes in a scale factor (slope) and scale offset (y int)
     private static final double VOLTAGE_SCALE_X_1 = 0.0;
     private static final double VOLTAGE_SCALE_X_2 = 3.3;
     private static final double VOLTAGE_SCALE_Y_1 = 0.0;
@@ -28,6 +30,8 @@ public class DcMotorServo
     private AnalogInput armPotentiometer;
     private MiniPID miniPID;
     private IntervalTimer intervalTimer;
+    private double targetPosition;
+    private Ramp powerAdjustmentRamp;
 
     public DcMotorServo(DcMotor motor, AnalogInput armPotentiometer, IConfig config)
     {
@@ -35,29 +39,12 @@ public class DcMotorServo
         this.armPotentiometer = armPotentiometer;
         this.intervalTimer = new IntervalTimer(TIME_INTERVAL);
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.miniPID = new MiniPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
+        this.miniPID = MiniPIDFactory.getMiniPIDFromConfig(config);
+        powerAdjustmentRamp = new ExponentialRamp(0, 0, 0, 0);
     }
 
-    public void loop(double targetPosition)
-    {
-        if (intervalTimer.hasCurrentIntervalPassed())
-        {
-            intervalTimer.update();
-            this.motor.setPower(getPIDPower(targetPosition));
-        }
-    }
-
-    private double getPIDPower(double targetPosition)
-    {
-        miniPID.setSetpoint(targetPosition);
-        miniPID.setOutputLimits(PID_OUTPUT_LIMITS);
-        return miniPID.getOutput(getCurrentPosition(), targetPosition);
-    }
-
-    public double getCurrentPosition()
-    {
-        return Range.scale(
-                this.armPotentiometer.getVoltage(), 0.0, 3.3, 0.0, 1.0);
+    public void setTargetPosition(double targetPosition) {
+        this.targetPosition = targetPosition;
     }
 
     public double getPower()
@@ -80,16 +67,41 @@ public class DcMotorServo
         this.motor.setPower(ZERO_POWER);
     }
 
-    public double adjustedPower(double currentPos, double targetPos, double maxPower)
+    public void loop()
     {
-        double changeInPosition = targetPos - currentPos;
-        Ramp ramp = new ExponentialRamp(MINIMUM_POSITION, MINIMUM_POWER, targetPos, maxPower);
-        return getPower(ramp, changeInPosition);
+        if (intervalTimer.hasCurrentIntervalPassed())
+        {
+            intervalTimer.update();
+            miniPID.setSetpoint(targetPosition);
+            motor.setPower(miniPID.getOutput(getCurrentPosition(), targetPosition));
+        }
     }
 
-    private double getPower(Ramp ramp, double delta)
+    public double getCurrentPosition()
     {
-        double power = Math.signum(delta) * ramp.value(Math.abs(delta));
+        return Range.scale(
+            armPotentiometer.getVoltage(),
+            VOLTAGE_SCALE_X_1, VOLTAGE_SCALE_X_2,
+            VOLTAGE_SCALE_Y_1, VOLTAGE_SCALE_Y_2
+        );
+    }
+
+    public double getAdjustedPowerFromCurrentPosition(double maxPower)
+    {
+        Ramp ramp = getPowerAdjustmentRamp(maxPower);
+        double distanceToTarget = targetPosition - getCurrentPosition();
+        double power = Math.signum(distanceToTarget) * ramp.value(Math.abs(distanceToTarget));
         return Math.abs(power) <= MINIMUM_POSITION ? ZERO_POWER : power;
+    }
+
+    private Ramp getPowerAdjustmentRamp(double maxPower) {
+        if (shouldUpdateRamp())
+            return new ExponentialRamp(MINIMUM_POSITION, MINIMUM_POWER, targetPosition, maxPower);
+        else
+            return powerAdjustmentRamp;
+    }
+
+    private boolean shouldUpdateRamp() {
+        return powerAdjustmentRamp == null || powerAdjustmentRamp.x2 != targetPosition;
     }
 }

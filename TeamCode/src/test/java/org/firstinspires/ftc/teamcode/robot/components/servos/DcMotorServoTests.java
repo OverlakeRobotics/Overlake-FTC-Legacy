@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.components.servos;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import junit.framework.Assert;
 
 import org.firstinspires.ftc.teamcode.fakes.FakeAnalogInput;
 import org.firstinspires.ftc.teamcode.fakes.FakeConfig;
 import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
-import org.firstinspires.ftc.teamcode.fakes.FakeHardwareMap;
-import org.firstinspires.ftc.teamcode.fakes.FakeTelemetry;
 import org.firstinspires.ftc.teamcode.config.IConfig;
 import org.junit.Test;
 
@@ -53,24 +51,37 @@ public class DcMotorServoTests
     {
         DcMotorServo motorServo = getMotorServo();
         Thread.sleep(10);
-        motorServo.loop(100);
+        motorServo.setTargetPosition(100);
+        motorServo.loop();
         Assert.assertEquals(0.48d, motorServo.getPower());
     }
 
     @Test
-    public void DcMotor_adjustedPower_PowerIsApproximately079()
+    public void DcMotor_getPowerRelativeToPosition_PowerIsApproximately093()
     {
         DcMotorServo motorServo = getMotorServo();
-        double power = motorServo.adjustedPower(15, 100, 1d);
-        Assert.assertEquals(0.79, Math.round(power * 100d) / 100d);
+        motorServo.setTargetPosition(85);
+        double power = motorServo.getAdjustedPowerFromCurrentPosition(1d);
+        Assert.assertEquals(0.93, Math.round(power * 100d) / 100d);
     }
 
     @Test
-    public void DcMotor_adjustedPower_PowerIs0()
+    public void DcMotor_getPowerRelativeToPosition_PowerIs0()
     {
         DcMotorServo motorServo = getMotorServo();
-        double power = motorServo.adjustedPower(1,1, 1d);
+        motorServo.setTargetPosition(4);
+        double power = motorServo.getAdjustedPowerFromCurrentPosition(1d);
         Assert.assertEquals(0d, power);
+    }
+
+    @Test
+    public void DcMotor_getPowerRelativeToPosition_PowerAShouldNotEqualPowerB() {
+        DcMotorServo motorServo = getMotorServo();
+        motorServo.setTargetPosition(50);
+        double powerA = motorServo.getAdjustedPowerFromCurrentPosition(1d);
+        motorServo.setTargetPosition(100);
+        double powerB = motorServo.getAdjustedPowerFromCurrentPosition(1d);
+        Assert.assertTrue(powerA != powerB);
     }
 
     private DcMotorServo getMotorServo()
@@ -91,6 +102,7 @@ public class DcMotorServoTests
         config.addConfigItem("P", 0.005d);
         config.addConfigItem("I", 0.05d);
         config.addConfigItem("D", 0.5d);
+        config.addConfigItem("OutputLimits", 1.0d);
         return config;
     }
 }
