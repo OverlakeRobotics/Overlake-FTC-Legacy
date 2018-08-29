@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware.dcmotors;
 
 
-public enum MotorType {
+public enum MotorType
+{
     TEST(1),
     NEVEREST20_PULSES(960),
     NEVEREST40_PULSES(1120),
@@ -9,11 +10,13 @@ public enum MotorType {
 
     private int pulses;
 
-    MotorType(int pulses) {
+    MotorType(int pulses)
+    {
         this.pulses = pulses;
     }
 
-    public int getPulses() {
+    public int getPulses()
+    {
         return this.pulses;
     }
 }

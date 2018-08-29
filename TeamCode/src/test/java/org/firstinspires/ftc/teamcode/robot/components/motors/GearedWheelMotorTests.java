@@ -9,9 +9,11 @@ import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.junit.Test;
 
-public class GearedWheelMotorTests {
+public class GearedWheelMotorTests
+{
     @Test
-    public void GearedWheelMotor_setOutputWheelTargetInches_TargetPositionIs357() {
+    public void GearedWheelMotor_setOutputWheelTargetInches_TargetPositionIs357()
+    {
         GearChain chain = new GearChain(MotorType.NEVEREST40_PULSES, 3, 6);
         DcMotor dcMotor = new FakeDcMotor();
         GearedWheelMotor motor = new GearedWheelMotor(chain, dcMotor, 2);

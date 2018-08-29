@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ramp;
+package org.firstinspires.ftc.teamcode.ramp;
 
 /*
     The logarithmic ramp increases quickly for low values and slows down as it approaches the higher values.
@@ -40,7 +40,7 @@ public class LogarithmicRamp extends Ramp
     double R;
     double expQ;
 
-    public LogarithmicRamp (double x1, double y1, double x2, double y2)
+    public LogarithmicRamp(double x1, double y1, double x2, double y2)
     {
         super(x1, y1, x2, y2);
 
@@ -48,9 +48,9 @@ public class LogarithmicRamp extends Ramp
         if (x1 == 0.0)
             x1 = Double.MIN_VALUE;
 
-        this.Q = (y2 - y1)/Math.log(x2/x1);
+        this.Q = (y2 - y1) / Math.log(x2 / x1);
         this.expQ = Math.exp(Q);
-        this.R = Math.exp(y1/Q)/x1;
+        this.R = Math.exp(y1 / Q) / x1;
     }
 
     @Override
@@ -58,9 +58,9 @@ public class LogarithmicRamp extends Ramp
     {
         Double result = CheckDomain(x);
         if (result != null)
-            return  result.doubleValue();
+            return result.doubleValue();
 
-        return Q*Math.log(R*x);
+        return Q * Math.log(R * x);
     }
 
     /*
@@ -72,8 +72,8 @@ public class LogarithmicRamp extends Ramp
     {
         Double result = CheckRange(y);
         if (result != null)
-            return  result.doubleValue();
+            return result.doubleValue();
 
-        return Math.exp(y/Q)/R;
+        return Math.exp(y / Q) / R;
     }
 }

@@ -18,8 +18,6 @@ public class GearedMotor implements IGearedMotor {
     public GearedMotor(GearChain chain, DcMotor motor) {
         this.chain = chain;
         this.motor = motor;
-        this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.motor.setPower(0);
     }
 
     public boolean isBusy() {
@@ -51,11 +49,6 @@ public class GearedMotor implements IGearedMotor {
     public void setInputGearTargetRevolutions(double revolutions) {
         int ticks = chain.calculateOutputRevolutionTicks(revolutions);
         setTargetPosition(ticks);
-    }
-
-    public void runMotor(int ticks, double power) {
-        setTargetPosition(ticks);
-        motor.setPower(power);
     }
 
     public void run(double power) {

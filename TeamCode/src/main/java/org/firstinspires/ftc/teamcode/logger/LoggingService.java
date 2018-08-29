@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.util.logger;
+package org.firstinspires.ftc.teamcode.logger;
 
 /**
  * Created by EvanCoulson on 1/5/18.
  */
 
-public enum LoggingService {
+public enum LoggingService
+{
     TELEMETRY,
     FILE,
     LOGCAT,

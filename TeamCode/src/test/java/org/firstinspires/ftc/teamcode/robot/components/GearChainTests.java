@@ -9,20 +9,22 @@ import org.junit.rules.TestName;
 import static org.junit.Assert.*;
 import static org.firstinspires.ftc.teamcode.test.constants.GearChainTestConstants.*;
 
-public class GearChainTests {
-
+public class GearChainTests
+{
     @Rule
     public TestName name = new TestName();
 
     @Test
-    public void GearChain_CalculateGearChainRatioWithOtherGears_Return2() {
+    public void GearChain_CalculateGearChainRatioWithOtherGears_Return2()
+    {
         GearChain chain = new GearChain(MotorType.TEST, GearChainTeeth);
         double ratio = chain.getChainRatio();
         assertTrue(ratio == ExpectedGearChainRatioWithOtherGears);
     }
 
     @Test
-    public void GearChain_CalculateGearChainRatioWithOutAnyOtherGears_Return1() {
+    public void GearChain_CalculateGearChainRatioWithOutAnyOtherGears_Return1()
+    {
         GearChain chain = new GearChain(MotorType.TEST);
         double ratio = chain.getChainRatio();
         assertTrue(ratio == ExpectedGearChainRatioWithOutAnyOtherGears);
@@ -36,17 +38,18 @@ public class GearChainTests {
     }
 
     @Test
-    public void GearChain_CalculateOutputRevolutionTicks_Return50() {
+    public void GearChain_CalculateOutputRevolutionTicks_Return50()
+    {
         GearChain chain = new GearChain(MotorType.TEST, GearChainTeeth);
         int outputRevolutionTicks = chain.calculateOutputRevolutionTicks(25);
         assertTrue(outputRevolutionTicks == ExpectedOutputRevolutionTicks);
     }
 
     @Test
-    public void GearChain_CalculateInputRevolutionTicks_Return50() {
+    public void GearChain_CalculateInputRevolutionTicks_Return50()
+    {
         GearChain chain = new GearChain(MotorType.TEST, GearChainTeeth);
         int inputRevolutionTicks = chain.calculateInputRevolutionTicks(50);
         assertTrue(inputRevolutionTicks == ExpectedInputRevolutionTicks);
     }
-
 }

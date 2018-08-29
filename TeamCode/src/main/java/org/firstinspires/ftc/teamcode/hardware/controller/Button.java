@@ -44,16 +44,22 @@ public class Button
         this.wasPressed = pressed;
 
         if (this.justPressed && this.pressedHandler != null)
-            try {
+            try
+            {
                 this.pressedHandler.invoke();
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
 
         if (this.justReleased && this.releasedHandler != null)
-            try {
+            try
+            {
                 this.releasedHandler.invoke();
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
     }

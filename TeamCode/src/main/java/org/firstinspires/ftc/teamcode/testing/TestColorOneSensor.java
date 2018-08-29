@@ -70,7 +70,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * You can use the X button on either gamepad to turn the LED on and off.
  *
  */
-@TeleOp(name="AdafruitRGBExampleOneSensor", group="Testing")
+@TeleOp(name = "AdafruitRGBExampleOneSensor", group = "Testing")
 @Disabled
 public class TestColorOneSensor extends LinearOpMode
 {
@@ -86,7 +86,8 @@ public class TestColorOneSensor extends LinearOpMode
     static final int LED_CHANNEL = 5;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
 
         // write some device information (connection info, name and type)
         // to the log file.
@@ -116,7 +117,7 @@ public class TestColorOneSensor extends LinearOpMode
         waitForStart();
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
+        float hsvValues[] = {0F, 0F, 0F};
 
         // values is a reference to the hsvValues arrays.
         final float values[] = hsvValues;

@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
  * Created by EvanCoulson on 8/26/18.
  */
 
-public class FakeDcMotor implements DcMotor {
+public class FakeDcMotor implements DcMotor
+{
     private double power;
     private int currentPosition;
     private int targetPosition;
@@ -18,127 +19,152 @@ public class FakeDcMotor implements DcMotor {
     private Direction direction;
     private RunMode runMode;
 
-    public FakeDcMotor() {
+    public FakeDcMotor()
+    {
         direction = Direction.FORWARD;
         runMode = RunMode.RUN_TO_POSITION;
     }
 
     @Override
-    public MotorConfigurationType getMotorType() {
+    public MotorConfigurationType getMotorType()
+    {
         return motorType;
     }
 
     @Override
-    public void setMotorType(MotorConfigurationType motorType) {
+    public void setMotorType(MotorConfigurationType motorType)
+    {
         this.motorType = motorType;
     }
 
     @Override
-    public DcMotorController getController() {
+    public DcMotorController getController()
+    {
         return null;
     }
 
     @Override
-    public int getPortNumber() {
+    public int getPortNumber()
+    {
         return 0;
     }
 
     @Override
-    public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
+    public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior)
+    {
 
     }
 
     @Override
-    public ZeroPowerBehavior getZeroPowerBehavior() {
+    public ZeroPowerBehavior getZeroPowerBehavior()
+    {
         return null;
     }
 
     @Override
-    public void setPowerFloat() {
+    public void setPowerFloat()
+    {
 
     }
 
     @Override
-    public boolean getPowerFloat() {
+    public boolean getPowerFloat()
+    {
         return false;
     }
 
     @Override
-    public void setTargetPosition(int position) {
+    public void setTargetPosition(int position)
+    {
         currentPosition = position;
         this.targetPosition = position;
     }
 
     @Override
-    public int getTargetPosition() {
+    public int getTargetPosition()
+    {
         return targetPosition;
     }
 
     @Override
-    public boolean isBusy() {
+    public boolean isBusy()
+    {
         return false;
     }
 
     @Override
-    public int getCurrentPosition() {
+    public int getCurrentPosition()
+    {
         return currentPosition;
     }
 
     @Override
-    public void setMode(RunMode mode) {
+    public void setMode(RunMode mode)
+    {
         this.runMode = mode;
     }
 
     @Override
-    public RunMode getMode() {
+    public RunMode getMode()
+    {
         return runMode;
     }
 
     @Override
-    public void setDirection(Direction direction) {
+    public void setDirection(Direction direction)
+    {
         this.direction = direction;
     }
 
     @Override
-    public Direction getDirection() {
+    public Direction getDirection()
+    {
         return direction;
     }
 
     @Override
-    public void setPower(double power) {
+    public void setPower(double power)
+    {
         this.power = power;
     }
 
     @Override
-    public double getPower() {
+    public double getPower()
+    {
         return power;
     }
 
     @Override
-    public Manufacturer getManufacturer() {
+    public Manufacturer getManufacturer()
+    {
         return null;
     }
 
     @Override
-    public String getDeviceName() {
+    public String getDeviceName()
+    {
         return null;
     }
 
     @Override
-    public String getConnectionInfo() {
+    public String getConnectionInfo()
+    {
         return null;
     }
 
     @Override
-    public int getVersion() {
+    public int getVersion()
+    {
         return 0;
     }
 
     @Override
-    public void resetDeviceConfigurationForOpMode() {
+    public void resetDeviceConfigurationForOpMode()
+    {
     }
 
     @Override
-    public void close() {
+    public void close()
+    {
     }
 }

@@ -9,13 +9,14 @@ import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
 import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.config.ConfigParser;
 
 /**
  * Created by EvanCoulson on 10/11/17.
  */
 
-public abstract class BaseOpMode extends LinearOpMode {
+public abstract class BaseOpMode extends LinearOpMode
+{
     public ConfigParser config;
     public MecanumDriveSystem driveSystem;
     public IMUSystem imuSystem;
@@ -25,12 +26,14 @@ public abstract class BaseOpMode extends LinearOpMode {
     public ClawSystemNoMergeConflictPlease claw;
     public ParallelLiftSystem parallelLiftSystem;
 
-    public BaseOpMode(String opModeName) {
+    public BaseOpMode(String opModeName)
+    {
         config = new ConfigParser(opModeName + ".omc");
         telemetry.setMsTransmissionInterval(200);
     }
 
-    protected void initSystems() {
+    protected void initSystems()
+    {
         this.driveSystem = new MecanumDriveSystem(this);
         this.imuSystem = new IMUSystem(this);
         this.eye = new Eye(this);
