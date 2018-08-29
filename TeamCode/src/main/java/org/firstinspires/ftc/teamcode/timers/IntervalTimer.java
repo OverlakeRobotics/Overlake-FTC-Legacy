@@ -21,7 +21,6 @@ public class IntervalTimer implements IClock
         return elapsedTime.nanoseconds();
     }
 
-    @Override
     public long getPreviousTime()
     {
         return previousTime;
