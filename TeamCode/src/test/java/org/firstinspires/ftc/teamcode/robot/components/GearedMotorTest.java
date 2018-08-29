@@ -69,7 +69,7 @@ public class GearedMotorTest {
         motor.runOutputGearRevolutions(2, 1);
         assertEquals(4, motor.getCurrentPosition());
     }
-    
+
     @Test
     public void GearedMotor_runInputGearRevolutions_Returns100() {
         GearedMotor motor = getMotor(1);
