@@ -17,7 +17,7 @@ public class DcMotorServo
     private static final int TIME_INTERVAL = 10000;
     private static final double MINIMUM_POWER = 0.2;
     private static final double ZERO_POWER = 0;
-    private static final double MINIMUM_POSITION = 0.1;
+    private static final double MINIMUM_POSITION = 0;
     private static final double MOTOR_POWER = 0.5;
 
     //TODO: Convert to a scale object that takes in a scale factor (slope) and scale offset (y int)

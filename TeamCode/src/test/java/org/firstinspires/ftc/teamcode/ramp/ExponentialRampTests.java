@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.ramp;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Created by EvanCoulson on 8/29/18.
  */
 
-public class ExponentialRampTests
+public class    ExponentialRampTests
 {
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
     @Test
     public void Value_XIs5_ReturnsRampedValue()
     {
@@ -33,6 +38,7 @@ public class ExponentialRampTests
     @Test
     public void Inverse_Yis50_ReturnsRampedValue() {
         ExponentialRamp ramp = new ExponentialRamp(1,1,3,10);
-        Assert.assertEquals(3, ramp.inverse(50), 0.00000001);
+        exceptionRule.expect(IllegalArgumentException.class);
+        ramp.inverse(50);
     }
 }

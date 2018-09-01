@@ -35,7 +35,6 @@ package org.firstinspires.ftc.teamcode.ramp;
 */
 public class ExponentialRamp extends Ramp
 {
-    // Computed constants for exponential and logarithmic ramps
     double logJ;
     double J;
     double K;
@@ -43,9 +42,6 @@ public class ExponentialRamp extends Ramp
     public ExponentialRamp(double x1, double y1, double x2, double y2)
     {
         super(x1, y1, x2, y2);
-
-        // Compute the constants for the exponential and logarithmic ramps
-
         K = Math.log(y1 / y2) / (x1 - x2);
         J = y1 / Math.exp(K * x1);
         logJ = Math.log(J);
@@ -54,20 +50,16 @@ public class ExponentialRamp extends Ramp
     @Override
     public double value(double x)
     {
-        Double result = CheckDomain(x);
-        if (result != null)
-            return result.doubleValue();
-
+        if (!IsInDomain(x))
+            throw new IllegalArgumentException(x + " is not within the domain of this ramp");
         return J * Math.exp(K * x);
     }
 
     @Override
     public double inverse(double y)
     {
-        Double result = CheckRange(y);
-        if (result != null)
-            return result.doubleValue();
-
+        if (!IsInRange(y))
+            throw new IllegalArgumentException(y + " is not within the range of this ramp");
         return (Math.log(y) - logJ) / K;
     }
 }

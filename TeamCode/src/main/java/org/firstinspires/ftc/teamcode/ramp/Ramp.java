@@ -23,44 +23,28 @@ abstract public class Ramp
 
     abstract public double inverse(double y);
 
-    public Double CheckDomain(double x)
+    public boolean IsInDomain(double x)
     {
         if (this.x1 < this.x2)
         {
-            if (x < this.x1)
-                return new Double(this.y1);
-            if (x > this.x2)
-                return new Double(this.y2);
+            return x >= this.x1 && x <= this.x2;
         }
         else
         {
-            if (x < this.x2)
-                return new Double(this.y2);
-            if (x > this.x1)
-                return new Double(this.y1);
+            return x <= this.x1 && x >= this.x2;
         }
-
-        return null;
     }
 
-    public Double CheckRange(double y)
+    public boolean IsInRange(double y)
     {
         if (this.y1 < this.y2)
         {
-            if (y < this.y1)
-                return new Double(this.x1);
-            if (y > this.y2)
-                return new Double(this.x2);
+            return y >= this.y1 && y <= this.y2;
         }
         else
         {
-            if (y < this.y2)
-                return new Double(this.x2);
-            if (y > this.y1)
-                return new Double(this.x1);
+            return y <= this.y1 && y >= this.y2;
         }
-
-        return null;
     }
 }
 

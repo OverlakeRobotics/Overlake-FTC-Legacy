@@ -43,11 +43,7 @@ public class LogarithmicRamp extends Ramp
     public LogarithmicRamp(double x1, double y1, double x2, double y2)
     {
         super(x1, y1, x2, y2);
-
-        // x1 can't be zero... but really small is fine.
-        if (x1 == 0.0)
-            x1 = Double.MIN_VALUE;
-
+        x1 = x1 == 0.0 ? Double.MIN_VALUE : x1;
         this.Q = (y2 - y1) / Math.log(x2 / x1);
         this.expQ = Math.exp(Q);
         this.R = Math.exp(y1 / Q) / x1;
@@ -56,24 +52,16 @@ public class LogarithmicRamp extends Ramp
     @Override
     public double value(double x)
     {
-        Double result = CheckDomain(x);
-        if (result != null)
-            return result.doubleValue();
-
+        if (!IsInDomain(x))
+            throw new IllegalArgumentException(x + " is not within the domain of this ramp");
         return Q * Math.log(R * x);
     }
 
-    /*
-    The exponential ramp starts slowly at the low end of the range
-    and accelerates to catch up at the high end of the range.
-     */
     @Override
     public double inverse(double y)
     {
-        Double result = CheckRange(y);
-        if (result != null)
-            return result.doubleValue();
-
+        if (!IsInRange(y))
+            throw new IllegalArgumentException(y + " is not within the range of this ramp");
         return Math.exp(y / Q) / R;
     }
 }

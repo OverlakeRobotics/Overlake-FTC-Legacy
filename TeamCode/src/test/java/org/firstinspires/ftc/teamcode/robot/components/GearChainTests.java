@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.robot.components;
 
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
-import org.firstinspires.ftc.teamcode.test.constants.GearChainTestConstants;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 import static org.junit.Assert.*;
-import static org.firstinspires.ftc.teamcode.test.constants.GearChainTestConstants.*;
 
 public class GearChainTests
 {
-    @Rule
-    public TestName name = new TestName();
+    private static final double[] GearChainTeeth = new double[] { 25, 50 };
+    private static final int ExpectedGearChainRatioWithOtherGears = 2;
+    private static final int ExpectedGearChainRatioWithOutAnyOtherGears = 1;
+    private static final int ExpectedOutputTicks = 200;
+    private static final int ExpectedOutputRevolutionTicks = 50;
+    private static final int ExpectedInputRevolutionTicks = 50;
 
     @Test
     public void GearChain_CalculateGearChainRatioWithOtherGears_Return2()
