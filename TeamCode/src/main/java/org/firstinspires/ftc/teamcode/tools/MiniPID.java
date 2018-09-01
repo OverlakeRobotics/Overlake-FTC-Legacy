@@ -106,7 +106,7 @@ public class MiniPID
      * Typically tuned second for "Position" based modes, and third for "Rate" or continuous based modes. <br>
      * Affects output through <b>output+=previous_errors*Igain ;previous_errors+=current_error</b>
      *
-     * @param i New gain value for the Integral term
+     * @param i New gain scale for the Integral term
      * @see {@link #setMaxIOutput(double) setMaxIOutput} for how to restrict
      */
     public void setI(double i)
@@ -134,13 +134,13 @@ public class MiniPID
      * <li> Adds a "startup kick" and speeds up system response during setpoint changes
      * <li> Adds "drag" and slows the system when moving toward the target
      * </list>
-     * A small D value can be useful for both improving response times, and preventing overshoot.
-     * However, in many systems a large D value will cause significant instability, particularly
+     * A small D scale can be useful for both improving response times, and preventing overshoot.
+     * However, in many systems a large D scale will cause significant instability, particularly
      * for large setpoint changes.
      * <br>
      * Affects output through <b>output += -D*(current_input_value - last_input_value)</b>
      *
-     * @param d New gain value for the Derivative term
+     * @param d New gain scale for the Derivative term
      */
     public void setD(double d)
     {
@@ -151,7 +151,7 @@ public class MiniPID
     /**
      * Configure the FeedForward parameter. <br>
      * This is excellent for velocity, rate, and other  continuous control modes where you can
-     * expect a rough output value based solely on the setpoint.<br>
+     * expect a rough output scale based solely on the setpoint.<br>
      * Should not be used in "position" based control modes.<br>
      * Affects output according to <b>output+=F*Setpoint</b>. Note, that a F-only system is actually open loop.
      *
@@ -202,10 +202,10 @@ public class MiniPID
     }
 
     /**
-     * Set the maximum output value contributed by the I component of the system
+     * Set the maximum output scale contributed by the I component of the system
      * This can be used to prevent large windup issues and make tuning simpler
      *
-     * @param maximum. Units are the same as the expected output value
+     * @param maximum. Units are the same as the expected output scale
      */
     public void setMaxIOutput(double maximum)
     {
@@ -236,8 +236,8 @@ public class MiniPID
      * When two inputs specified, output range is configured to
      * <b>[minimum, maximum]</b>
      *
-     * @param minimum possible output value
-     * @param maximum possible output value
+     * @param minimum possible output scale
+     * @param maximum possible output scale
      */
     public void setOutputLimits(double minimum, double maximum)
     {
@@ -280,11 +280,11 @@ public class MiniPID
     }
 
     /**
-     * Calculate the output value for the current PID cycle.<br>
+     * Calculate the output scale for the current PID cycle.<br>
      *
-     * @param actual   The monitored value, typically as a sensor input.
-     * @param setpoint The target value for the system
-     * @return calculated output value for driving the system
+     * @param actual   The monitored scale, typically as a sensor input.
+     * @param setpoint The target scale for the system
+     * @return calculated output scale for driving the system
      */
     public double getOutput(double actual, double setpoint)
     {
@@ -388,12 +388,12 @@ public class MiniPID
     }
 
     /**
-     * Calculate the output value for the current PID cycle.<br>
-     * In no-parameter mode, this uses the last sensor value,
-     * and last setpoint value. <br>
+     * Calculate the output scale for the current PID cycle.<br>
+     * In no-parameter mode, this uses the last sensor scale,
+     * and last setpoint scale. <br>
      * Not typically useful, and use of parameter modes is suggested. <br>
      *
-     * @return calculated output value for driving the system
+     * @return calculated output scale for driving the system
      */
     public double getOutput()
     {
@@ -401,12 +401,12 @@ public class MiniPID
     }
 
     /**
-     * Calculate the output value for the current PID cycle.<br>
+     * Calculate the output scale for the current PID cycle.<br>
      * In one parameter mode, the last configured setpoint will be used.<br>
      *
-     * @param actual   The monitored value, typically as a sensor input.
-     * @param setpoint The target value for the system
-     * @return calculated output value for driving the system
+     * @param actual   The monitored scale, typically as a sensor input.
+     * @param setpoint The target scale for the system
+     * @return calculated output scale for driving the system
      * @see MiniPID#setSetpoint()
      */
     public double getOutput(double actual)
@@ -457,9 +457,9 @@ public class MiniPID
 
     /**
      * Set a filter on the output to reduce sharp oscillations. <br>
-     * 0.1 is likely a sane starting value. Larger values use historical data
+     * 0.1 is likely a sane starting scale. Larger values use historical data
      * more heavily, with low values weigh newer data. 0 will disable, filtering, and use
-     * only the most recent value. <br>
+     * only the most recent scale. <br>
      * Increasing the filter strength will P and D oscillations, but force larger I
      * values and increase I term overshoot.<br>
      * Uses an exponential wieghted rolling sum filter, according to a simple <br>
@@ -480,11 +480,11 @@ public class MiniPID
     //**************************************
 
     /**
-     * Forces a value into a specific range
+     * Forces a scale into a specific range
      *
-     * @param value input value
-     * @param min   maximum returned value
-     * @param max   minimum value in range
+     * @param value input scale
+     * @param min   maximum returned scale
+     * @param max   minimum scale in range
      * @return Value if it's within provided range, min or max otherwise
      */
     private double constrain(double value, double min, double max)
@@ -501,12 +501,12 @@ public class MiniPID
     }
 
     /**
-     * Test if the value is within the min and max, inclusive
+     * Test if the scale is within the min and max, inclusive
      *
      * @param value to test
-     * @param min   Minimum value of range
-     * @param max   Maximum value of range
-     * @return true if value is within range, false otherwise
+     * @param min   Minimum scale of range
+     * @param max   Maximum scale of range
+     * @return true if scale is within range, false otherwise
      */
     private boolean bounded(double value, double min, double max)
     {
@@ -519,7 +519,7 @@ public class MiniPID
 
     /**
      * To operate correctly, all PID parameters require the same sign
-     * This should align with the {@literal}reversed value
+     * This should align with the {@literal}reversed scale
      */
     private void checkSigns()
     {

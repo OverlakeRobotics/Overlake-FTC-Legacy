@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.ramp.*;
+import org.firstinspires.ftc.teamcode.scale.*;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 /**
@@ -60,8 +60,8 @@ public abstract class VuforiaBaseOpMode extends BaseOpMode
 
     public void driveToTarget(int targetNum, double minPower, double maxPower)
     {
-        double minDistance = 10.0; //TODO: Find good value.
-        double maxDistance = 100.0; //TODO: Find good value.
+        double minDistance = 10.0; //TODO: Find good scale.
+        double maxDistance = 100.0; //TODO: Find good scale.
 
         VuforiaTrackableDefaultListener target = (VuforiaTrackableDefaultListener) beacons.get(targetNum).getListener();
 
@@ -69,7 +69,10 @@ public abstract class VuforiaBaseOpMode extends BaseOpMode
             We want to ramp the speed (power) down as we get closer to the target. Between maxDistance and minDistance
             power drops exponentially from maxPower to minPower.
         */
-        Ramp ramp = new ExponentialRamp(minDistance, minPower, maxDistance, maxPower);
+        Ramp ramp = new ExponentialRamp(
+            new Point(minDistance, minPower),
+            new Point(maxDistance, maxPower)
+        );
 
         double distanceToTarget = Double.MAX_VALUE;
         double angleToTarget;
@@ -90,7 +93,7 @@ public abstract class VuforiaBaseOpMode extends BaseOpMode
                 degreesToTurnToTarget = Math.toDegrees(angleToTarget);
                 distanceToTarget = Math.sqrt(z * z + x * x);  // Pythagoras calc of hypotenuse
 
-                double power = ramp.value(distanceToTarget);
+                double power = ramp.scaleX(distanceToTarget);
 
                 telemetry.addData("Tracking", "Target found.");
                 telemetry.addData("Translation", String.format("(%.1f, %.1f, %.1f)", x, y, z));

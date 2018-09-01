@@ -101,7 +101,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     }
 
     /**
-     * @param signature is a value between 1 and 7 corresponding to the signature trained into the PixyCam.
+     * @param signature is a scale between 1 and 7 corresponding to the signature trained into the PixyCam.
      * @return a Block object containing details about the location of the largest detected block for the specified signature.
      */
     public Block GetBiggestBlock(int signature)

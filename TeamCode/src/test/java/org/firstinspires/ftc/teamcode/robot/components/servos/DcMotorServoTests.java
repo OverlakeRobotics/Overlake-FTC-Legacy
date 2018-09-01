@@ -74,6 +74,16 @@ public class DcMotorServoTests
     }
 
     @Test
+    public void DcMotor_getPowerRelativeToPosition_PowerAShouldEqualPowerB() {
+        DcMotorServo motorServo = getMotorServo();
+        motorServo.setTargetPosition(50);
+        double powerA = motorServo.getAdjustedPowerFromCurrentPosition(1d);
+        motorServo.setTargetPosition(50);
+        double powerB = motorServo.getAdjustedPowerFromCurrentPosition(1d);
+        Assert.assertTrue(powerA == powerB);
+    }
+
+    @Test
     public void DcMotor_getPowerRelativeToPosition_PowerAShouldNotEqualPowerB() {
         DcMotorServo motorServo = getMotorServo();
         motorServo.setTargetPosition(50);

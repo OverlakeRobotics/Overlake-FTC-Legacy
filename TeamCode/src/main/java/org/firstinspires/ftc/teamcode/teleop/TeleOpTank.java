@@ -92,7 +92,7 @@ public class TeleOpTank extends OpMode
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
 
-        // scale the joystick value to make it easier to control
+        // scale the joystick scale to make it easier to control
         // the robot more precisely at slower speeds.
         right = (float) scaleInput(right);
         left = (float) scaleInput(left);
@@ -106,7 +106,7 @@ public class TeleOpTank extends OpMode
         /*
          * Send telemetry data back to driver station. Note that if we are using
          * a legacy NXT-compatible motor controller, then the getPower() method
-         * will return a null value. The legacy NXT-compatible motor controllers
+         * will return a null scale. The legacy NXT-compatible motor controllers
          * are currently write only.
          */
         telemetry.addData("Text", "*** Robot Data***");
@@ -127,7 +127,7 @@ public class TeleOpTank extends OpMode
 
     /*
      * This method scales the joystick input so for low joystick values, the
-     * scaled value is less than linear.  This is to make it easier to drive
+     * scaled scale is less than linear.  This is to make it easier to drive
      * the robot more precisely at slower speeds.
      */
     double scaleInput(double dVal)

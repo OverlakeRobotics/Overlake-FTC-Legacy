@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ramp;
+package org.firstinspires.ftc.teamcode.scale;
 
 /*
     The logarithmic ramp increases quickly for low values and slows down as it approaches the higher values.
@@ -36,32 +36,29 @@ package org.firstinspires.ftc.teamcode.ramp;
 
 public class LogarithmicRamp extends Ramp
 {
-    double Q;
-    double R;
-    double expQ;
+    private double Q;
+    private double R;
 
-    public LogarithmicRamp(double x1, double y1, double x2, double y2)
+    public LogarithmicRamp(Point point1, Point point2)
     {
-        super(x1, y1, x2, y2);
-        x1 = x1 == 0.0 ? Double.MIN_VALUE : x1;
-        this.Q = (y2 - y1) / Math.log(x2 / x1);
-        this.expQ = Math.exp(Q);
-        this.R = Math.exp(y1 / Q) / x1;
+        super(point1, point2);
+        if (point1.getX() == 0 || point2.getX() == 0) {
+            throw new IllegalArgumentException("Logarithmic scales can start at x=0");
+        }
+
+        Q = (point2.getY() - point1.getY()) / Math.log(point2.getX() / point1.getX());
+        R = Math.exp(point1.getY() / Q) / point1.getX();
     }
 
     @Override
-    public double value(double x)
+    protected double scale(double x)
     {
-        if (!IsInDomain(x))
-            throw new IllegalArgumentException(x + " is not within the domain of this ramp");
         return Q * Math.log(R * x);
     }
 
     @Override
-    public double inverse(double y)
+    protected double inverse(double y)
     {
-        if (!IsInRange(y))
-            throw new IllegalArgumentException(y + " is not within the range of this ramp");
         return Math.exp(y / Q) / R;
     }
 }

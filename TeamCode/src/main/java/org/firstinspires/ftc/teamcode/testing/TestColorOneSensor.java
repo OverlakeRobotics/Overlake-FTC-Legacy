@@ -116,7 +116,7 @@ public class TestColorOneSensor extends LinearOpMode
         // wait for the start button to be pressed.
         waitForStart();
 
-        // hsvValues is an array that will hold the hue, saturation, and value information.
+        // hsvValues is an array that will hold the hue, saturation, and scale information.
         float hsvValues[] = {0F, 0F, 0F};
 
         // values is a reference to the hsvValues arrays.
@@ -140,7 +140,7 @@ public class TestColorOneSensor extends LinearOpMode
             this.hue = hsvValues[0];
 
             // change the background color to match the color detected by the RGB sensor.
-            // pass a reference to the hue, saturation, and value array as an argument
+            // pass a reference to the hue, saturation, and scale array as an argument
             // to the HSVToColor method.
       /*
         relativeLayout.post(new Runnable() {

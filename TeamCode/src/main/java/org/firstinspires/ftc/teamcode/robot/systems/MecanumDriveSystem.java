@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.firstinspires.ftc.teamcode.robot.components.motors.GearedWheelMotor;
 import org.firstinspires.ftc.teamcode.logger.LoggingService;
-import org.firstinspires.ftc.teamcode.ramp.*;
+import org.firstinspires.ftc.teamcode.scale.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,10 +74,10 @@ public class MecanumDriveSystem extends System
     }
 
     private static final double ticksPerRotation = 1120;
-    private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual value for this
-    private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual value for this
+    private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual scale for this
+    private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual scale for this
     private static final double gearRatio = wheelGearSize / motorGearSize;
-    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual value for this
+    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual scale for this
     private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
     public void setDirection(DcMotorSimple.Direction direction)
@@ -271,7 +271,7 @@ public class MecanumDriveSystem extends System
 
     public void driveToPositionInches(double inches, double power, double rampLength)
     {
-        Ramp ramp = new ExponentialRamp(0, 0.1, motorBackLeft.inchesToTicks(rampLength), power);
+        Ramp ramp = new ExponentialRamp(new Point(0, 0.1), new Point(motorBackLeft.inchesToTicks(rampLength), power));
 
         setTargetPositionInches(inches);
         setPower(0.1);
@@ -290,7 +290,7 @@ public class MecanumDriveSystem extends System
                 direction = -1.0;
             }
 
-            double scaledPower = ramp.value(minDistance);
+            double scaledPower = ramp.scaleX(minDistance);
 
             setPower(direction * scaledPower);
         }
@@ -325,7 +325,7 @@ public class MecanumDriveSystem extends System
 
         // Between 130 and 2 degrees away from the target
         // we want to slow down from maxPower to 0.1
-        ExponentialRamp ramp = new ExponentialRamp(2.0, 0.1, 130.0, maxPower);
+        ExponentialRamp ramp = new ExponentialRamp(new Point(2.0, 0.1), new Point(130.0, maxPower));
 
         while (!mode.isStopRequested() && Math.abs(computeDegreesDiff(targetHeading, heading)) > 1)
         {
@@ -368,7 +368,7 @@ public class MecanumDriveSystem extends System
             diff = -diff;
         }
 
-        return sign * ramp.value(diff);
+        return sign * ramp.scaleX(diff);
     }
 
     private double computeDegreesDiff(double targetHeading, double heading)
@@ -405,7 +405,7 @@ public class MecanumDriveSystem extends System
             direction = -1.0;
         }
 
-        double scaledPower = ramp.value(minDistance);
+        double scaledPower = ramp.scaleX(minDistance);
 
         setPower(direction * scaledPower);
     }
@@ -423,8 +423,10 @@ public class MecanumDriveSystem extends System
         //    will be set to maxPower, but when it gets within 1.0 revolutions, the power
         //    will be ramped down to minPower
         //
-        Ramp ramp = new ExponentialRamp(revolutionsToTicks(0.01), minPower,
-                revolutionsToTicks(1.0), maxPower);
+        Ramp ramp = new ExponentialRamp(
+            new Point(revolutionsToTicks(0.01), minPower),
+            new Point(revolutionsToTicks(1.0), maxPower)
+        );
 
         // Wait until they are done
         setPower(maxPower);
@@ -458,8 +460,10 @@ public class MecanumDriveSystem extends System
         //    will be set to maxPower, but when it gets within 1.0 revolutions, the power
         //    will be ramped down to minPower
         //
-        Ramp ramp = new ExponentialRamp(revolutionsToTicks(0.01), minPower,
-                revolutionsToTicks(1.0), maxPower);
+        Ramp ramp = new ExponentialRamp(
+            new Point(revolutionsToTicks(0.01), minPower),
+            new Point(revolutionsToTicks(1.0), maxPower)
+        );
 
         // Wait until they are done
         setPower(-maxPower);
@@ -503,7 +507,7 @@ public class MecanumDriveSystem extends System
             direction = -1.0;
         }
 
-        double scaledPower = -ramp.value(minDistance);
+        double scaledPower = -ramp.scaleX(minDistance);
 
         setPower(direction * scaledPower);
     }
