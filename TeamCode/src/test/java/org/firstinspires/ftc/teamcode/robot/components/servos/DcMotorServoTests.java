@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.robot.components.servos;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import junit.framework.Assert;
-
 import org.firstinspires.ftc.teamcode.fakes.FakeAnalogInput;
 import org.firstinspires.ftc.teamcode.fakes.FakeConfig;
 import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
 import org.firstinspires.ftc.teamcode.config.IConfig;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DcMotorServoTests
@@ -19,7 +18,7 @@ public class DcMotorServoTests
     {
         DcMotorServo motorServo = getMotorServo();
         double position = motorServo.getCurrentPosition();
-        Assert.assertEquals(4d, position);
+        Assert.assertEquals(4d, position, 0.000000001);
     }
 
     @Test
@@ -27,7 +26,7 @@ public class DcMotorServoTests
     {
         DcMotorServo motorServo = getMotorServo();
         motorServo.stop();
-        Assert.assertEquals(0d, motorServo.getPower());
+        Assert.assertEquals(0d, motorServo.getPower(), 0.000000001);
     }
 
     @Test
@@ -35,7 +34,7 @@ public class DcMotorServoTests
     {
         DcMotorServo motorServo = getMotorServo();
         motorServo.runMotor();
-        Assert.assertEquals(0.5d, motorServo.getPower());
+        Assert.assertEquals(0.5d, motorServo.getPower(), 0.000000001);
     }
 
     @Test
@@ -43,7 +42,7 @@ public class DcMotorServoTests
     {
         DcMotorServo motorServo = getMotorServo();
         motorServo.runMotorBack();
-        Assert.assertEquals(-0.2d, motorServo.getPower());
+        Assert.assertEquals(-0.2d, motorServo.getPower(), 0.000000001);
     }
 
     @Test
@@ -53,7 +52,7 @@ public class DcMotorServoTests
         Thread.sleep(10);
         motorServo.setTargetPosition(100);
         motorServo.loop();
-        Assert.assertEquals(0.48d, motorServo.getPower());
+        Assert.assertEquals(0.48d, motorServo.getPower(), 0.000000001);
     }
 
     @Test
@@ -62,7 +61,7 @@ public class DcMotorServoTests
         DcMotorServo motorServo = getMotorServo();
         motorServo.setTargetPosition(85);
         double power = motorServo.getAdjustedPowerFromCurrentPosition(1d);
-        Assert.assertEquals(0.93, Math.round(power * 100d) / 100d);
+        Assert.assertEquals(0.93, power, 0.01);
     }
 
     @Test
@@ -71,7 +70,7 @@ public class DcMotorServoTests
         DcMotorServo motorServo = getMotorServo();
         motorServo.setTargetPosition(4);
         double power = motorServo.getAdjustedPowerFromCurrentPosition(1d);
-        Assert.assertEquals(0d, power);
+        Assert.assertEquals(0d, power, 0.000000001);
     }
 
     @Test
