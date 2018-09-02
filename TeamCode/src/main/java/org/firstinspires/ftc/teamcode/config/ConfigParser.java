@@ -46,7 +46,7 @@ public class ConfigParser implements IConfig
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("CONFIG FILE " + filename);
+            throw new IllegalArgumentException("Missing config file " + filename);
         }
     }
 
@@ -122,7 +122,7 @@ public class ConfigParser implements IConfig
             }
             else
             {
-                throw new IllegalStateException("Trying to get key with wrong tpe of: " + type + ", should be: " + configData.get(key)[0]);
+                throw new IllegalStateException("Trying to get key with wrong type of: " + type + ", should be: " + configData.get(key)[0]);
             }
         }
         else

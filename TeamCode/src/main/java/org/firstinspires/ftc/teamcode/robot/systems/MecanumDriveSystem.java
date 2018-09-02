@@ -19,8 +19,15 @@ import java.util.List;
 
 public class MecanumDriveSystem extends System
 {
-    private final float SCALE_FACTOR = 0.62f;
+    private final IScale JOYSTICK_SCALE = new LinearScale(0.62, 0);
     private final double WHEEL_DIAMETER_INCHES = 4.0;
+
+    private final double ticksPerRotation = 1120;
+    private final double motorGearSize = 32; //TODO: This is a placeholder, use actual scale for this
+    private final double wheelGearSize = 16; //TODO: This is a placeholder, use actual scale for this
+    private final double gearRatio = wheelGearSize / motorGearSize;
+    private final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual scale for this
+    private final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
     public IMUSystem imuSystem;
 
@@ -59,7 +66,6 @@ public class MecanumDriveSystem extends System
 
         // Set PID coeffiecents
         setAllMotorsPID(config.getDouble("P"), config.getDouble("I"), config.getDouble("D"));
-        this.initialHeading = Math.toRadians(this.imuSystem.getHeading());
 
         powerItem = telemetry.addData("power", 0);
         distanceItem = telemetry.addData("distance", 0);
@@ -72,13 +78,6 @@ public class MecanumDriveSystem extends System
     {
         return (int) Math.round(inches * this.ticksPerInch);
     }
-
-    private static final double ticksPerRotation = 1120;
-    private static final double motorGearSize = 32; //TODO: This is a placeholder, use actual scale for this
-    private static final double wheelGearSize = 16; //TODO: This is a placeholder, use actual scale for this
-    private static final double gearRatio = wheelGearSize / motorGearSize;
-    private static final double wheelDiameterInches = 4.0; //TODO: This is a placeholder, use actual scale for this
-    private static final double ticksPerInch = (ticksPerRotation * gearRatio) / (wheelDiameterInches * Math.PI);
 
     public void setDirection(DcMotorSimple.Direction direction)
     {
@@ -111,7 +110,6 @@ public class MecanumDriveSystem extends System
 
     public void setRunMode(DcMotor.RunMode runMode)
     {
-        logger.log(String.format("Run Mode: %s", runMode));
         motorFrontLeft.setRunMode(runMode);
         motorFrontRight.setRunMode(runMode);
         motorBackLeft.setRunMode(runMode);
@@ -139,27 +137,11 @@ public class MecanumDriveSystem extends System
         this.motorBackLeft.run(Range.clip(backLeftPower + leftX, -1, 1));
     }
 
-    public void driveCircle(float power)
+    private float scaleJoystickValue(float joystickValue)
     {
-        float lx = power;
-        float rx = 0.33f * lx;
-
-        mecanumDrive(rx, 0f, lx, 0f, false);
-    }
-
-    private void clampPowers(List<Double> powers)
-    {
-        double minPower = Collections.min(powers);
-        double maxPower = Collections.max(powers);
-        double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
-
-        if (maxMag > 1.0)
-        {
-            for (int i = 0; i < powers.size(); i++)
-            {
-                powers.set(i, powers.get(i) / maxMag);
-            }
-        }
+        return joystickValue > 0
+                ? (float)JOYSTICK_SCALE.scaleX(joystickValue * joystickValue)
+                : (float)-JOYSTICK_SCALE.scaleX(joystickValue * joystickValue);
     }
 
     public void driveGodMode(float rightX, float rightY, float leftX, float leftY)
@@ -194,6 +176,21 @@ public class MecanumDriveSystem extends System
         motorFrontRight.run(powers.get(1));
         motorBackLeft.run(powers.get(2));
         motorBackRight.run(powers.get(3));
+    }
+
+    private void clampPowers(List<Double> powers)
+    {
+        double minPower = Collections.min(powers);
+        double maxPower = Collections.max(powers);
+        double maxMag = Math.max(Math.abs(minPower), Math.abs(maxPower));
+
+        if (maxMag > 1.0)
+        {
+            for (int i = 0; i < powers.size(); i++)
+            {
+                powers.set(i, powers.get(i) / maxMag);
+            }
+        }
     }
 
     public void resetInitialHeading()
@@ -381,14 +378,6 @@ public class MecanumDriveSystem extends System
         }
         return diff;
     }
-
-    float scaleJoystickValue(float joystickValue)
-    {
-        return joystickValue > 0
-                ? ((joystickValue * joystickValue) * SCALE_FACTOR)
-                : (-(joystickValue * joystickValue) * SCALE_FACTOR);
-    }
-
 
     public void adjustPowerBackwordz(Ramp ramp)
     {
