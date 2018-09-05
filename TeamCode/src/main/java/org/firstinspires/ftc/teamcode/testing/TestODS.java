@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 
-@TeleOp(name="TestODS")
+@TeleOp(name = "TestODS")
 @Disabled
 public class TestODS extends LinearOpMode
 {
@@ -55,7 +55,8 @@ public class TestODS extends LinearOpMode
     double reflectedLight;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
 
         // write some device information (connection info, name and type)
         // to the log file.
@@ -96,6 +97,6 @@ public class TestODS extends LinearOpMode
                     {
                         return reflectedLight;
                     }
-                }) ;
+                });
     }
 }

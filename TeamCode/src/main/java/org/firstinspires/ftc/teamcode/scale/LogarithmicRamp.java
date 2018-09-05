@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ramp;
+package org.firstinspires.ftc.teamcode.scale;
 
 /*
     The logarithmic ramp increases quickly for low values and slows down as it approaches the higher values.
@@ -36,44 +36,29 @@ package org.firstinspires.ftc.teamcode.util.ramp;
 
 public class LogarithmicRamp extends Ramp
 {
-    double Q;
-    double R;
-    double expQ;
+    private double Q;
+    private double R;
 
-    public LogarithmicRamp (double x1, double y1, double x2, double y2)
+    public LogarithmicRamp(Point point1, Point point2)
     {
-        super(x1, y1, x2, y2);
+        super(point1, point2);
+        if (point1.getX() == 0 || point2.getX() == 0) {
+            throw new IllegalArgumentException("Logarithmic scales can start at x=0");
+        }
 
-        // x1 can't be zero... but really small is fine.
-        if (x1 == 0.0)
-            x1 = Double.MIN_VALUE;
-
-        this.Q = (y2 - y1)/Math.log(x2/x1);
-        this.expQ = Math.exp(Q);
-        this.R = Math.exp(y1/Q)/x1;
+        Q = (point2.getY() - point1.getY()) / Math.log(point2.getX() / point1.getX());
+        R = Math.exp(point1.getY() / Q) / point1.getX();
     }
 
     @Override
-    public double value(double x)
+    protected double scale(double x)
     {
-        Double result = CheckDomain(x);
-        if (result != null)
-            return  result.doubleValue();
-
-        return Q*Math.log(R*x);
+        return Q * Math.log(R * x);
     }
 
-    /*
-    The exponential ramp starts slowly at the low end of the range
-    and accelerates to catch up at the high end of the range.
-     */
     @Override
-    public double inverse(double y)
+    protected double inverse(double y)
     {
-        Double result = CheckRange(y);
-        if (result != null)
-            return  result.doubleValue();
-
-        return Math.exp(y/Q)/R;
+        return Math.exp(y / Q) / R;
     }
 }

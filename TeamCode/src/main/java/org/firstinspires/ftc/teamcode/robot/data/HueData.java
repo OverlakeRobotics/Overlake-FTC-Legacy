@@ -4,13 +4,19 @@ import com.google.gson.annotations.Expose;
 
 public class HueData
 {
-    @Expose public double hueMin;
-    @Expose public double hueMax;
-    @Expose public double hueAverage;
+    @Expose
+    public double hueMin;
+    @Expose
+    public double hueMax;
+    @Expose
+    public double hueAverage;
 
-    @Expose public double red;
-    @Expose public double blue;
-    @Expose public double green;
+    @Expose
+    public double red;
+    @Expose
+    public double blue;
+    @Expose
+    public double green;
 
     public boolean hasData;
 

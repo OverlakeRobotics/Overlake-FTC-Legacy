@@ -11,11 +11,13 @@ import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
  */
 @Autonomous(name = "TestElevator", group = "Bot")
 @Disabled
-public class TestElevator extends LinearOpMode{
+public class TestElevator extends LinearOpMode
+{
     ElevatorSystem elevatorSystem;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
         waitForStart();
 
         elevatorSystem = new ElevatorSystem(this);

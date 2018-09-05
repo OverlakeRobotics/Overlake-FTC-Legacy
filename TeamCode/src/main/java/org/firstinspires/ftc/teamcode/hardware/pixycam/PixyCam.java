@@ -23,9 +23,9 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         /**
          * The x, y location of the center of the detected block.
          * x is in the range (0, 255)
-         *     0 is the left side of the field of view and 255 is the right.
+         * 0 is the left side of the field of view and 255 is the right.
          * y is in the range (0, 199)
-         *     0 is the top of the field of view and 199 is the bottom.
+         * 0 is the top of the field of view and 199 is the bottom.
          */
         public final int x, y;
 
@@ -46,7 +46,8 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
             this.height = TypeConversion.unsignedByteToInt(height);
         }
 
-        @Override public String toString()
+        @Override
+        public String toString()
         {
             return String.format("x: %d, y: %d, w: %d, h: %d", this.x, this.y, this.width, this.height);
         }
@@ -59,7 +60,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     /**
      * The ReadWindows used to do the PixyCam LEGO protocol SignatureQuery.
      */
-    private I2cDeviceSynch.ReadWindow [] legoProtocolSignatureQueryReadWindows;
+    private I2cDeviceSynch.ReadWindow[] legoProtocolSignatureQueryReadWindows;
 
     public PixyCam(I2cDeviceSynch deviceSynch)
     {
@@ -68,7 +69,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         this.legoProtocolGeneralQueryReadWindow = new I2cDeviceSynch.ReadWindow(0x50, 6, I2cDeviceSynch.ReadMode.REPEAT);
         this.legoProtocolSignatureQueryReadWindows = new I2cDeviceSynch.ReadWindow[7];
         for (int i = 1; i <= 7; i++)
-            this.legoProtocolSignatureQueryReadWindows[i-1] = NewLegoProtocolSignatureQueryReadWindow(i);
+            this.legoProtocolSignatureQueryReadWindows[i - 1] = NewLegoProtocolSignatureQueryReadWindow(i);
 
         super.registerArmingStateCallback(false);
         this.deviceClient.setI2cAddress(I2cAddr.create7bit(1));
@@ -80,7 +81,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         return new I2cDeviceSynch.ReadWindow(0x50 + signature, 5, I2cDeviceSynch.ReadMode.REPEAT);
     }
 
-    private byte [] ReadEntireWindow(I2cDeviceSynch.ReadWindow readWindow)
+    private byte[] ReadEntireWindow(I2cDeviceSynch.ReadWindow readWindow)
     {
         this.deviceClient.setReadWindow(readWindow);
         return this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
@@ -92,7 +93,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
      */
     public Block GetBiggestBlock()
     {
-        byte [] buffer = ReadEntireWindow(this.legoProtocolGeneralQueryReadWindow);
+        byte[] buffer = ReadEntireWindow(this.legoProtocolGeneralQueryReadWindow);
 
         int signature = buffer[1] << 8 | buffer[0];
 
@@ -100,8 +101,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     }
 
     /**
-     *
-     * @param signature is a value between 1 and 7 corresponding to the signature trained into the PixyCam.
+     * @param signature is a scale between 1 and 7 corresponding to the signature trained into the PixyCam.
      * @return a Block object containing details about the location of the largest detected block for the specified signature.
      */
     public Block GetBiggestBlock(int signature)
@@ -109,24 +109,27 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         if (signature < 1 || signature > 7)
             throw new IllegalArgumentException("signature must be between 1 and 7");
 
-        byte [] buffer = ReadEntireWindow(this.legoProtocolSignatureQueryReadWindows[signature - 1]);
+        byte[] buffer = ReadEntireWindow(this.legoProtocolSignatureQueryReadWindows[signature - 1]);
 
         return new Block(signature, buffer[1], buffer[2], buffer[3], buffer[4]);
     }
 
 
     @Override
-    protected boolean doInitialize() {
+    protected boolean doInitialize()
+    {
         return true;
     }
 
     @Override
-    public Manufacturer getManufacturer() {
+    public Manufacturer getManufacturer()
+    {
         return Manufacturer.Other;
     }
 
     @Override
-    public String getDeviceName() {
+    public String getDeviceName()
+    {
         return "PixyCam";
     }
 }

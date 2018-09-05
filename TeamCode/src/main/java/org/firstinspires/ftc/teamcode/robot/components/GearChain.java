@@ -1,47 +1,51 @@
 package org.firstinspires.ftc.teamcode.robot.components;
 
+import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
+
 /**
  * Created by EvanCoulson on 9/26/17.
  */
 
-public class GearChain {
-    public final static int NEVEREST20_PULSES = 960;
-    public final static int NEVEREST40_PULSES = 1120;
-    public final static int NEVEREST60_PULSES = 1680;
-
-    private Gear input;
+public class GearChain
+{
     private double chainRatio;
+    private double[] teeth;
+    private MotorType motorType;
 
-    public GearChain(double... allTeeth) {
-        input = new Gear(allTeeth[0]);
-        Gear current = input;
-        for (int i = 1; i < allTeeth.length; i++) {
-            Gear next = new Gear(allTeeth[i]);
-            current.next = next;
-            current = next;
-        }
+    public GearChain(MotorType motorType, double... teeth)
+    {
+        this.teeth = teeth;
+        this.motorType = motorType;
         chainRatio = calculateChainRatio();
     }
 
-    public int calculateInputRevolutions(int pulses, double revolutions) {
-        return (int) Math.round(pulses * revolutions);
+    private double calculateChainRatio()
+    {
+        double chainRatio = 1d;
+        for (int i = 1; i < teeth.length; i++)
+        {
+            chainRatio *= teeth[i] / teeth[i - 1];
+        }
+        return chainRatio;
     }
 
-    public int calculateOutputRevolutions(int pulses, double revolutions) {
-        return (int) Math.round(pulses * revolutions * chainRatio);
+    public int calculateInputRevolutionTicks(double revolutions)
+    {
+        return (int) Math.round(motorType.getPulses() * revolutions);
     }
 
-    public int calculateOuputTicks(int ticks) {
+    public int calculateOutputRevolutionTicks(double revolutions)
+    {
+        return (int) Math.round(motorType.getPulses() * revolutions * chainRatio);
+    }
+
+    public int calculateOuputTicks(int ticks)
+    {
         return (int) Math.round(ticks * chainRatio);
     }
 
-    private double calculateChainRatio() {
-        double ratio = 1d;
-        Gear current = input;
-        while (current.next != null) {
-            ratio *= current.getRatio();
-            current = current.next;
-        }
-        return ratio;
+    public double getChainRatio()
+    {
+        return chainRatio;
     }
 }

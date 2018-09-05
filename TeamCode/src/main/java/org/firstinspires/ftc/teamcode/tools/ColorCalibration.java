@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.teamcode.robot.data.ColorSensorData;
 import org.firstinspires.ftc.teamcode.robot.data.HueData;
 
-@TeleOp(name="ColorCalibration")
+@TeleOp(name = "ColorCalibration")
 @Disabled
 public class ColorCalibration extends LinearOpMode
 {
@@ -67,7 +67,8 @@ public class ColorCalibration extends LinearOpMode
             b = gamepad1.b;
         }
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             hue.addSample(hueFromRGB(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue()));
             sleep(200);
         }
@@ -88,34 +89,39 @@ public class ColorCalibration extends LinearOpMode
     }
 
 
-
     void composeDashboard()
     {
         telemetry.setMsTransmissionInterval(200);
         telemetry.addLine()
-                .addData("Red: ", new Func<Object>() {
-                    public Object value() {
+                .addData("Red: ", new Func<Object>()
+                {
+                    public Object value()
+                    {
                         return sensorRGB.red();
                     }
                 })
-                .addData ("Green: ", new Func<Object>() {
-                    public Object value() {
+                .addData("Green: ", new Func<Object>()
+                {
+                    public Object value()
+                    {
                         return sensorRGB.green();
                     }
                 })
-                .addData ("Blue: ", new Func<Object>() {
-                    public Object value() {
+                .addData("Blue: ", new Func<Object>()
+                {
+                    public Object value()
+                    {
                         return sensorRGB.blue();
                     }
                 });
 
-        telemetry.addLine().addData( "Message: ", new Func<Object>()
-                {
-                    public Object value()
-                    {
-                        return message;
-                    }
-                });
+        telemetry.addLine().addData("Message: ", new Func<Object>()
+        {
+            public Object value()
+            {
+                return message;
+            }
+        });
     }
 }
 

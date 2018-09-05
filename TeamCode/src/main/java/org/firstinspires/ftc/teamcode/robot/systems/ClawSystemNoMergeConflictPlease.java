@@ -3,25 +3,19 @@ package org.firstinspires.ftc.teamcode.robot.systems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-
-import org.firstinspires.ftc.teamcode.robot.components.DcMotorServo;
-import org.firstinspires.ftc.teamcode.teleop.ControllerOpMode;
-import org.firstinspires.ftc.teamcode.util.config.*;
+import org.firstinspires.ftc.teamcode.robot.components.servos.DcMotorServo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.config.ConfigParser;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.firstinspires.ftc.teamcode.config.ConfigParser;
 
 /**
  * Created by jacks on 1/8/2018.
  */
-public class ClawSystemNoMergeConflictPlease extends System {
+public class ClawSystemNoMergeConflictPlease extends System
+{
 
-    private DcMotorServo motor;
+    private DcMotorServo motorServo;
 
     double bottom;
     double middle;
@@ -34,62 +28,81 @@ public class ClawSystemNoMergeConflictPlease extends System {
     Telemetry.Item indexTelemetryItem;
     Telemetry.Item positionTelemetryItem;
 
-    //public Claw2png(OpMode opMode, Telemetry telemetry){
-    public ClawSystemNoMergeConflictPlease(OpMode opMode){
+    public ClawSystemNoMergeConflictPlease(OpMode opMode)
+    {
         super(opMode, "meMotor");
         this.telemetry = opMode.telemetry;
-        this.motor = new DcMotorServo();
-        this.motor.init(opMode.hardwareMap, "meMotor", "potentiometer", telemetry);
+        DcMotor motor = opMode.hardwareMap.dcMotor.get("meMotor");
+        AnalogInput armPotentiometer = opMode.hardwareMap.analogInput.get("potentiometer");
+        this.motorServo = new DcMotorServo(motor, armPotentiometer, new ConfigParser("PID.omc"));
         this.liftTelemetryLine = this.telemetry.addLine("Claw");
         this.indexTelemetryItem = liftTelemetryLine.addData("position", 0);
         this.positionTelemetryItem = liftTelemetryLine.addData("power", 0);
         bottom = config.getDouble("bottom");
         middle = config.getDouble("middle");
-        top  = config.getDouble("top");
+        top = config.getDouble("top");
         position = 0.45;
     }
 
-    public void loop(){
-        this.positionTelemetryItem.setValue(motor.getPower());
-        this.indexTelemetryItem.setValue(motor.getCurrentPosition());
+    public void loop()
+    {
+        this.positionTelemetryItem.setValue(motorServo.getPower());
+        this.indexTelemetryItem.setValue(motorServo.getCurrentPosition());
 
-        motor.loop(position);
-
-    }
-    public void managePosition() {
-
+        motorServo.setTargetPosition(position);
+        motorServo.loop();
     }
 
-    public void runMotorBackUpALotProbablyDeleteLater() {
+    public void managePosition()
+    {
+
+    }
+
+    public void runMotorBackUpALotProbablyDeleteLater()
+    {
         runMotor();
     }
-    public void goToBottom() { position = bottom; }
 
-    public void closeSynch(LinearOpMode o) {
+    public void goToBottom()
+    {
+        position = bottom;
+    }
+
+    public void closeSynch(LinearOpMode o)
+    {
         runMotorBack();
         o.sleep(1000);
     }
 
-    public void openSynch(LinearOpMode o) {
-        motor.runMotor();
+    public void openSynch(LinearOpMode o)
+    {
+        motorServo.runMotor();
         o.sleep(1000);
     }
 
-    public void goToMiddle() {
+    public void goToMiddle()
+    {
         position = middle;
     }
-    public void goToTop() {
+
+    public void goToTop()
+    {
         position = top;
     }
-    public void runMotor(){
-        motor.runMotor();
-    }
-    public void runMotorBack(){
-        motor.runMotorBack();
-    }
-    public void stop() {
-        motor.stop();
 
+    public void runMotor()
+    {
+        motorServo.runMotor();
+    }
+
+    public void runMotorBack()
+    {
+        motorServo.runMotorBack();
+    }
+
+    public void stop()
+    {
+        motorServo.stop();
     }
 }
 

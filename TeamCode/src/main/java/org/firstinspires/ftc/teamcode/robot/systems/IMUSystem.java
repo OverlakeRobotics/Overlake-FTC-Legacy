@@ -4,13 +4,10 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.robot.systems.System;
-import org.firstinspires.ftc.teamcode.util.logger.LoggingService;
+import org.firstinspires.ftc.teamcode.logger.LoggingService;
 
 /**
  * This is NOT an opmode.
- *
- *
  */
 public class IMUSystem extends System
 {
@@ -19,7 +16,8 @@ public class IMUSystem extends System
 
 
     /* Constructor */
-    public IMUSystem(OpMode opMode){
+    public IMUSystem(OpMode opMode)
+    {
         super(opMode, "IMUSystem");
         logger.setLoggingServices(LoggingService.FILE);
 
@@ -42,11 +40,13 @@ public class IMUSystem extends System
         return orientation.firstAngle;
     }
 
-    public Acceleration getAcceleration() {
+    public Acceleration getAcceleration()
+    {
         return imu.getLinearAcceleration();
     }
 
-    public Velocity getVelocity() {
+    public Velocity getVelocity()
+    {
         return imu.getVelocity();
     }
 }

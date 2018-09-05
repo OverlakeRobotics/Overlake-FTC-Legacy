@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ramp;
+package org.firstinspires.ftc.teamcode.scale;
 
 /*
     The exponential ramp increases slowly for low values and speeds up as it approaches the higher values.
@@ -35,39 +35,25 @@ package org.firstinspires.ftc.teamcode.util.ramp;
 */
 public class ExponentialRamp extends Ramp
 {
-    // Computed constants for exponential and logarithmic ramps
-    double logJ;
-    double J;
-    double K;
+    private double J;
+    private double K;
 
-    public ExponentialRamp(double x1, double y1, double x2, double y2)
+    public ExponentialRamp(Point point1, Point point2)
     {
-        super(x1, y1, x2, y2);
-
-        // Compute the constants for the exponential and logarithmic ramps
-
-        K = Math.log(y1/y2)/(x1 - x2);
-        J = y1/Math.exp(K*x1);
-        logJ = Math.log(J);
+        super(point1, point2);
+        K = Math.log(point1.getY() / point2.getY()) / (point1.getX() - point2.getX());
+        J = point1.getY() / Math.exp(K * point1.getX());
     }
 
     @Override
-    public double value(double x)
+    protected double scale(double x)
     {
-        Double result = CheckDomain(x);
-        if (result != null)
-            return  result.doubleValue();
-
-        return J*Math.exp(K*x);
+        return J * Math.exp(K * x);
     }
 
     @Override
-    public double inverse(double y)
+    protected double inverse(double y)
     {
-        Double result = CheckRange(y);
-        if (result != null)
-            return  result.doubleValue();
-
-        return (Math.log(y) - logJ) / K;
+        return (Math.log(y / J)) / K;
     }
 }

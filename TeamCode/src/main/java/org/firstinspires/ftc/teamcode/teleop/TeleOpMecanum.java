@@ -43,40 +43,44 @@ import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
  * Enables control of the robot via the gamepad
  */
 
-@TeleOp(name="TeleOpMecanum", group="TeleOp")
-public class TeleOpMecanum extends BaseOpMode {
+@TeleOp(name = "TeleOpMecanum", group = "TeleOp")
+public class TeleOpMecanum extends BaseOpMode
+{
 
-	private MecanumDriveSystem driveSystem;
+    private MecanumDriveSystem driveSystem;
 
-	public TeleOpMecanum() {
-		super("TeleOpMecanum");
-	}
+    public TeleOpMecanum()
+    {
+        super("TeleOpMecanum");
+    }
 
-	Telemetry.Item statusTelemetryItem;
+    Telemetry.Item statusTelemetryItem;
 
-	@Override
-	public void init() {
-		telemetry.update();
+    @Override
+    public void init()
+    {
+        telemetry.update();
         this.driveSystem = new MecanumDriveSystem(this);
-		telemetry.update();
-		this.statusTelemetryItem = telemetry.addData("mecanum", "");
-	}
+        telemetry.update();
+        this.statusTelemetryItem = telemetry.addData("mecanum", "");
+    }
 
-	@Override
-	public void loop()
-	{
+    @Override
+    public void loop()
+    {
         this.driveSystem.driveGodMode(gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_stick_x, gamepad1.left_stick_y);
-		statusTelemetryItem.setValue(gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
-	}
+        statusTelemetryItem.setValue(gamepad1.right_stick_x + ", " + gamepad1.right_stick_y + ", " + gamepad1.left_stick_x + ", " + gamepad1.left_stick_y);
+    }
 
-	@Override
-	public void stop()
-	{
+    @Override
+    public void stop()
+    {
 
-	}
+    }
 
-	@Override
-	public void initButtons() {
+    @Override
+    public void initButtons()
+    {
 
-	}
+    }
 }
