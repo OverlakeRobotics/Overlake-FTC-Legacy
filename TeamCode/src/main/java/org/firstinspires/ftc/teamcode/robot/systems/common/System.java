@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.logger.LoggingService;
  * Created by EvanCoulson on 10/5/17.
  */
 
-public abstract class System
-{
+public abstract class System {
 
     private String system;
     private String fileName;
@@ -24,33 +23,28 @@ public abstract class System
 
     public Logger logger;
 
-    public System(OpMode opMode, String system)
-    {
+    public System(OpMode opMode, String systemName) {
         this.map = opMode.hardwareMap;
-        this.system = system;
-        this.fileName = system + ".omc";
+        this.system = systemName;
+        this.fileName = systemName + ".omc";
         this.telemetry = opMode.telemetry;
         this.config = new ConfigParser(fileName);
-        this.logger = new Logger(opMode, system);
+        this.logger = new Logger(opMode, systemName);
     }
 
-    public void setDefaultLoggingServices(LoggingService... services)
-    {
+    public void setDefaultLoggingServices(LoggingService... services) {
         LoggingService[] loggingServices = new LoggingService[services.length];
-        for (int i = 0; i < services.length; i++)
-        {
+        for (int i = 0; i < services.length; i++) {
             loggingServices[i] = services[i];
         }
         this.logger.setLoggingServices(loggingServices);
     }
 
-    public String getFileName()
-    {
+    public String getFileName() {
         return fileName;
     }
 
-    public String getSystemName()
-    {
+    public String getSystemName() {
         return system;
     }
 }
