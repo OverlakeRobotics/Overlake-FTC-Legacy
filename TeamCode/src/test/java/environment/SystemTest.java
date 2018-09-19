@@ -60,11 +60,14 @@ public abstract class SystemTest
         return new File(root.getPath() + "/" + name + ".omc");
     }
 
-    public void addConfigValues(String name, ConfigValue configValue) throws IOException
+    public void addConfigValues(String name, ConfigValue... configValues) throws IOException
     {
         File configFile = configFileMapping.get(name);
         FileWriter writer = new FileWriter(configFile);
-        writer.write(configValue.toString());
+        for (ConfigValue configValue: configValues)
+        {
+            writer.append(configValue.toString());
+        }
         writer.flush();
         writer.close();
     }

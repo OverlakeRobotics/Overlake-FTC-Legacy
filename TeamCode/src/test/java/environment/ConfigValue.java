@@ -10,7 +10,7 @@ public class ConfigValue
     private String value;
     private String type;
 
-    public ConfigValue(String key, String value, String type) {
+    public ConfigValue(String type, String key, String value) {
         this.key = key;
         this.value = value;
         this.type = type;
@@ -18,6 +18,6 @@ public class ConfigValue
 
     @Override
     public String toString() {
-        return String.format(":{0}: {1} {2}\n", type, key, value);
+        return String.format(":%1$s: %2$s %3$s\n", type, key, value);
     }
 }
