@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
 import org.firstinspires.ftc.teamcode.config.IConfig;
 

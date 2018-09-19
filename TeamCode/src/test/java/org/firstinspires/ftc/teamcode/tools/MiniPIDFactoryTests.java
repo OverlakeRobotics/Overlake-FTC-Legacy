@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.tools;
 import junit.framework.Assert;
 
 import org.firstinspires.ftc.teamcode.config.IConfig;
-import org.firstinspires.ftc.teamcode.fakes.FakeConfig;
+import fakes.FakeConfig;
 import org.junit.Test;
 
 /**

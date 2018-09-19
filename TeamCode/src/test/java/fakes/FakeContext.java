@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

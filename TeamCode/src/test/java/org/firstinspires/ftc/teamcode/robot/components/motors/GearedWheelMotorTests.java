@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import junit.framework.Assert;
 
-import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
+import fakes.FakeDcMotor;
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.junit.Test;

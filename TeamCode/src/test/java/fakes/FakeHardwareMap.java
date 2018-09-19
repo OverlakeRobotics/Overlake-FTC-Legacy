@@ -1,11 +1,7 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
-import android.content.Context;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 

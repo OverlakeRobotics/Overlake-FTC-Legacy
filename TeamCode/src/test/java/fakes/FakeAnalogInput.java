@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.AnalogInputController;
 
 public class FakeAnalogInput extends AnalogInput
 {

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.components.motors;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
+import fakes.FakeDcMotor;
 import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.junit.Rule;

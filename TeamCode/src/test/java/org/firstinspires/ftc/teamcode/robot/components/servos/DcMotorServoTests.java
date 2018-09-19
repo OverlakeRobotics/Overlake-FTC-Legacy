@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.components.servos;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.fakes.FakeAnalogInput;
-import org.firstinspires.ftc.teamcode.fakes.FakeConfig;
-import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
+import fakes.FakeAnalogInput;
+import fakes.FakeConfig;
+import fakes.FakeDcMotor;
 import org.firstinspires.ftc.teamcode.config.IConfig;
 import org.junit.Assert;
 import org.junit.Test;
