@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.PixySystem;
 
 /**
  * Created by lexis on 05-Nov-17.

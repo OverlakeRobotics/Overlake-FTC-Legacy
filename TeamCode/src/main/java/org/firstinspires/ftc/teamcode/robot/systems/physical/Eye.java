@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.systems;
+package org.firstinspires.ftc.teamcode.robot.systems.physical;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.robot.systems.System;
+import org.firstinspires.ftc.teamcode.robot.systems.base.System;
 
 /**
  * Created by Steven Abbott on 9/27/2017.

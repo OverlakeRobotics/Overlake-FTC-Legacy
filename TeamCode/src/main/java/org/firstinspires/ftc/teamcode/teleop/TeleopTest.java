@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.IMUSystem;
 import org.firstinspires.ftc.teamcode.logger.LoggingService;
 
 @TeleOp(name = "TeleOpTest", group = "TeleOp")

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.systems;
+package org.firstinspires.ftc.teamcode.robot.systems.physical;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.hardware.dcmotors.MotorType;
 import org.firstinspires.ftc.teamcode.robot.components.GearChain;
 import org.firstinspires.ftc.teamcode.robot.components.motors.GearedWheelMotor;
 import org.firstinspires.ftc.teamcode.logger.LoggingService;
+import org.firstinspires.ftc.teamcode.robot.systems.base.System;
 import org.firstinspires.ftc.teamcode.scale.*;
 
 import java.util.Arrays;

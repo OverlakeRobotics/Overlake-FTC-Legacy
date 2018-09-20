@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.systems;
+package org.firstinspires.ftc.teamcode.robot.systems.physical;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.robot.components.servos.DcMotorServo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.ConfigParser;
+import org.firstinspires.ftc.teamcode.robot.systems.base.System;
 
 /**
  * Created by jacks on 1/8/2018.

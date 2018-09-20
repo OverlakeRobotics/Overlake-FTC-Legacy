@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ElevatorSystem;
 
 /**
  * Created by jacks on 10/20/2017.

@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.systems.ClawSystemNoMergeConflictPlease;
-import org.firstinspires.ftc.teamcode.robot.systems.ElevatorSystem;
-import org.firstinspires.ftc.teamcode.robot.systems.Eye;
-import org.firstinspires.ftc.teamcode.robot.systems.IMUSystem;
-import org.firstinspires.ftc.teamcode.robot.systems.MecanumDriveSystem;
-import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
-import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ClawSystemNoMergeConflictPlease;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ElevatorSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.Eye;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.IMUSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.MecanumDriveSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ParallelLiftSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.PixySystem;
 import org.firstinspires.ftc.teamcode.config.ConfigParser;
 
 /**

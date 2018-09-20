@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ParallelLiftSystem;
 
 /**
  * Created by Steven Abbott on 1/29/2018.

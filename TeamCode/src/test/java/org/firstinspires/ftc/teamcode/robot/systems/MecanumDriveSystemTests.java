@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
-import android.os.Environment;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -13,18 +11,11 @@ import fakes.FakeDcMotor;
 import fakes.FakeHardwareMap;
 import fakes.FakeIMUDevice;
 import fakes.FakeOpMode;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.File;
-import java.io.FileWriter;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.MecanumDriveSystem;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 
 public class MecanumDriveSystemTests extends SystemTest
@@ -77,6 +68,13 @@ public class MecanumDriveSystemTests extends SystemTest
         Assert.assertEquals(100, mecanumDriveSystem.motorBackRight.getTargetPosition());
     }
 
+    @Test
+    public void mecanumDrive_SetsPowerToMotors_PowersAreCorrectValues() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+    }
+
+
+    //TODO: Refactor in to the environemnt test
     private OpMode getOpMode()
     {
         FakeOpMode mode = new FakeOpMode();

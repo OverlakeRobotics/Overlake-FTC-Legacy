@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.sun.tools.javac.comp.Flow;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robot.systems.ParallelLiftSystem;
-import org.firstinspires.ftc.teamcode.robot.systems.PixySystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.ParallelLiftSystem;
+import org.firstinspires.ftc.teamcode.robot.systems.physical.PixySystem;
 
 /**
  * Created by lexis on 23-Oct-17.
