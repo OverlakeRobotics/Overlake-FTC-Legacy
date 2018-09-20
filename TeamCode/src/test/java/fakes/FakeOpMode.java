@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 

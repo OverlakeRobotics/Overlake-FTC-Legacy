@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode.fakes;
+package fakes;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
 
 /**

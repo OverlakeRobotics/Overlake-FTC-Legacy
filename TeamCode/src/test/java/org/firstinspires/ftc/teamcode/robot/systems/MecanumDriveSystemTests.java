@@ -2,25 +2,22 @@ package org.firstinspires.ftc.teamcode.robot.systems;
 
 import android.os.Environment;
 
-import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceImpl;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 
 import junit.framework.Assert;
 
-import org.firstinspires.ftc.teamcode.fakes.FakeDcMotor;
-import org.firstinspires.ftc.teamcode.fakes.FakeHardwareMap;
-import org.firstinspires.ftc.teamcode.fakes.FakeIMUDevice;
-import org.firstinspires.ftc.teamcode.fakes.FakeOpMode;
+import environment.ConfigValue;
+import environment.SystemTest;
+import fakes.FakeDcMotor;
+import fakes.FakeHardwareMap;
+import fakes.FakeIMUDevice;
+import fakes.FakeOpMode;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -30,43 +27,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Environment.class})
-public class MecanumDriveSystemTests
+public class MecanumDriveSystemTests extends SystemTest
 {
-    @Rule
-    public TemporaryFolder storageDirectory = new TemporaryFolder();
-
-    private File nonExistentDirectory;
-    private File existentDirectory;
-
     @Before
-    public void setupFileSystem() throws IOException
-    {
-        nonExistentDirectory = Mockito.mock(File.class);
-        Mockito.when(nonExistentDirectory.exists()).thenReturn(false);
-        existentDirectory = storageDirectory.getRoot();
-        PowerMockito.mockStatic(Environment.class);
+    public void setupTest() throws IOException {
         initializeConfig("MecanumDrive");
         initializeConfig("IMUSystem");
-        addConfigValues("MecanumDrive", new String[] {
-                ":String: motorFL motorFL",
-                ":String: motorFR motorFR",
-                ":String: motorBL motorBL",
-                ":String: motorBR motorBR",
-                ":double: P 0",
-                ":double: I 0",
-                ":double: D 0"
-        });
-        Mockito.when(Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
-    }
-
-    private void initializeConfig(String name) throws IOException
-    {
-        File root = new File(existentDirectory.getAbsolutePath() + "/Android/data/com.overlake.ftc.configapp/files", "configurations");
-        root.mkdirs();
-        File configFile = new File(root.getPath() + "/" + name + ".omc");
-        configFile.createNewFile();
+        addConfigValues("MecanumDrive",
+            new ConfigValue("String", "motorFL", "motorFL"),
+            new ConfigValue("String", "motorBL", "motorBL"),
+            new ConfigValue("String", "motorFR", "motorFR"),
+            new ConfigValue("String", "motorBR", "motorBR"),
+            new ConfigValue("double", "P", "0"),
+            new ConfigValue("double", "I", "0"),
+            new ConfigValue("double", "D", "0")
+        );
     }
 
     @Test
@@ -118,18 +93,5 @@ public class MecanumDriveSystemTests
         fakeHardwareMap.addFakeDcMotor("motorBL", new FakeDcMotor());
         fakeHardwareMap.addFakeDcMotor("motorBR", new FakeDcMotor());
         return fakeHardwareMap;
-    }
-
-    private void addConfigValues(String name, String[] configValues) throws IOException
-    {
-        File root = new File(existentDirectory.getAbsolutePath() + "/Android/data/com.overlake.ftc.configapp/files", "configurations");
-        File configFile = new File(root.getPath() + "/" + name + ".omc");
-        FileWriter writer = new FileWriter(configFile);
-        for (String configString : configValues)
-        {
-            writer.write(configString + "\n");
-        }
-        writer.flush();
-        writer.close();
     }
 }
