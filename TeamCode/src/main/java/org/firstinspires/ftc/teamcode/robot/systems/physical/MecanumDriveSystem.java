@@ -148,7 +148,7 @@ public class MecanumDriveSystem extends System
         driveGodMode(rightX, rightY, leftX, leftY, 1);
     }
 
-    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff)
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coefficient)
     {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
         double headingDiff = initialHeading - currentHeading;
@@ -159,14 +159,13 @@ public class MecanumDriveSystem extends System
 
         double speed = Math.sqrt(leftX * leftX + leftY * leftY);
         double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
-        double changeOfDirectionSpeed = rightX;
-        double x = coeff * speed * Math.cos(angle);
-        double y = coeff * speed * Math.sin(angle);
+        double x = coefficient * speed * Math.cos(angle);
+        double y = coefficient * speed * Math.sin(angle);
 
-        double frontLeft = y - changeOfDirectionSpeed + x;
-        double frontRight = y + changeOfDirectionSpeed - x;
-        double backLeft = y - changeOfDirectionSpeed - x;
-        double backRight = y + changeOfDirectionSpeed + x;
+        double frontLeft = y - rightX + x;
+        double frontRight = y + rightX - x;
+        double backLeft = y - rightX - x;
+        double backRight = y + rightX + x;
 
         List<Double> powers = Arrays.asList(frontLeft, frontRight, backLeft, backRight);
         clampPowers(powers);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import junit.framework.Assert;
@@ -78,6 +79,25 @@ public class MecanumDriveSystemTests extends SystemTest
         Assert.assertEquals(0.27125, mecanumDriveSystem.motorBackRight.getPower(), 0.00001f);
     }
 
+    @Test
+    public void setRunmode_SetsRunModeOfMotors_RunWithEncoders() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Assert.assertEquals(DcMotor.RunMode.RUN_USING_ENCODER, mecanumDriveSystem.motorFrontLeft.getRunMode());
+        Assert.assertEquals(DcMotor.RunMode.RUN_USING_ENCODER, mecanumDriveSystem.motorFrontRight.getRunMode());
+        Assert.assertEquals(DcMotor.RunMode.RUN_USING_ENCODER, mecanumDriveSystem.motorBackLeft.getRunMode());
+        Assert.assertEquals(DcMotor.RunMode.RUN_USING_ENCODER, mecanumDriveSystem.motorBackRight.getRunMode());
+    }
+
+    @Test
+    public void godDrive_SetsPowerToMotors_PowersAreCorrectValues() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.driveGodMode(1f, 0.5f, 0.25f, 0.66f, 1f);
+        Assert.assertEquals(-0.388678, mecanumDriveSystem.motorFrontLeft.getPower(), 0.00001f);
+        Assert.assertEquals(0.851322, mecanumDriveSystem.motorBackRight.getPower(), 0.00001f);
+        Assert.assertEquals(0.928822, mecanumDriveSystem.motorFrontRight.getPower(), 0.00001f);
+        Assert.assertEquals(-0.311178, mecanumDriveSystem.motorBackLeft.getPower(), 0.00001f);
+    }
 
     //TODO: Refactor in to the environemnt test
     private OpMode getOpMode()
