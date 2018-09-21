@@ -71,6 +71,11 @@ public class MecanumDriveSystemTests extends SystemTest
     @Test
     public void mecanumDrive_SetsPowerToMotors_PowersAreCorrectValues() {
         MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.mecanumDrive(0.5f, 0.25f, 0.25f, 0.5f, false);
+        Assert.assertEquals(-0.0775, mecanumDriveSystem.motorFrontLeft.getPower(), 0.00001f);
+        Assert.assertEquals(0.34875, mecanumDriveSystem.motorFrontRight.getPower(), 0.00001f);
+        Assert.assertEquals(0.0775, mecanumDriveSystem.motorBackLeft.getPower(), 0.00001f);
+        Assert.assertEquals(0.27125, mecanumDriveSystem.motorBackRight.getPower(), 0.00001f);
     }
 
 

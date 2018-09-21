@@ -13,7 +13,6 @@ public class LinearScale implements IScale
     {
         this.scaleFactor = scaleFactor;
         this.scaleOffset = scaleOffset;
-
     }
 
     @Override

@@ -140,9 +140,7 @@ public class MecanumDriveSystem extends System
 
     private float scaleJoystickValue(float joystickValue)
     {
-        return joystickValue > 0
-                ? (float)JOYSTICK_SCALE.scaleX(joystickValue * joystickValue)
-                : (float)-JOYSTICK_SCALE.scaleX(joystickValue * joystickValue);
+        return (float) JOYSTICK_SCALE.scaleX(joystickValue * joystickValue);
     }
 
     public void driveGodMode(float rightX, float rightY, float leftX, float leftY)
