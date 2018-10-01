@@ -37,7 +37,7 @@ public class MecanumDriveSystem extends System
     public GearedWheelMotor motorBackLeft;
     public GearedWheelMotor motorBackRight;
 
-    private double initialHeading;
+    public double initialHeading;
 
     Telemetry.Item distanceItem;
     Telemetry.Item powerItem;
@@ -246,12 +246,12 @@ public class MecanumDriveSystem extends System
         driveToPositionInches(inches, power, inches / 10);
     }
 
-    public int getMinimumDistanceFromTarget()
+    private int getMinimumDistanceFromTarget()
     {
         int d = this.motorFrontLeft.getTargetPosition() - this.motorFrontLeft.getCurrentPosition();
         d = closestToZero(d, this.motorFrontRight.getTargetPosition() - this.motorFrontRight.getCurrentPosition());
         d = closestToZero(d, this.motorBackLeft.getTargetPosition() - this.motorBackLeft.getCurrentPosition());
-        d = closestToZero(d, this.motorBackRight.getTargetPosition() - this.motorBackRight.getCurrentPosition());
+        d = closestToZero(d, this.motorBackRight.getTargetPosition() + this.motorBackRight.getCurrentPosition());
         distanceItem.setValue(d);
         return d;
     }

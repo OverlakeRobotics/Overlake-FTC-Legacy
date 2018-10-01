@@ -99,6 +99,33 @@ public class MecanumDriveSystemTests extends SystemTest
         Assert.assertEquals(-0.311178, mecanumDriveSystem.motorBackLeft.getPower(), 0.00001f);
     }
 
+    @Test
+    public void resetInitialHeading_SetsCurrentHeading_CurrentHeadingIs0() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.resetInitialHeading();
+        Assert.assertEquals(0, mecanumDriveSystem.initialHeading, 0.000001d);
+    }
+
+    @Test
+    public void mecanumDriveXY_SetsPowerToMotors_CorrectMotorPowers() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.mecanumDriveXY(0.5, 0.5);
+        Assert.assertEquals(0, mecanumDriveSystem.motorFrontLeft.getPower(), 0.00001f);
+        Assert.assertEquals(0, mecanumDriveSystem.motorBackRight.getPower(), 0.00001f);
+        Assert.assertEquals(1, mecanumDriveSystem.motorFrontRight.getPower(), 0.00001f);
+        Assert.assertEquals(1, mecanumDriveSystem.motorBackLeft.getPower(), 0.00001f);
+    }
+
+    @Test
+    public void mecanumDrivePolar_SetsPowerToMotors_CorrectMotorPowers() {
+        MecanumDriveSystem mecanumDriveSystem = new MecanumDriveSystem(getOpMode());
+        mecanumDriveSystem.mecanumDrivePolar(Math.PI, 0.5);
+        Assert.assertEquals(0.5, mecanumDriveSystem.motorFrontLeft.getPower(), 0.00001f);
+        Assert.assertEquals(0.5, mecanumDriveSystem.motorBackRight.getPower(), 0.00001f);
+        Assert.assertEquals(-0.5, mecanumDriveSystem.motorFrontRight.getPower(), 0.00001f);
+        Assert.assertEquals(-0.5, mecanumDriveSystem.motorBackLeft.getPower(), 0.00001f);
+    }
+
     //TODO: Refactor in to the environemnt test
     private OpMode getOpMode()
     {
